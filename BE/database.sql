@@ -10,8 +10,10 @@ GO
 
 CREATE DATABASE QuanLyDoanVien
 GO 
+
 USE QuanLyDoanVien
 GO
+
 CREATE TABLE Khoa (
     idKhoa CHAR(15) PRIMARY KEY,
     tenKhoa NVARCHAR(100) NOT NULL
@@ -45,7 +47,7 @@ CREATE TABLE DoanVien (
     idChiDoan CHAR(15),
     ngayVaoDoan DATE,
     noiChuyenDen NVARCHAR(100),
-    ngayChuyenDen NVARCHAR(50),
+    ngayChuyenDen DATE, 
     trangThaiSH NVARCHAR(50),
     diemHD INT,
     CONSTRAINT FK_DoanVien_ChiDoan FOREIGN KEY (idChiDoan) REFERENCES ChiDoan(idChiDoan)
@@ -57,7 +59,7 @@ CREATE TABLE TaiKhoan (
     tenNguoiDung NVARCHAR(100) NOT NULL,
     matKhau NVARCHAR(100) NOT NULL,
     trangThai BIT DEFAULT 1,
-    ngayTao CHAR(15),
+    ngayTao DATETIME, 
     idVaiTro CHAR(15),
     idDV CHAR(15) UNIQUE,
     CONSTRAINT FK_TaiKhoan_VaiTro FOREIGN KEY (idVaiTro) REFERENCES VaiTro(idVaiTro),
@@ -109,7 +111,7 @@ CREATE TABLE DoanVienDangKi (
     idHD CHAR(15),
     ngayDangKi DATETIME,
     trangThaiDuyet NVARCHAR(50),
-    tiDoTuChe NVARCHAR(500),
+    lyDoTuChoi NVARCHAR(500), 
     PRIMARY KEY (idDV, idHD),
     CONSTRAINT FK_DoanVienDangKi_DoanVien FOREIGN KEY (idDV) REFERENCES DoanVien(idDV),
     CONSTRAINT FK_DoanVienDangKi_HoatDongDoan FOREIGN KEY (idHD) REFERENCES HoatDongDoan(idHD)
@@ -129,7 +131,7 @@ CREATE TABLE PhieuThuDoanPhi (
     nguoiNop CHAR(15),
     fileDinhKem NVARCHAR(200),
     trangThai NVARCHAR(50),
-    ngucDuyet CHAR(15),
+    nguoiDuyet CHAR(15), 
     CONSTRAINT FK_PhieuThuDoanPhi_TaiKhoan FOREIGN KEY (nguoiNop) REFERENCES TaiKhoan(idUser)
 );
 GO
