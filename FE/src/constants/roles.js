@@ -15,8 +15,8 @@ export const ROLES = {
 
 /** Label hiển thị tương ứng */
 export const ROLE_LABELS = {
-  [ROLES.DOANTRUONG]: 'Đoàn trường (Ban thường vụ)',
-  [ROLES.DOANKHOA]: 'Bí thư liên chi đoàn',
-  [ROLES.BITHU]: 'Bí thư chi đoàn lớp',
-  [ROLES.DOANVIEN]: 'Đoàn viên',
+  [ROLES.DOANTRUONG]: 'Đoàn Trường',
+  [ROLES.DOANKHOA]:   'Đoàn Khoa',
+  [ROLES.BITHU]:      'Bí thư Chi đoàn',
+  [ROLES.DOANVIEN]:   'Đoàn Viên',
 };

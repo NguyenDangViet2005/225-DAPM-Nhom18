@@ -1,16 +1,27 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { ROLES } from '@/constants/roles';
 
 const LoginForm = ({ onForgotPassword }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = '/dashboard';
+      // Redirect theo role của mock user hiện tại
+      const role = user?.role;
+      if (role === ROLES.DOANVIEN || role === ROLES.BITHU) {
+        navigate('/thong-tin-ca-nhan');
+      } else {
+        navigate('/dashboard');
+      }
     }, 1400);
   };
 

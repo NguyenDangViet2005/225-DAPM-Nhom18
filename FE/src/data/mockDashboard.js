@@ -2,7 +2,7 @@ import {
   Users, 
   UserCheck, 
   Activity, 
-  ClipboardList 
+  ClipboardList,
 } from 'lucide-react';
 import { ROLES } from '@/constants/roles';
 

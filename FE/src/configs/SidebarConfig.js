@@ -243,12 +243,6 @@ const SIDEBAR_CONFIG = {
   //  DOANVIEN – Đoàn viên (Sinh viên)
   // ══════════════════════════════════════════════════════════
   [ROLES.DOANVIEN]: [
-    {
-      key: 'dashboard',
-      label: 'Tổng quan',
-      icon: 'LayoutDashboard',
-      path: '/dashboard',
-    },
     ...DOANVIEN_SIDEBAR_ITEMS,
   ],
 };
