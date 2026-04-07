@@ -129,6 +129,23 @@
 
 .hdc-badge--approved { background: #f0fdf4; color: #15803d; }
 .hdc-badge--pending { background: #fffbeb; color: #b45309; }
+.hdc-badge--rejected { background: #fef2f2; color: #b91c1c; }
+
+.hdc-filter-bar {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  padding: 0.875rem 1rem;
+}
+
+.hdc-select {
+  padding: 0.6rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  font-size: 0.875rem;
+  background: #fff;
+  outline: none;
+  min-width: 260px;
+  cursor: pointer;
+}
 
 @media (max-width: 768px) {
   .hdc-container { padding: 2rem 1.25rem; }

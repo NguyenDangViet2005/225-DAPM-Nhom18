@@ -1,65 +1,72 @@
 import { useMemo } from 'react';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, TrendingUp, ArrowRight } from 'lucide-react';
 import { getDashboardMockData } from '@/data/mockDashboard';
 import { useAuth } from '@/hooks/useAuth';
-import '@/pages/dashboard/Dashboard.css';
+import '@/pages/bithu/bithu.css';
+import './BiThuDashboard.css';
 
 const BiThuDashboard = () => {
   const { user } = useAuth();
   const activeRole = user?.role || 'BITHU';
-  const dashboardData = useMemo(() => getDashboardMockData(activeRole), [activeRole]);
+  const data = useMemo(() => getDashboardMockData(activeRole), [activeRole]);
 
   return (
-    <div className="dashboard-wrapper">
-      <div className="dashboard-main">
-        <header className="dashboard-header">
-          <div className="dashboard-header__greeting">
-            <h2 className="dashboard-header__title">
-              Chào mừng, {(user?.name || 'Bí thư').split(' ').pop()}
-            </h2>
-            <p className="dashboard-header__date">
-              {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
+    <div className="bt-page">
+
+      {/* ── Header ── */}
+      <div className="btd-header">
+        <div>
+          <h2 className="bt-title">
+            Chào mừng trở lại, {(user?.name || 'Bí thư').split(' ').pop()} 👋
+          </h2>
+          <p className="bt-subtitle">
+            {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
+        </div>
+        <div className="btd-header__actions">
+          <div className="bt-search-wrap" style={{ maxWidth: 260 }}>
+            <Search size={15} />
+            <input className="bt-search-input" placeholder="Tìm kiếm đoàn viên..." />
           </div>
-          <div className="dashboard-header__actions">
-            <div className="dashboard-search">
-              <Search size={16} className="dashboard-search__icon" />
-              <input type="text" className="dashboard-search__input" placeholder="Tìm kiếm đoàn viên..." />
+          <button className="btd-bell" title="Thông báo">
+            <Bell size={18} />
+            <span className="btd-bell__dot" />
+          </button>
+          <div className="btd-avatar">
+            {(user?.name || 'B').charAt(0).toUpperCase()}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Stats ── */}
+      <div className="bt-stats">
+        {data.stats.map((stat, i) => (
+          <div key={i} className="bt-glass bt-stat-card">
+            <div className="bt-stat-card__icon" style={{ background: `${stat.color}18`, color: stat.color }}>
+              <stat.icon size={22} />
             </div>
-            <button className="dashboard-header__bell" title="Thông báo">
-              <Bell size={20} />
-              <span className="dashboard-header__bell-dot" />
+            <div>
+              <p className="bt-stat-card__label">{stat.title}</p>
+              <p className="bt-stat-card__value">{stat.value}</p>
+              <p className="bt-stat-card__trend">{stat.trend}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Content grid ── */}
+      <div className="btd-grid">
+
+        {/* Member table */}
+        <div className="bt-glass bt-table-card">
+          <div className="bt-table-card__header">
+            <h3 className="bt-table-card__title">Đoàn viên trong lớp</h3>
+            <button className="bt-btn bt-btn--ghost bt-btn--sm">
+              Xem tất cả <ArrowRight size={13} />
             </button>
-            <div className="dashboard-header__avatar" title={user?.name}>
-              {(user?.name || 'B').charAt(0).toUpperCase()}
-            </div>
           </div>
-        </header>
-
-        <section className="dashboard-stats">
-          {dashboardData.stats.map((stat, i) => (
-            <div key={i} className="stat-card">
-              <div className="stat-card__top">
-                <div className="stat-card__icon" style={{ backgroundColor: `${stat.color}18`, color: stat.color }}>
-                  <stat.icon size={22} />
-                </div>
-                <span className="stat-card__trend" style={{ color: stat.color, backgroundColor: `${stat.color}12` }}>
-                  {stat.trend}
-                </span>
-              </div>
-              <p className="stat-card__label">{stat.title}</p>
-              <p className="stat-card__value">{stat.value}</p>
-            </div>
-          ))}
-        </section>
-
-        <section className="dashboard-content-grid">
-          <div className="dashboard-card">
-            <div className="dashboard-card__header">
-              <h3 className="dashboard-card__title">Đoàn viên trong lớp</h3>
-              <button className="dashboard-card__action">Xem tất cả →</button>
-            </div>
-            <table className="member-table">
+          <div style={{ overflowX: 'auto' }}>
+            <table className="bt-table">
               <thead>
                 <tr>
                   <th>Sinh viên</th>
@@ -69,18 +76,27 @@ const BiThuDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {dashboardData.recentMembers.map((row, i) => (
+                {data.recentMembers.map((row, i) => (
                   <tr key={i}>
                     <td>
-                      <div className="member-table__name-cell">
-                        <div className="member-table__avatar">{row.name.charAt(0)}</div>
-                        {row.name}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div className="bt-avatar">{row.name.charAt(0)}</div>
+                        <span style={{ fontWeight: 600 }}>{row.name}</span>
                       </div>
                     </td>
-                    <td className="member-table__muted">{row.id}</td>
-                    <td className="member-table__muted">{row.dept}</td>
+                    <td style={{ color: 'var(--bt-text-muted)' }}>{row.id}</td>
+                    <td style={{ color: 'var(--bt-text-muted)' }}>{row.dept}</td>
                     <td>
-                      <span className="member-table__status" style={{ color: row.statusColor, backgroundColor: `${row.statusColor}15` }}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '0.28rem 0.75rem',
+                        borderRadius: 999,
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        color: row.statusColor,
+                        background: `${row.statusColor}15`,
+                        border: `1px solid ${row.statusColor}30`,
+                      }}>
                         {row.status}
                       </span>
                     </td>
@@ -89,22 +105,34 @@ const BiThuDashboard = () => {
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div className="dashboard-card">
-            <h3 className="dashboard-card__title" style={{ marginBottom: '1.5rem' }}>Thông báo quan trọng</h3>
-            <div className="notification-list">
-              {dashboardData.notifications.map((note, i) => (
-                <div key={i} className="notification-item">
-                  <p className="notification-item__title">{note.title}</p>
-                  <div className="notification-item__meta">
+        {/* Notifications */}
+        <div className="bt-glass btd-notif-card">
+          <h3 className="bt-table-card__title" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.5)' }}>
+            Thông báo quan trọng
+          </h3>
+          <div className="btd-notif-list">
+            {data.notifications.map((note, i) => (
+              <div key={i} className="btd-notif-item">
+                <div className="btd-notif-dot" />
+                <div style={{ flex: 1 }}>
+                  <p className="btd-notif-title">{note.title}</p>
+                  <div className="btd-notif-meta">
                     <span>{note.time}</span>
-                    <span className="notification-item__type">{note.type}</span>
+                    <span className="btd-notif-type">{note.type}</span>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </section>
+          <div style={{ padding: '1rem 1.5rem' }}>
+            <button className="bt-btn bt-btn--primary" style={{ width: '100%', justifyContent: 'center' }}>
+              <TrendingUp size={15} /> Xem báo cáo chi đoàn
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

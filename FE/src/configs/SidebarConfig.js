@@ -215,10 +215,10 @@ const SIDEBAR_CONFIG = {
       permission: PERMISSIONS.ACTIVITY_CLASS_VIEW_REGISTRATIONS,
       children: [
         {
-          key: 'hoat-dong-chi-doan-duyet',
-          label: 'Duyệt đăng ký',
-          path: '/hoat-dong-chi-doan/duyet',
-          permission: PERMISSIONS.ACTIVITY_CLASS_APPROVE_REGISTRATIONS,
+          key: 'hoat-dong-chi-doan-danh-sach',
+          label: 'Danh sách đăng ký',
+          path: '/hoat-dong-chi-doan/danh-sach',
+          permission: PERMISSIONS.ACTIVITY_CLASS_VIEW_REGISTRATIONS,
         },
         {
           key: 'hoat-dong-chi-doan-xac-nhan',
