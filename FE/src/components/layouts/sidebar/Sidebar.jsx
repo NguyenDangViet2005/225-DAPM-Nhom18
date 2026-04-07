@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getSidebarItems } from '@/configs/SidebarConfig';
 import { ROLE_LABELS } from '@/constants/roles';
+import SidebarItem from './SidebarItem';
 import './Sidebar.css';
 
 const Sidebar = ({
@@ -35,7 +36,6 @@ const Sidebar = ({
           {!isCollapsed && <span className="sidebar__brand-name">UTE Đoàn</span>}
         </div>
         
-        {/* Nút Toggle chuyển sang dạng tuyệt đối hoặc linh hoạt hơn */}
         <button
           className="sidebar__toggle-btn"
           onClick={onToggle}
@@ -56,62 +56,19 @@ const Sidebar = ({
 
       {/* ── Navigation ───────────────────────────────────── */}
       <nav className="sidebar__nav">
-        {items.map((item) => {
-          const hasChildren = item.children && item.children.length > 0;
-          const groupActive = isGroupActive(item);
-          const isOpen = openGroups[item.key] ?? groupActive;
-
-          return (
-            <div key={item.key} className="sidebar__item-group">
-              <button
-                className={`sidebar__item${
-                  isActive(item.path) || (groupActive && !hasChildren)
-                    ? ' sidebar__item--active'
-                    : ''
-                }${groupActive && hasChildren ? ' sidebar__item--group-active' : ''}`}
-                onClick={() => {
-                  if (hasChildren) {
-                    toggleGroup(item.key);
-                  } else {
-                    navigate(item.path);
-                  }
-                }}
-                title={isCollapsed ? item.label : undefined}
-              >
-                <div className="sidebar__item-icon-wrap">
-                  <SidebarIcon name={item.icon} />
-                </div>
-                {!isCollapsed && (
-                  <>
-                    <span className="sidebar__item-label">{item.label}</span>
-                    {hasChildren && (
-                      <span className={`sidebar__chevron${isOpen ? ' sidebar__chevron--open' : ''}`}>
-                        <SidebarIcon name="ChevronRight" />
-                      </span>
-                    )}
-                  </>
-                )}
-              </button>
-
-              {hasChildren && isOpen && !isCollapsed && (
-                <div className="sidebar__children">
-                  {item.children.map((child) => (
-                    <button
-                      key={child.key}
-                      className={`sidebar__child-item${
-                        isActive(child.path) ? ' sidebar__child-item--active' : ''
-                      }`}
-                      onClick={() => navigate(child.path)}
-                    >
-                      <span className="sidebar__child-dot" />
-                      {child.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {items.map((item) => (
+          <SidebarItem
+            key={item.key}
+            item={item}
+            isCollapsed={isCollapsed}
+            isActive={isActive}
+            isGroupActive={isGroupActive}
+            isOpen={openGroups[item.key] ?? isGroupActive(item)}
+            toggleGroup={toggleGroup}
+            navigate={navigate}
+            SidebarIcon={SidebarIcon}
+          />
+        ))}
       </nav>
 
       {/* ── Footer ───────────────────────────────────────── */}

@@ -178,10 +178,8 @@
 }
 
 .sidebar__item-label {
-  flex: 1;
   font-size: 0.925rem;
   font-weight: 500;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }

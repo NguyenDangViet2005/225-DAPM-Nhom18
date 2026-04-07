@@ -1,7 +1,7 @@
 import { Route } from 'react-router-dom';
 import { ROLES } from '@/constants/roles';
 import ProtectedRoute from './ProtectedRoute';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
+import DashboardLayout from '@/components/layouts/dashboardLayout/DashboardLayout';
 
 // Pages – Admin
 import Dashboard from '@/pages/dashboard/Dashboard';

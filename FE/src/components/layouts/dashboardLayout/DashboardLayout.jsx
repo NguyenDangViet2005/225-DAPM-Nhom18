@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import Sidebar from '@/components/layouts/Sidebar';
+import Sidebar from '@/components/layouts/sidebar/Sidebar';
 import { ROLE_PERMISSIONS } from '@/constants/permissions';
 import { useAuth } from '@/hooks/useAuth';
 import './DashboardLayout.css';
