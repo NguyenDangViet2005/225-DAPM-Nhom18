@@ -111,20 +111,6 @@ const SIDEBAR_CONFIG = {
       icon: 'ClipboardList',
       path: '/yeu-cau',
       permission: PERMISSIONS.ACTIVITY_REQUEST_VIEW,
-      children: [
-        {
-          key: 'yeu-cau-danh-sach',
-          label: 'Danh sách yêu cầu',
-          path: '/yeu-cau/danh-sach',
-          permission: PERMISSIONS.ACTIVITY_REQUEST_VIEW,
-        },
-        {
-          key: 'yeu-cau-duyet',
-          label: 'Duyệt yêu cầu',
-          path: '/yeu-cau/duyet',
-          permission: PERMISSIONS.ACTIVITY_REQUEST_APPROVE,
-        },
-      ],
     },
     {
       key: 'tai-khoan',

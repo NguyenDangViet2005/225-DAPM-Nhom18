@@ -1,0 +1,249 @@
+/* ───────────────────────────────────────────────────────── (CSS)
+   Request Management Styling (Yêu cầu mở hoạt động)
+───────────────────────────────────────────────────────── */
+
+.yc-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.yc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.yc-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+.yc-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.yc-update-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.yc-update-btn:hover {
+  opacity: 0.8;
+}
+
+/* Stats Styling */
+.yc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.yc-stat-item {
+  background: #fff;
+  padding: 1.25rem;
+  border: 1px solid #eef2f6;
+  border-left: 3px solid #f59e0b; /* default pending color */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.yc-stat-item__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.yc-stat-item__value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+/* Card & Table Area */
+.yc-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.yc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.yc-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.yc-table td {
+  padding: 1.125rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.yc-table tr:hover td {
+  background-color: #f7faff;
+}
+
+.yc-name-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.yc-activity-title {
+  display: block;
+  font-weight: 700;
+  color: #0d1f3c;
+  margin-bottom: 0.25rem;
+}
+
+.yc-activity-info {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Badges */
+.yc-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.yc-badge--pending { background: #fef3c7; color: #b45309; }
+.yc-badge--approved { background: #dcfce7; color: #15803d; }
+.yc-badge--rejected { background: #fee2e2; color: #b91c1c; }
+
+/* Action Buttons */
+.yc-btn-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.yc-btn-icon:hover { color: #004f9f; border-color: #004f9f; }
+.yc-btn-icon--approve:hover { color: #15803d; border-color: #15803d; background: #f0fdf4; }
+.yc-btn-icon--reject:hover { color: #b91c1c; border-color: #b91c1c; background: #fef2f2; }
+
+/* Modal body styling */
+.yc-modal-body {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.yc-modal-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
+}
+
+.yc-modal-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0d1f3c;
+  background: #f8fafc;
+  padding: 0.625rem 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.yc-modal-value--long {
+  min-height: 100px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.dp-btn-reject {
+  padding: 0.625rem 1.25rem;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .yc-container {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .yc-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .yc-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .yc-stat-item {
+    align-items: flex-start;
+  }
+
+  .yc-card {
+    overflow-x: auto;
+  }
+
+  .yc-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 480px) {
+  .yc-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .yc-stats {
+    grid-template-columns: 1fr;
+  }
+}

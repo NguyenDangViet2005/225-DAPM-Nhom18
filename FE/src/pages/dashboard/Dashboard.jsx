@@ -3,7 +3,6 @@ import {
   Bell,
   Search,
 } from 'lucide-react';
-import { ROLE_PERMISSIONS } from '@/constants/permissions';
 import { getDashboardMockData } from '@/data/mockDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import './Dashboard.css';

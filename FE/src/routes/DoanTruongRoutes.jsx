@@ -31,8 +31,7 @@ const DoanTruongRoutes = (
       <Route path="/hoat-dong/duyet" element={<HoatDongDuyet />} />
       <Route path="/hoat-dong/xac-nhan" element={<HoatDongXacNhan />} />
 
-      <Route path="/yeu-cau/danh-sach" element={<YeuCau />} />
-      <Route path="/yeu-cau/duyet" element={<YeuCau tab="duyet" />} />
+      <Route path="/yeu-cau" element={<YeuCau />} />
       <Route path="/tai-khoan" element={<TaiKhoan />} />
     </Route>
   </Route>

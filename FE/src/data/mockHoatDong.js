@@ -1,6 +1,6 @@
 /**
  * Mock data cho Quản lý Hoạt động Đoàn
- * Ánh xạ theo ERD: HoatDongDoan, DoanVienDangKi
+ * Ánh xạ theo ERD: HoatDongDoan, DoanVienDangKi, YeuCauHoatDong
  */
 
 export const MOCK_HOAT_DONG = [
@@ -92,9 +92,46 @@ export const MOCK_DANG_KY_HOAT_DONG = [
   }
 ];
 
+export const MOCK_YEU_CAU_HOAT_DONG = [
+  {
+    idYC: 'YC001',
+    tenHD: 'Hội trại 26/03 - Khoa CNTT',
+    donViYeuCau: 'Khoa Công nghệ thông tin',
+    ngayDuKien: '2024-03-24T07:00:00',
+    diaDiemDuKien: 'Sân bóng trường',
+    moTa: 'Tổ chức các gian hàng trò chơi dân gian và đêm nhạc chủ đề Đoàn.',
+    trangThaiYC: 'Chờ duyệt', // Chờ duyệt, Đã duyệt, Từ chối
+    ngayGui: '2024-02-15T10:00:00',
+    nguoiGui: 'Trần Văn Khoa'
+  },
+  {
+    idYC: 'YC002',
+    tenHD: 'Workshop AI & Future Career',
+    donViYeuCau: 'Khoa Sư phạm Kỹ thuật',
+    ngayDuKien: '2024-04-10T08:00:00',
+    diaDiemDuKien: 'Hội trường A',
+    moTa: 'Tư vấn hướng nghiệp cho sinh viên sư phạm trong kỷ nguyên AI.',
+    trangThaiYC: 'Chờ duyệt',
+    ngayGui: '2024-03-01T15:30:00',
+    nguoiGui: 'Lê Minh Sư'
+  },
+  {
+    idYC: 'YC003',
+    tenHD: 'Giải Marathon Sinh viên 2024',
+    donViYeuCau: 'Khoa Cơ khí',
+    ngayDuKien: '2024-05-15T06:00:00',
+    diaDiemDuKien: 'Công viên bờ sông',
+    moTa: 'Chạy bộ gây quỹ học bổng cho sinh viên nghèo vượt khó.',
+    trangThaiYC: 'Đã duyệt',
+    ngayGui: '2024-03-05T08:00:00',
+    nguoiGui: 'Nguyễn Cơ Khí'
+  }
+];
+
 export const ACTIVITY_STATS = {
   tongHoatDong: 12,
   dangMo: 4,
   sapDienRa: 3,
-  choDuyetDK: 125
+  choDuyetDK: 125,
+  yeuCauMoi: 2 // Thống kê cho Yêu cầu mở hoạt động
 };

@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { MOCK_HOAT_DONG, MOCK_DANG_KY_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
 import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
-import RegistrationListModal from '@/components/commons/modals/RegistrationListModal';
+import RegistrationListModal from '@/components/commons/modals/DanhSachDoanVienDangKiModal';
 import './HoatDong.css';
 
 const HoatDongQuanLy = () => {
