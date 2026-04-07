@@ -180,8 +180,9 @@
 .sidebar__item-label {
   font-size: 0.925rem;
   font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex: 1;
+  text-align: left;
+}
 }
 
 /* ── Chevron ───────────────────────────────────────────── */

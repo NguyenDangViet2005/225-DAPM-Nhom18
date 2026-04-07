@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '@/pages/auth/login/Login';
 import DoanTruongRoutes from './DoanTruongRoutes';
+import DoanKhoaRoutes from './DoanKhoaRoutes';
 
 const AppRoutes = () => {
   return (
@@ -11,6 +12,7 @@ const AppRoutes = () => {
 
       {/* Protected – mỗi role có route riêng */}
       {DoanTruongRoutes}
+      {DoanKhoaRoutes}
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/login" replace />} />
