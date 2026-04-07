@@ -3,6 +3,13 @@ import { PERMISSIONS } from '@/constants/permissions';
 
 const DOANVIEN_SIDEBAR_ITEMS = [
   {
+    key: 'thong-tin-ca-nhan',
+    label: 'Thông tin cá nhân',
+    icon: 'UserCircle',
+    path: '/thong-tin-ca-nhan',
+    permission: PERMISSIONS.PROFILE_VIEW_UPDATE,
+  },
+  {
     key: 'so-doan',
     label: 'Sổ đoàn',
     icon: 'BookOpen',
@@ -227,13 +234,6 @@ const SIDEBAR_CONFIG = {
           permission: PERMISSIONS.ACTIVITY_CLASS_CONFIRM,
         },
       ],
-    },
-    {
-      key: 'gui-yeu-cau-hoat-dong',
-      label: 'Gửi yêu cầu hoạt động',
-      icon: 'Send',
-      path: '/gui-yeu-cau-hoat-dong',
-      permission: PERMISSIONS.ACTIVITY_CLASS_VIEW_REGISTRATIONS,
     },
     // ── Kế thừa từ Đoàn viên ──────────────────────────────
     ...DOANVIEN_SIDEBAR_ITEMS,

@@ -16,7 +16,8 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
 
   // 2. Kiểm tra quyền (nếu có yêu cầu)
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/login" replace />;
+    // Thông thường sẽ redirect sang trang 403, tạm thời về / để cho đơn giản
+    return <Navigate to="/dashboard" replace />;
   }
 
   // 3. Nếu OK, render con của Route
