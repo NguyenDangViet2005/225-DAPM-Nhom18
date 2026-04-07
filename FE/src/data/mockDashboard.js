@@ -58,6 +58,29 @@ export const getDashboardMockData = (role) => {
     };
   }
 
+  // ── TRƯỜNG HỢP: BITHU ──────────────────────────────────
+  if (role === ROLES.BITHU) {
+    return {
+      stats: [
+        { title: 'Đoàn viên lớp', value: '42', icon: Users, color: '#004F9F', trend: 'Chi đoàn 23110CL1A' },
+        { title: 'Đã đóng đoàn phí', value: '35', icon: UserCheck, color: '#38a169', trend: '83% hoàn thành' },
+        { title: 'Hoạt động đang mở', value: '3', icon: Activity, color: '#0088cc', trend: 'Cần đăng ký' },
+        { title: 'Đăng ký chờ duyệt', value: '8', icon: ClipboardList, color: '#e53e3e', trend: 'Cần xử lý' },
+      ],
+      recentMembers: [
+        { name: 'Nguyễn Văn An', id: '23110001', dept: 'CNTT', status: 'Đã đóng phí', statusColor: '#38a169' },
+        { name: 'Trần Thị Bình', id: '23110002', dept: 'CNTT', status: 'Chưa đóng phí', statusColor: '#e53e3e' },
+        { name: 'Lê Minh Cường', id: '23110003', dept: 'CNTT', status: 'Đã đóng phí', statusColor: '#38a169' },
+        { name: 'Phạm Thị Dung', id: '23110004', dept: 'CNTT', status: 'Chưa đóng phí', statusColor: '#d69e2e' },
+      ],
+      notifications: [
+        { title: 'Hạn nộp đoàn phí học kỳ II: 30/04', time: 'Còn 23 ngày', type: 'Nhiệm vụ' },
+        { title: '8 đơn đăng ký hoạt động chờ duyệt', time: 'Hôm nay', type: 'Cần xử lý' },
+        { title: 'Họp chi đoàn tháng 4', time: '19:00, 18/04', type: 'Sự kiện' },
+      ]
+    };
+  }
+
   // ── TRƯỜNG HỢP: DOAN TRUONG (Mặc định) ─────────────────
   return {
     stats: [

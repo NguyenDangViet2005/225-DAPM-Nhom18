@@ -135,3 +135,33 @@ export const ACTIVITY_STATS = {
   choDuyetDK: 125,
   yeuCauMoi: 2 // Thống kê cho Yêu cầu mở hoạt động
 };
+
+// Yêu cầu hoạt động do Bí thư chi đoàn gửi lên Đoàn trường
+export const MOCK_YEU_CAU_CHI_DOAN = [
+  {
+    idYC: 'YCCD001',
+    tenHD: 'Giao lưu văn nghệ chi đoàn 23110CL1A',
+    idChiDoan: '23110CL1A',
+    donViYeuCau: 'Chi đoàn 23110CL1A',
+    ngayDuKien: '2026-05-10T18:00:00',
+    diaDiemDuKien: 'Hội trường B',
+    soLuongDuKien: 42,
+    moTa: 'Tổ chức đêm giao lưu văn nghệ chào mừng ngày thành lập Đoàn 26/3.',
+    trangThaiYC: 'Chờ duyệt',
+    ngayGui: '2026-04-05T10:00:00',
+    nguoiGui: 'Nguyễn Văn Bí Thư',
+  },
+  {
+    idYC: 'YCCD002',
+    tenHD: 'Tham quan thực tế doanh nghiệp',
+    idChiDoan: '23110CL1A',
+    donViYeuCau: 'Chi đoàn 23110CL1A',
+    ngayDuKien: '2026-05-20T07:30:00',
+    diaDiemDuKien: 'Khu công nghệ cao TP.HCM',
+    soLuongDuKien: 40,
+    moTa: 'Tham quan thực tế tại các công ty công nghệ, giúp sinh viên định hướng nghề nghiệp.',
+    trangThaiYC: 'Đã duyệt',
+    ngayGui: '2026-03-20T09:00:00',
+    nguoiGui: 'Nguyễn Văn Bí Thư',
+  },
+];
