@@ -1,23 +1,19 @@
 import { useState } from 'react';
 import { 
-  Search, 
-  Plus, 
   Download, 
-  FileText, 
+  Plus, 
   Eye, 
+  FileText, 
   Trash2, 
-  MoreHorizontal,
-  ChevronRight,
-  Filter
 } from 'lucide-react';
 import { MOCK_SO_DOAN, SO_DOAN_STATS } from '@/data/mockSoDoan';
+import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
 import './SoDoan.css';
 
 const SoDoan = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Logic lọc dữ liệu
   const filteredData = MOCK_SO_DOAN.filter(item => {
     const matchesSearch = item.member.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          item.idDV.includes(searchTerm) || 
@@ -26,9 +22,15 @@ const SoDoan = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const filterOptions = [
+    { value: 'all', label: 'Tất cả trạng thái' },
+    { value: 'Đang lưu giữ', label: 'Đang lưu giữ' },
+    { value: 'Đã rút', label: 'Đã rút / Chuyển sinh hoạt' },
+    { value: 'Thất lạc', label: 'Thất lạc / Chờ cấp lại' }
+  ];
+
   return (
     <div className="so-doan-container">
-      {/* ── Header ────────────────────────────────────────── */}
       <div className="so-doan-header">
         <h1 className="so-doan-title">Quản lý Sổ Đoàn</h1>
         <div className="so-doan-actions">
@@ -43,7 +45,6 @@ const SoDoan = () => {
         </div>
       </div>
 
-      {/* ── Stats ─────────────────────────────────────────── */}
       <div className="so-doan-stats">
         <div className="stat-item">
           <span className="stat-item__label">Tổng số Sổ</span>
@@ -63,34 +64,15 @@ const SoDoan = () => {
         </div>
       </div>
 
-      {/* ── Filter Bar ────────────────────────────────────── */}
-      <div className="so-doan-filters">
-        <div className="search-input-wrap">
-          <Search size={18} />
-          <input 
-            type="text" 
-            className="search-input" 
-            placeholder="Tìm theo Tên đoàn viên, MSSV hoặc Mã sổ..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <select 
-          className="filter-select"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="all">Tất cả trạng thái</option>
-          <option value="Đang lưu giữ">Đang lưu giữ</option>
-          <option value="Đã rút">Đã rút / Chuyển sinh hoạt</option>
-          <option value="Thất lạc">Thất lạc / Chờ cấp lại</option>
-        </select>
-        <button className="btn-icon" title="Lọc nâng cao">
-          <Filter size={18} />
-        </button>
-      </div>
+      <DataTableToolbar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placeholder="Tìm theo Tên đoàn viên, MSSV hoặc Mã sổ..."
+        filterValue={statusFilter}
+        onFilterChange={setStatusFilter}
+        filterOptions={filterOptions}
+      />
 
-      {/* ── Data Table ────────────────────────────────────── */}
       <div className="so-doan-card">
         <table className="so-doan-table">
           <thead>
@@ -122,9 +104,7 @@ const SoDoan = () => {
                     <span className="member-id">{item.member.idChiDoan}</span>
                   </div>
                 </td>
-                <td>
-                  {new Date(item.ngayCap).toLocaleDateString('vi-VN')}
-                </td>
+                <td>{new Date(item.ngayCap).toLocaleDateString('vi-VN')}</td>
                 <td style={{ fontSize: '0.8rem', color: '#64748b', maxWidth: '150px' }}>
                   {item.noiCap}
                 </td>
@@ -139,26 +119,13 @@ const SoDoan = () => {
                 </td>
                 <td>
                   <div className="action-btns">
-                    <button className="btn-icon" title="Xem chi tiết hồ sơ">
-                      <Eye size={16} />
-                    </button>
-                    <button className="btn-icon" title="Cập nhật trạng thái">
-                      <FileText size={16} />
-                    </button>
-                    <button className="btn-icon" title="Xóa hồ sơ">
-                      <Trash2 size={16} />
-                    </button>
+                    <button className="btn-icon" title="Xem chi tiết hồ sơ"><Eye size={16} /></button>
+                    <button className="btn-icon" title="Cập nhật trạng thái"><FileText size={16} /></button>
+                    <button className="btn-icon" title="Xóa hồ sơ"><Trash2 size={16} /></button>
                   </div>
                 </td>
               </tr>
             ))}
-            {filteredData.length === 0 && (
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                  Không tìm thấy dữ liệu phù hợp với bộ lọc
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>

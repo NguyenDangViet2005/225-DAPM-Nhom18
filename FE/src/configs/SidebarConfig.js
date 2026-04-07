@@ -92,12 +92,6 @@ const SIDEBAR_CONFIG = {
           permission: PERMISSIONS.ACTIVITY_SCHOOL_UPDATE,
         },
         {
-          key: 'hoat-dong-dang-ky',
-          label: 'Danh sách đăng ký',
-          path: '/hoat-dong/dang-ky',
-          permission: PERMISSIONS.ACTIVITY_SCHOOL_VIEW_REGISTRATIONS,
-        },
-        {
           key: 'hoat-dong-duyet',
           label: 'Duyệt đăng ký',
           path: '/hoat-dong/duyet',
@@ -163,12 +157,6 @@ const SIDEBAR_CONFIG = {
           label: 'Quản lý hoạt động',
           path: '/hoat-dong-khoa/quan-ly',
           permission: PERMISSIONS.ACTIVITY_FACULTY_UPDATE,
-        },
-        {
-          key: 'hoat-dong-khoa-dang-ky',
-          label: 'Danh sách đăng ký',
-          path: '/hoat-dong-khoa/dang-ky',
-          permission: PERMISSIONS.ACTIVITY_FACULTY_VIEW_REGISTRATIONS,
         },
         {
           key: 'hoat-dong-khoa-duyet',
@@ -247,12 +235,6 @@ const SIDEBAR_CONFIG = {
       path: '/hoat-dong-chi-doan',
       permission: PERMISSIONS.ACTIVITY_CLASS_VIEW_REGISTRATIONS,
       children: [
-        {
-          key: 'hoat-dong-chi-doan-dang-ky',
-          label: 'Danh sách đăng ký',
-          path: '/hoat-dong-chi-doan/dang-ky',
-          permission: PERMISSIONS.ACTIVITY_CLASS_VIEW_REGISTRATIONS,
-        },
         {
           key: 'hoat-dong-chi-doan-duyet',
           label: 'Duyệt đăng ký',

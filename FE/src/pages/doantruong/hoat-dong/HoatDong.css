@@ -1,0 +1,255 @@
+/* ─────────────────────────────────────────────────────────
+   HoatDong (Activity Management) Styling
+───────────────────────────────────────────────────────── */
+
+.hd-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.hd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.hd-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+.hd-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ── Quick Stats ───────────────────────────────────────── */
+.hd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.hd-stat-item {
+  background: #fff;
+  padding: 1.25rem;
+  border: 1px solid #eef2f6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.hd-stat-item__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hd-stat-item__value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+/* ── Toolbar ───────────────────────────────────────────── */
+.hd-toolbar {
+  background: #fff;
+  padding: 1rem 1.25rem;
+  border: 1px solid #eef2f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hd-search-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.hd-search-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.hd-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1.5px solid #e2e8f0;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+.hd-filter-select {
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  outline: none;
+  font-size: 0.875rem;
+  background: #fff;
+  min-width: 180px;
+}
+
+/* ── Content Grid ──────────────────────────────────────── */
+.hd-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.hd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hd-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.hd-table td {
+  padding: 1.125rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.hd-table tr:hover td {
+  background-color: #f7faff;
+}
+
+.hd-name-cell {
+  max-width: 250px;
+}
+
+.hd-activity-title {
+  display: block;
+  font-weight: 700;
+  color: #0d1f3c;
+  margin-bottom: 0.25rem;
+}
+
+.hd-activity-info {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Status Badges ──────────────────────────────────────── */
+.hd-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hd-badge--open { background: #f0fdf4; color: #15803d; }
+.hd-badge--closed { background: #fee2e2; color: #b91c1c; }
+.hd-badge--ongoing { background: #e0f2fe; color: #0369a1; }
+.hd-badge--ended { background: #f1f5f9; color: #475569; }
+
+.hd-progress-wrap {
+  width: 100px;
+  background: #f1f5f9;
+  height: 6px;
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.hd-progress-bar {
+  height: 100%;
+  background: #004f9f;
+}
+
+.hd-update-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hd-update-btn:hover {
+  opacity: 0.8;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hd-container {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hd-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hd-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .hd-stat-item {
+    align-items: flex-start;
+  }
+
+  .hd-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .hd-filter-select {
+    width: 100%;
+  }
+
+  .hd-card {
+    overflow-x: auto;
+  }
+
+  .hd-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hd-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .hd-stats {
+    grid-template-columns: 1fr;
+  }
+}

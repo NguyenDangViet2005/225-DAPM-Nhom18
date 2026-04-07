@@ -1,16 +1,15 @@
 import { useState, useMemo } from 'react';
 import { 
-  Search, 
   CreditCard, 
   Download, 
   Settings, 
   CheckCircle, 
   Clock, 
   TrendingUp,
-  Filter,
 } from 'lucide-react';
 import { MOCK_MUC_DOAN_PHI, MOCK_DOAN_PHI, MOCK_PHIEU_THU } from '@/data/mockDoanPhi';
 import UpdateFeeModal from '@/components/commons/modals/UpdateMucDoanPhiModal';
+import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
 import './DoanPhi.css';
 
 const DoanPhi = () => {
@@ -45,6 +44,13 @@ const DoanPhi = () => {
     alert(`Đã cập nhật mức phí mới: ${Number(newFee).toLocaleString()} VNĐ`);
     setShowUpdateFee(false);
   };
+
+  const paymentFilterOptions = [
+    { value: 'all', label: 'Tất cả trạng thái' },
+    { value: 'Đã đóng', label: 'Đã đóng' },
+    { value: 'Chưa đóng', label: 'Chưa đóng' },
+    { value: 'Chờ duyệt', label: 'Chờ duyệt (Phiếu thu)' }
+  ];
 
   return (
     <div className="doan-phi-container">
@@ -102,33 +108,15 @@ const DoanPhi = () => {
         </div>
       </div>
 
-      {/* ── Toolbar ────────────────────────────────────── */}
-      <div className="dp-toolbar">
-        <div className="dp-search-wrap">
-          <Search size={18} />
-          <input 
-            type="text" 
-            className="dp-search-input" 
-            placeholder="Tìm kiếm đoàn viên, phiếu thu..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <select 
-          className="dp-filter-select"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="all">Tất cả trạng thái</option>
-          <option value="Đã đóng">Đã đóng</option>
-          <option value="Chưa đóng">Chưa đóng</option>
-          <option value="Chờ duyệt">Chờ duyệt (Phiếu thu)</option>
-        </select>
-        <button className="dp-update-btn" style={{ borderColor: '#e2e8f0', color: '#64748b' }}>
-          <Filter size={18} />
-          Bộ lọc nâng cao
-        </button>
-      </div>
+      {/* ── Generic Toolbar ─────────────────────────────────── */}
+      <DataTableToolbar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placeholder="Tìm kiếm đoàn viên, phiếu thu..."
+        filterValue={statusFilter}
+        onFilterChange={setStatusFilter}
+        filterOptions={paymentFilterOptions}
+      />
 
       {/* ── Tabs Navigation ─────────────────────────────── */}
       <div className="dp-tabs">
@@ -242,7 +230,6 @@ const DoanPhi = () => {
         )}
       </div>
 
-      {/* ── Modal Cập nhật mức thu ─────────────────────────── */}
       <UpdateFeeModal
          show={showUpdateFee}
          onClose={() => setShowUpdateFee(false)}
