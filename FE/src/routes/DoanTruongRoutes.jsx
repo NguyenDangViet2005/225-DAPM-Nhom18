@@ -1,26 +1,22 @@
 import { Route } from 'react-router-dom';
-import { ROLES } from '../constants/roles';
+import { ROLES } from '@/constants/roles';
 import ProtectedRoute from './ProtectedRoute';
-// import DashboardLayout from '../components/layouts/DashboardLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 
 // Pages – Admin
-// import Dashboard from '../pages/dashboard/Dashboard';
-// import SoDoan from '../pages/admin/so-doan/SoDoan';
-// import DoanPhi from '../pages/admin/doan-phi/DoanPhi';
-// import HoatDong from '../pages/admin/hoat-dong/HoatDong';
-// import YeuCau from '../pages/admin/yeu-cau/YeuCau';
-// import TaiKhoan from '../pages/admin/tai-khoan/TaiKhoan';
+import Dashboard from '@/pages/dashboard/Dashboard';
+import SoDoan from '@/pages/doantruong/so-doan/SoDoan';
+import DoanPhi from '@/pages/doantruong/doan-phi/DoanPhi';
+import HoatDong from '@/pages/doantruong/hoat-dong/HoatDong';
+import YeuCau from '@/pages/doantruong/yeu-cau/YeuCau';
+import TaiKhoan from '@/pages/doantruong/tai-khoan/TaiKhoan';
 
 /**
- * AdminRoutes – chỉ cho phép role DOANTRUONG
- * Sử dụng trong AppRoutes.jsx:
- *   <Route path="/" element={<ProtectedRoute allowedRoles={[ROLES.DOANTRUONG]} />}>
- *     {AdminRoutes}
- *   </Route>
+ * DoanTruongRoutes – chỉ cho phép role DOANTRUONG
  */
-const AdminRoutes = (
+const DoanTruongRoutes = (
   <Route element={<ProtectedRoute allowedRoles={[ROLES.DOANTRUONG]} />}>
-    {/* <Route element={<DashboardLayout />}>
+    <Route element={<DashboardLayout />}>
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/so-doan" element={<SoDoan />} />
       <Route path="/doan-phi" element={<DoanPhi />} />
@@ -31,8 +27,8 @@ const AdminRoutes = (
       <Route path="/yeu-cau/danh-sach" element={<YeuCau />} />
       <Route path="/yeu-cau/duyet" element={<YeuCau tab="duyet" />} />
       <Route path="/tai-khoan" element={<TaiKhoan />} />
-    </Route> */}
+    </Route>
   </Route>
 );
 
-export default AdminRoutes;
+export default DoanTruongRoutes;

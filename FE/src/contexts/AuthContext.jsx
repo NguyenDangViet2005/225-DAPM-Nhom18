@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { ROLE_PERMISSIONS } from '../constants/permissions';
+import { ROLE_PERMISSIONS } from '@/constants/permissions';
+import { ROLES } from '@/constants/roles';
 
 /**
  * AuthContext – lưu trạng thái đăng nhập toàn cục.
@@ -8,7 +9,14 @@ import { ROLE_PERMISSIONS } from '../constants/permissions';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);       // { id, name, role }
+  // ── MOCK LOGIN TRONG QUÁ TRÌNH DEV ──────────────────────────
+  // Để hiển thị Dashboard ngay lập tức, ta gán user mặc định.
+  // Hãy đổi role sang ROLES.DOANKHOA để test giao diện cấp Khoa.
+  const [user, setUser] = useState({
+    name: 'Đoàn Trường',
+    role: ROLES.DOANTRUONG,
+  });
+  
   const [isLoading, setIsLoading] = useState(true);
 
   // Restore session từ localStorage khi reload

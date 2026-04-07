@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from '../pages/auth/login/Login';
-import AdminRoutes from './AdminRoutes';
+import Login from '@/pages/auth/login/Login';
+import DoanTruongRoutes from './DoanTruongRoutes';
 
 const AppRoutes = () => {
   return (
@@ -10,7 +10,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
 
       {/* Protected – mỗi role có route riêng */}
-      {AdminRoutes}
+      {DoanTruongRoutes}
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/login" replace />} />

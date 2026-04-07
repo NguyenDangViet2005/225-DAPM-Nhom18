@@ -1,0 +1,11 @@
+.dl-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f4f8;
+}
+
+.dl-content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}

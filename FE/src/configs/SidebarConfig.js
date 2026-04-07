@@ -1,5 +1,5 @@
-import { ROLES } from '../constants/roles';
-import { PERMISSIONS } from '../constants/permissions';
+import { ROLES } from '@/constants/roles';
+import { PERMISSIONS } from '@/constants/permissions';
 
 const DOANVIEN_SIDEBAR_ITEMS = [
   {
