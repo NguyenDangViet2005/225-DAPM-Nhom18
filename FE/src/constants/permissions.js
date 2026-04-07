@@ -50,9 +50,9 @@ export const PERMISSIONS = {
 };
 
 /**
- * MEMBER_PERMISSIONS – dùng chung cho MEMBER & CLASS_SEC (kế thừa)
+ * DOANVIEN_PERMISSIONS – dùng chung cho DOANVIEN & BITHU (kế thừa)
  */
-const MEMBER_PERMISSIONS = [
+const DOANVIEN_PERMISSIONS = [
   PERMISSIONS.PROFILE_VIEW_UPDATE,
   PERMISSIONS.SO_DOAN_VIEW,
   PERMISSIONS.DOAN_PHI_VIEW_HISTORY,
@@ -67,7 +67,7 @@ const MEMBER_PERMISSIONS = [
 export const ROLE_PERMISSIONS = {
 
   // ────────────────────────────────────────────────────────
-  [ROLES.ADMIN]: [
+  [ROLES.DOANTRUONG]: [
     PERMISSIONS.SO_DOAN_UPDATE,
     PERMISSIONS.DOAN_PHI_UPDATE,
     PERMISSIONS.ACTIVITY_SCHOOL_UPDATE,
@@ -80,7 +80,7 @@ export const ROLE_PERMISSIONS = {
   ],
 
   // ────────────────────────────────────────────────────────
-  [ROLES.FACULTY_SEC]: [
+  [ROLES.DOANKHOA]: [
     PERMISSIONS.ACTIVITY_FACULTY_REPORT,
     PERMISSIONS.ACTIVITY_FACULTY_UPDATE,
     PERMISSIONS.ACTIVITY_FACULTY_VIEW_REGISTRATIONS,
@@ -91,8 +91,8 @@ export const ROLE_PERMISSIONS = {
   ],
 
   // ────────────────────────────────────────────────────────
-  // CLASS_SEC kế thừa toàn bộ quyền của MEMBER + quyền riêng
-  [ROLES.CLASS_SEC]: [
+  // BITHU kế thừa toàn bộ quyền của DOANVIEN + quyền riêng
+  [ROLES.BITHU]: [
     // ── Quyền riêng của Bí thư chi đoàn ──
     PERMISSIONS.DOAN_PHI_COLLECT,
     PERMISSIONS.DOAN_PHI_SUBMIT,
@@ -100,11 +100,11 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.ACTIVITY_CLASS_APPROVE_REGISTRATIONS,
     PERMISSIONS.ACTIVITY_CLASS_CONFIRM,
     // ── Kế thừa từ Đoàn viên ──
-    ...MEMBER_PERMISSIONS,
+    ...DOANVIEN_PERMISSIONS,
   ],
 
   // ────────────────────────────────────────────────────────
-  [ROLES.MEMBER]: [...MEMBER_PERMISSIONS],
+  [ROLES.DOANVIEN]: [...DOANVIEN_PERMISSIONS],
 };
 
 /**

@@ -1,13 +1,19 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/auth/login/Login';
-// import Dashboard from '../pages/Dashboard';
+import AdminRoutes from './AdminRoutes';
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Public */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<Login />} />
+
+      {/* Protected – mỗi role có route riêng */}
+      {AdminRoutes}
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };

@@ -1,7 +1,7 @@
 import { ROLES } from '../constants/roles';
 import { PERMISSIONS } from '../constants/permissions';
 
-const MEMBER_SIDEBAR_ITEMS = [
+const DOANVIEN_SIDEBAR_ITEMS = [
   {
     key: 'thong-tin-ca-nhan',
     label: 'Thông tin cá nhân',
@@ -55,9 +55,9 @@ const MEMBER_SIDEBAR_ITEMS = [
 const SIDEBAR_CONFIG = {
 
   // ══════════════════════════════════════════════════════════
-  //  ADMIN – Đoàn trường (Ban thường vụ)
+  //  DOANTRUONG – Đoàn trường (Ban thường vụ)
   // ══════════════════════════════════════════════════════════
-  [ROLES.ADMIN]: [
+  [ROLES.DOANTRUONG]: [
     {
       key: 'dashboard',
       label: 'Tổng quan',
@@ -142,9 +142,9 @@ const SIDEBAR_CONFIG = {
   ],
 
   // ══════════════════════════════════════════════════════════
-  //  FACULTY_SEC – Bí thư liên chi đoàn (Đoàn khoa)
+  //  DOANKHOA – Bí thư liên chi đoàn (Đoàn khoa)
   // ══════════════════════════════════════════════════════════
-  [ROLES.FACULTY_SEC]: [
+  [ROLES.DOANKHOA]: [
     {
       key: 'dashboard',
       label: 'Tổng quan',
@@ -208,10 +208,10 @@ const SIDEBAR_CONFIG = {
   ],
 
   // ══════════════════════════════════════════════════════════
-  //  CLASS_SEC – Bí thư chi đoàn lớp
-  //  Kế thừa toàn bộ menu của Đoàn viên (MEMBER_SIDEBAR_ITEMS)
+  //  BITHU – Bí thư chi đoàn lớp
+  //  Kế thừa toàn bộ menu của Đoàn viên (DOANVIEN_SIDEBAR_ITEMS)
   // ══════════════════════════════════════════════════════════
-  [ROLES.CLASS_SEC]: [
+  [ROLES.BITHU]: [
     {
       key: 'dashboard',
       label: 'Tổng quan',
@@ -268,20 +268,20 @@ const SIDEBAR_CONFIG = {
       ],
     },
     // ── Kế thừa từ Đoàn viên ──────────────────────────────
-    ...MEMBER_SIDEBAR_ITEMS,
+    ...DOANVIEN_SIDEBAR_ITEMS,
   ],
 
   // ══════════════════════════════════════════════════════════
-  //  MEMBER – Đoàn viên (Sinh viên)
+  //  DOANVIEN – Đoàn viên (Sinh viên)
   // ══════════════════════════════════════════════════════════
-  [ROLES.MEMBER]: [
+  [ROLES.DOANVIEN]: [
     {
       key: 'dashboard',
       label: 'Tổng quan',
       icon: 'LayoutDashboard',
       path: '/dashboard',
     },
-    ...MEMBER_SIDEBAR_ITEMS,
+    ...DOANVIEN_SIDEBAR_ITEMS,
   ],
 };
 
@@ -289,7 +289,7 @@ const SIDEBAR_CONFIG = {
  * getSidebarItems – trả về danh sách menu items cho một role,
  * đã lọc theo quyền thực tế của user.
  *
- * @param {string} role        – vai trò hiện tại (ROLES.ADMIN, ...)
+ * @param {string} role        – vai trò hiện tại (ROLES.DOANTRUONG, ...)
  * @param {string[]} userPerms – mảng permission thực tế (từ auth context / JWT)
  * @returns {Array}
  */

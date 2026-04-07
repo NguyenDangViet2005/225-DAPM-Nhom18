@@ -724,17 +724,17 @@ export const clearStorage = () => {
 ```javascript
 // roles.constant.js
 export const ROLES = {
-  ADMIN: 'Admin',
-  BAN_CHU_NHIEM: 'Ban Chủ nhiệm',
-  CHI_DOAN_TRUONG: 'Chi đoàn trưởng',
-  DOAN_VIEN: 'Đoàn viên'
+  DOANTRUONG: 'Đoàn trường (Ban thường vụ)',
+  DOANKHOA: 'Bí thư liên chi đoàn (Khoa)',
+  BITHU: 'Bí thư chi đoàn (Lớp)',
+  DOANVIEN: 'Đoàn viên (Sinh viên)'
 };
 
 export const ROLE_PERMISSIONS = {
-  [ROLES.ADMIN]: ['all'],
-  [ROLES.BAN_CHU_NHIEM]: ['manage_doanvien', 'manage_hoatdong', 'view_reports'],
-  [ROLES.CHI_DOAN_TRUONG]: ['manage_chidoan', 'view_doanvien'],
-  [ROLES.DOAN_VIEN]: ['view_profile', 'register_hoatdong']
+  [ROLES.DOANTRUONG]: ['all'],
+  [ROLES.DOANKHOA]: ['manage_faculty_activities', 'view_reports'],
+  [ROLES.BITHU]: ['manage_class_activities', 'view_class_members'],
+  [ROLES.DOANVIEN]: ['view_profile', 'register_activities']
 };
 ```
 
