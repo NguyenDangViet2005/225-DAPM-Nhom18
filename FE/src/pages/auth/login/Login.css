@@ -1,0 +1,465 @@
+/* ── Page Wrapper ─────────────────────────────────────────── */
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #f0f4f8;
+  /* overflow: hidden chỉ để tránh scroll ngang trên desktop */
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LEFT PANEL – Hero Image
+══════════════════════════════════════════════════════════ */
+.login-hero {
+  flex: 1.1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  animation: fadeInLeft 0.7s ease-out;
+}
+
+.login-hero__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.login-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(0, 27, 77, 0.9) 0%,
+    rgba(0, 79, 159, 0.82) 50%,
+    rgba(0, 136, 204, 0.55) 100%
+  );
+  z-index: 1;
+}
+
+.login-hero__content {
+  position: relative;
+  z-index: 2;
+  padding: 3rem 3.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-hero__logo-row {
+  margin-bottom: 2rem;
+}
+
+.login-hero__logo {
+  height: 100px;
+  width: auto;
+  opacity: 0.95;
+}
+
+.login-hero__divider {
+  width: 56px;
+  height: 4px;
+  background-color: #f59e0b;
+  margin-bottom: 1.75rem;
+}
+
+.login-hero__title {
+  color: #ffffff;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.login-hero__title-accent {
+  color: #f59e0b;
+}
+
+.login-hero__subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  font-weight: 400;
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.3px;
+}
+
+.login-hero__badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.login-hero__badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.login-hero__footer {
+  position: relative;
+  z-index: 2;
+  padding: 1.25rem 3.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(0, 27, 77, 0.45);
+}
+
+.login-hero__footer-text {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.78rem;
+  letter-spacing: 0.3px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RIGHT PANEL – Login Form
+══════════════════════════════════════════════════════════ */
+.login-panel {
+  flex: 0.9;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  border-left: 1px solid #e2e8f0;
+  animation: fadeInRight 0.7s ease-out;
+  overflow-y: auto;
+}
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ── Form Header ──────────────────────────────────────────── */
+.login-form-header {
+  margin-bottom: 2rem;
+}
+
+.login-form-tagline {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #004f9f;
+  text-transform: uppercase;
+  background-color: #e6f0fa;
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.login-form-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #13479b;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.login-form-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* ── Accent Bar ───────────────────────────────────────────── */
+.login-accent-bar {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #004f9f 0%, #0088cc 60%, #e8f4ff 100%);
+  margin-bottom: 2.5rem;
+}
+
+/* ── Field Group ──────────────────────────────────────────── */
+.login-field-group {
+  margin-bottom: 1.5rem;
+}
+
+.login-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #475569;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.login-input-wrap {
+  position: relative;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.875rem 0.875rem 0.875rem 46px;
+  font-size: 0.95rem;
+  font-family: 'Roboto', sans-serif;
+  color: #0d1f3c;
+  background-color: #f8faff;
+  border: 1.5px solid #c8d6e8;
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.login-input::placeholder {
+  color: #a0aec0;
+}
+
+.login-input:focus {
+  border-color: #004f9f;
+  box-shadow: inset 0 0 0 1px #004f9f;
+  background-color: #ffffff;
+}
+
+/* ── Options Row ──────────────────────────────────────────── */
+.login-options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.login-check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+
+.login-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #004f9f;
+  cursor: pointer;
+}
+
+.login-forgot-link {
+  font-size: 0.875rem;
+  color: #004f9f;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.login-forgot-link:hover {
+  color: #003a75;
+  text-decoration: underline;
+}
+
+/* ── Submit Button ────────────────────────────────────────── */
+.login-submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #004f9f;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: 'Roboto', sans-serif;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(0, 79, 159, 0.22);
+  margin-bottom: 1.5rem;
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  background-color: #003a75;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 79, 159, 0.35);
+}
+
+.login-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+/* ── Spinner ──────────────────────────────────────────────── */
+.login-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+/* ── Security Note ────────────────────────────────────────── */
+.login-security-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 1rem;
+  background-color: #f0f6ff;
+  border-left: 3px solid #004f9f;
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Animations
+══════════════════════════════════════════════════════════ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Responsive – ≤ 1024px
+   Ẩn hoàn toàn hero panel, chỉ hiện form căn giữa trang
+══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+
+  /* Wrapper: nền gradient full màn hình, căn giữa */
+  .login-wrapper {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: linear-gradient(
+      135deg,
+      #001b4d 0%,
+      #004f9f 55%,
+      #0088cc 100%
+    );
+    padding: 2rem 1.25rem;
+  }
+
+  /* Ẩn hoàn toàn panel bên trái */
+  .login-hero {
+    display: none;
+  }
+
+  /* Form panel: card nổi giữa nền gradient */
+  .login-panel {
+    flex: none;
+    width: 100%;
+    max-width: 460px;
+    background-color: #ffffff;
+    border-left: none;
+    border-top: 4px solid #f59e0b;   /* accent vàng thay border xanh */
+    padding: 2.5rem 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    animation: fadeInDown 0.55s ease-out;
+    overflow-y: visible;
+  }
+
+  .login-form-wrapper {
+    max-width: 100%;
+  }
+
+  /* Logo nhỏ trên form card để vẫn có nhận diện thương hiệu */
+  .login-form-header::before {
+    content: '';
+    display: block;
+    width: 52px;
+    height: 52px;
+    background-image: url('/images/ute.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Responsive – ≤ 600px  (Mobile nhỏ)
+   Thu nhỏ padding & font cho vừa màn hình
+══════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .login-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .login-panel {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .login-form-title {
+    font-size: 1.65rem;
+  }
+
+  .login-form-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .login-input {
+    padding: 0.8rem 0.75rem 0.8rem 42px;
+    font-size: 0.9rem;
+  }
+
+  .login-options-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-submit-btn {
+    padding: 0.875rem;
+    font-size: 0.82rem;
+  }
+
+  .login-security-note {
+    font-size: 0.74rem;
+  }
+}
+
