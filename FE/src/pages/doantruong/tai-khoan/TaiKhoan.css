@@ -1,0 +1,247 @@
+/* ───────────────────────────────────────────────────────── (CSS)
+   Account Management Styling (Quản lý Tài khoản)
+───────────────────────────────────────────────────────── */
+
+.tk-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.tk-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+.tk-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.tk-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.625rem 1.25rem;
+  background: #004f9f;
+  border: 1px solid #004f9f;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tk-btn-primary:hover {
+  background: #003a74;
+}
+
+/* Stats Styling */
+.tk-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.tk-stat-item {
+  background: #fff;
+  padding: 1.25rem;
+  border: 1px solid #eef2f6;
+  border-left: 3px solid #004f9f; /* default color */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.tk-stat-item__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tk-stat-item__value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+.tk-stat-item__bg-icon {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  opacity: 0.1;
+  color: #004f9f;
+  pointer-events: none;
+}
+
+/* Card & Table Area */
+.tk-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.tk-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tk-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.tk-table td {
+  padding: 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.tk-table tr:hover td {
+  background-color: #f7faff;
+}
+
+.tk-user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tk-avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #004f9f;
+  font-weight: 800;
+  font-size: 1.125rem;
+  border-radius: 0;
+}
+
+.tk-user-name {
+  display: block;
+  font-weight: 700;
+  color: #0d1f3c;
+}
+
+.tk-user-id {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.tk-user-email {
+  font-size: 0.725rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tk-activity-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Badges */
+.tk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tk-badge--active { background: #f0fdf4; color: #15803d; }
+.tk-badge--locked { background: #fee2e2; color: #b91c1c; }
+
+/* Action Buttons */
+.tk-btn-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tk-btn-icon:hover { color: #004f9f; border-color: #004f9f; background: #f8fafc; }
+.tk-btn-lock:hover { color: #b91c1c; border-color: #b91c1c; background: #fef2f2; }
+.tk-btn-active:hover { color: #15803d; border-color: #15803d; background: #f0fdf4; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .tk-container {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tk-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .tk-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .tk-stat-item {
+    align-items: flex-start;
+  }
+
+  .tk-card {
+    overflow-x: auto;
+  }
+
+  .tk-table {
+    min-width: 1000px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tk-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .tk-stats {
+    grid-template-columns: 1fr;
+  }
+}
