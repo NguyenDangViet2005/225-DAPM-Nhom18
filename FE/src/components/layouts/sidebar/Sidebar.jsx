@@ -3,13 +3,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getSidebarItems } from '@/configs/SidebarConfig';
 import { ROLE_LABELS } from '@/constants/roles';
 import SidebarItem from './SidebarItem';
+import { X } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = ({
   role,
   permissions = [],
   isCollapsed = false,
+  isMobileOpen = false,
   onToggle,
+  onCloseMobile,
   onLogout,
   user = {},
 }) => {
@@ -28,25 +31,34 @@ const Sidebar = ({
     item.children?.some((c) => location.pathname.startsWith(c.path));
 
   return (
-    <aside className={`sidebar${isCollapsed ? ' sidebar--collapsed' : ''}`}>
+    <aside className={`sidebar${isCollapsed ? ' sidebar--collapsed' : ''}${isMobileOpen ? ' sidebar--mobile-open' : ''}`}>
       {/* ── Branding ─────────────────────────────────────── */}
       <div className="sidebar__brand">
         <div className="sidebar__brand-logo-wrapper">
           <img src="/images/ute.png" alt="UTE Logo" className="sidebar__logo" />
-          {!isCollapsed && <span className="sidebar__brand-name">UTE Đoàn</span>}
+          {(!isCollapsed || isMobileOpen) && <span className="sidebar__brand-name">UTE Đoàn</span>}
         </div>
         
+        {/* Toggle cho Desktop */}
         <button
-          className="sidebar__toggle-btn"
+          className="sidebar__toggle-btn desktop-only"
           onClick={onToggle}
           title={isCollapsed ? 'Mở rộng' : 'Thu nhỏ'}
         >
           <SidebarIcon name={isCollapsed ? 'ChevronRight' : 'ChevronLeft'} />
         </button>
+
+        {/* Close cho Mobile */}
+        <button
+          className="sidebar__toggle-btn mobile-only"
+          onClick={onCloseMobile}
+        >
+          <X size={20} />
+        </button>
       </div>
 
       {/* ── Role badge ───────────────────────────────────── */}
-      {!isCollapsed && (
+      {(!isCollapsed || isMobileOpen) && (
         <div className="sidebar__role-badge">
           {ROLE_LABELS[role] ?? role}
         </div>
@@ -60,7 +72,7 @@ const Sidebar = ({
           <SidebarItem
             key={item.key}
             item={item}
-            isCollapsed={isCollapsed}
+            isCollapsed={isCollapsed && !isMobileOpen} // Không collapse khi ở mobile drawer
             isActive={isActive}
             isGroupActive={isGroupActive}
             isOpen={openGroups[item.key] ?? isGroupActive(item)}
@@ -74,7 +86,7 @@ const Sidebar = ({
       {/* ── Footer ───────────────────────────────────────── */}
       <div className="sidebar__footer">
         <div className="sidebar__divider" />
-        {!isCollapsed && (
+        {(!isCollapsed || isMobileOpen) && (
           <div className="sidebar__user">
             <div className="sidebar__user-avatar">
               {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
@@ -94,7 +106,7 @@ const Sidebar = ({
           <div className="sidebar__item-icon-wrap">
             <SidebarIcon name="LogOut" />
           </div>
-          {!isCollapsed && <span>Đăng xuất</span>}
+          {(!isCollapsed || isMobileOpen) && <span>Đăng xuất</span>}
         </button>
       </div>
     </aside>

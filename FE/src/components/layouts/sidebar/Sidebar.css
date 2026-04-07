@@ -306,3 +306,36 @@
 .sidebar__nav::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ── Mobile Responsive Logic ────────────────────────────── */
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-only {
+    display: flex !important;
+  }
+
+  .sidebar {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 200; /* Cao nhất để lên trên overlay */
+    transform: translateX(-100%);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar--mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar--collapsed {
+    width: var(--sidebar-width); /* Không cho phép collapse trên mobile drawer */
+  }
+}
