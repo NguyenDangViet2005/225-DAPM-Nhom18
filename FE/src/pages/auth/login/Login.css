@@ -336,6 +336,83 @@
   line-height: 1.6;
 }
 
+/* ── Forgot Link – button reset (dùng chung với <a>) ─────── */
+button.login-forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: inherit;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Forgot Password – Success State
+══════════════════════════════════════════════════════════ */
+.forgot-success {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.forgot-success__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background-color: #f0fff4;
+  border: 2px solid #38a169;
+  margin: 0 auto 1.25rem;
+}
+
+.forgot-success__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #38a169;
+  margin-bottom: 0.75rem;
+}
+
+.forgot-success__desc {
+  font-size: 0.875rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.forgot-success__desc strong {
+  color: #004f9f;
+  font-weight: 600;
+}
+
+/* ── Back to Login Row ────────────────────────────────────── */
+.forgot-back-row {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.forgot-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 0;
+  transition: color 0.15s;
+  box-shadow: none;
+}
+
+.forgot-back-btn:hover {
+  color: #004f9f;
+}
+
 /* ══════════════════════════════════════════════════════════
    Animations
 ══════════════════════════════════════════════════════════ */

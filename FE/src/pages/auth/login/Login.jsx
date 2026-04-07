@@ -1,9 +1,14 @@
+import { useState } from 'react';
 import './Login.css';
 import LoginForm from '../../../components/forms/LoginForm';
+import ForgotPasswordForm from '../../../components/forms/ForgotPasswordForm';
 
 const Login = () => {
+  const [view, setView] = useState('login'); // 'login' | 'forgot'
+
   return (
     <div className="login-wrapper">
+      {/* ── LEFT PANEL – Hero Image ───────────────────────────── */}
       <div className="login-hero">
         <div className="login-hero__overlay" />
         <img
@@ -40,8 +45,13 @@ const Login = () => {
           </span>
         </div>
       </div>
-      <LoginForm />
 
+      {/* ── RIGHT PANEL – Toggle giữa Login / Forgot Password ─── */}
+      {view === 'login' ? (
+        <LoginForm onForgotPassword={() => setView('forgot')} />
+      ) : (
+        <ForgotPasswordForm onBackToLogin={() => setView('login')} />
+      )}
     </div>
   );
 };

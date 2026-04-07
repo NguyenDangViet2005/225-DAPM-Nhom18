@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const LoginForm = () => {
+const LoginForm = ({ onForgotPassword }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,8 +17,6 @@ const LoginForm = () => {
   return (
     <div className="login-panel">
       <div className="login-form-wrapper">
-
-        {/* Header */}
         <div className="login-form-header">
           <div className="login-form-tagline">HỆ THỐNG NỘI BỘ</div>
           <h2 className="login-form-title">Đăng nhập</h2>
@@ -30,8 +28,6 @@ const LoginForm = () => {
         <div className="login-accent-bar" />
 
         <form onSubmit={handleSubmit} noValidate>
-
-          {/* Username */}
           <div className="login-field-group">
             <label className="login-label" htmlFor="username">
               Tài khoản / Mã số sinh viên
@@ -55,8 +51,6 @@ const LoginForm = () => {
               />
             </div>
           </div>
-
-          {/* Password */}
           <div className="login-field-group">
             <label className="login-label" htmlFor="password">
               Mật khẩu
@@ -80,17 +74,19 @@ const LoginForm = () => {
               />
             </div>
           </div>
-
-          {/* Options Row */}
           <div className="login-options-row">
             <label className="login-check-label">
               <input type="checkbox" className="login-checkbox" />
               <span>Ghi nhớ đăng nhập</span>
             </label>
-            <a href="#" className="login-forgot-link">Quên mật khẩu?</a>
+            <button
+              type="button"
+              className="login-forgot-link"
+              onClick={onForgotPassword}
+            >
+              Quên mật khẩu?
+            </button>
           </div>
-
-          {/* Submit */}
           <button
             type="submit"
             className="login-submit-btn"
