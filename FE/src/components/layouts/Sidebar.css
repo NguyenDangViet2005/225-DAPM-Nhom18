@@ -1,0 +1,315 @@
+/* ─────────────────────────────────────────────────────────
+   Sidebar Component Styles
+───────────────────────────────────────────────────────── */
+
+/* ── Variables ─────────────────────────────────────────── */
+:root {
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 68px;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-primary: #004f9f;
+  --sidebar-primary-light: #e6f0fa;
+  --sidebar-text: #1a202c;
+  --sidebar-text-muted: #718096;
+  --sidebar-active-bg: #e6f0fa;
+  --sidebar-hover-bg: #f7faff;
+  --sidebar-danger: #e53e3e;
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-width);
+  min-height: 100vh;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar--collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+/* ── Branding ───────────────────────────────────────────── */
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 1rem;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--sidebar-border);
+  min-height: 72px;
+}
+
+.sidebar__logo {
+  height: 38px;
+  width: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.sidebar__brand-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--sidebar-primary);
+  white-space: nowrap;
+  flex: 1;
+  letter-spacing: -0.3px;
+}
+
+.sidebar__toggle-btn {
+  background: none;
+  border: 1px solid var(--sidebar-border);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--sidebar-text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  border-radius: 0;
+  box-shadow: none;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebar__toggle-btn:hover {
+  background-color: var(--sidebar-primary-light);
+  color: var(--sidebar-primary);
+}
+
+/* ── Role badge ─────────────────────────────────────────── */
+.sidebar__role-badge {
+  margin: 0.75rem 1rem 0;
+  padding: 0.3rem 0.6rem;
+  background-color: var(--sidebar-primary-light);
+  color: var(--sidebar-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Divider ────────────────────────────────────────────── */
+.sidebar__divider {
+  height: 1px;
+  background-color: var(--sidebar-border);
+  margin: 0.75rem 0;
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+.sidebar__nav {
+  flex: 1;
+  padding: 0.25rem 0.625rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Base item button ───────────────────────────────────── */
+.sidebar__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.675rem 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 0.895rem;
+  font-weight: 500;
+  color: var(--sidebar-text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.sidebar__item:hover {
+  background-color: var(--sidebar-hover-bg);
+  color: var(--sidebar-primary);
+}
+
+.sidebar__item--active {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-primary);
+  font-weight: 700;
+}
+
+.sidebar__item--group-active {
+  color: var(--sidebar-primary);
+  font-weight: 600;
+}
+
+/* ── Icon ───────────────────────────────────────────────── */
+.sidebar__icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.sidebar__item:hover .sidebar__icon,
+.sidebar__item--active .sidebar__icon,
+.sidebar__item--group-active .sidebar__icon {
+  opacity: 1;
+}
+
+.sidebar__icon-placeholder {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── Label & chevron ────────────────────────────────────── */
+.sidebar__item-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__chevron {
+  font-size: 1rem;
+  transition: transform 0.2s;
+  opacity: 0.6;
+  display: inline-block;
+}
+
+.sidebar__chevron--open {
+  transform: rotate(90deg);
+}
+
+/* ── Children ───────────────────────────────────────────── */
+.sidebar__children {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+  margin-top: 2px;
+  gap: 1px;
+  border-left: 2px solid var(--sidebar-primary-light);
+  margin-left: calc(0.75rem + 18px + 0.75rem); /* align with label */
+}
+
+.sidebar__child-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 0.83rem;
+  font-weight: 400;
+  color: var(--sidebar-text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.sidebar__child-item:hover {
+  background-color: var(--sidebar-hover-bg);
+  color: var(--sidebar-primary);
+}
+
+.sidebar__child-item--active {
+  color: var(--sidebar-primary);
+  font-weight: 600;
+  background-color: var(--sidebar-active-bg);
+}
+
+.sidebar__child-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.sidebar__footer {
+  padding: 0 0.625rem 1rem;
+}
+
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: #f8faff;
+}
+
+.sidebar__user-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: var(--sidebar-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.sidebar__user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar__user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sidebar-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__user-role {
+  font-size: 0.72rem;
+  color: var(--sidebar-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.675rem 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sidebar-danger);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.sidebar__logout-btn:hover {
+  background-color: #fff5f5;
+}

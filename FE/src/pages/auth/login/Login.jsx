@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './Login.css';
-import LoginForm from '../../../components/forms/LoginForm';
-import ForgotPasswordForm from '../../../components/forms/ForgotPasswordForm';
+import LoginForm from '../../../components/commons/forms/LoginForm';
+import ForgotPasswordForm from '../../../components/commons/forms/ForgotPasswordForm';
 
 const Login = () => {
   const [view, setView] = useState('login'); // 'login' | 'forgot'
