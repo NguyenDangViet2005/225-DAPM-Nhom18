@@ -1,0 +1,176 @@
+/* ─────────────────────────────────────────────────────────
+   HoatDongKhoa – Styling cho các trang hoạt động cấp Khoa
+   Prefix: hdk- để tránh conflict với HoatDong.css (đoàn trường)
+───────────────────────────────────────────────────────── */
+
+.hdk-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.hdk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hdk-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+.hdk-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ── Stats ──────────────────────────────────────────────── */
+.hdk-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.hdk-stat-item {
+  background: #fff;
+  padding: 1.25rem;
+  border: 1px solid #eef2f6;
+  border-left: 3px solid #004f9f;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hdk-stat-item__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hdk-stat-item__value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+/* ── Card & Table ───────────────────────────────────────── */
+.hdk-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.hdk-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hdk-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.hdk-table td {
+  padding: 1.125rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.hdk-table tr:hover td {
+  background-color: #f7faff;
+}
+
+.hdk-name-cell {
+  max-width: 250px;
+}
+
+.hdk-activity-title {
+  display: block;
+  font-weight: 700;
+  color: #0d1f3c;
+  margin-bottom: 0.25rem;
+}
+
+.hdk-activity-info {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Badges ─────────────────────────────────────────────── */
+.hdk-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hdk-badge--open     { background: #f0fdf4; color: #15803d; }
+.hdk-badge--ongoing  { background: #e0f2fe; color: #0369a1; }
+.hdk-badge--closed   { background: #fee2e2; color: #b91c1c; }
+.hdk-badge--ended    { background: #f1f5f9; color: #475569; }
+
+/* ── Progress ───────────────────────────────────────────── */
+.hdk-progress-wrap {
+  width: 100px;
+  background: #f1f5f9;
+  height: 6px;
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.hdk-progress-bar {
+  height: 100%;
+  background: #004f9f;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.hdk-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hdk-btn:hover { opacity: 0.8; }
+
+/* ── Modal overlay (dùng lại class dp-modal từ DoanPhi) ─── */
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hdk-container { padding: 2rem 1.5rem; }
+  .hdk-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .hdk-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .hdk-card { overflow-x: auto; }
+  .hdk-table { min-width: 800px; }
+}
