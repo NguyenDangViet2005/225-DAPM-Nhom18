@@ -41,7 +41,7 @@ const BiThuDashboard = () => {
       {/* ── Stats ── */}
       <div className="bt-stats">
         {data.stats.map((stat, i) => (
-          <div key={i} className="bt-glass bt-stat-card">
+          <div key={i} className="bt-card bt-stat-card">
             <div className="bt-stat-card__icon" style={{ background: `${stat.color}18`, color: stat.color }}>
               <stat.icon size={22} />
             </div>
@@ -58,7 +58,7 @@ const BiThuDashboard = () => {
       <div className="btd-grid">
 
         {/* Member table */}
-        <div className="bt-glass bt-table-card">
+        <div className="bt-card bt-table-card">
           <div className="bt-table-card__header">
             <h3 className="bt-table-card__title">Đoàn viên trong lớp</h3>
             <button className="bt-btn bt-btn--ghost bt-btn--sm">
@@ -87,12 +87,7 @@ const BiThuDashboard = () => {
                     <td style={{ color: 'var(--bt-text-muted)' }}>{row.id}</td>
                     <td style={{ color: 'var(--bt-text-muted)' }}>{row.dept}</td>
                     <td>
-                      <span style={{
-                        display: 'inline-block',
-                        padding: '0.28rem 0.75rem',
-                        borderRadius: 999,
-                        fontSize: '0.7rem',
-                        fontWeight: 700,
+                      <span className="bt-status" style={{
                         color: row.statusColor,
                         background: `${row.statusColor}15`,
                         border: `1px solid ${row.statusColor}30`,
@@ -108,8 +103,8 @@ const BiThuDashboard = () => {
         </div>
 
         {/* Notifications */}
-        <div className="bt-glass btd-notif-card">
-          <h3 className="bt-table-card__title" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.5)' }}>
+        <div className="bt-card btd-notif-card">
+          <h3 className="bt-table-card__title" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--bt-border)' }}>
             Thông báo quan trọng
           </h3>
           <div className="btd-notif-list">

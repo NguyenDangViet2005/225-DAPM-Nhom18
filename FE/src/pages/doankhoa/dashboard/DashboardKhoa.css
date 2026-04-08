@@ -1,0 +1,48 @@
+/* ─────────────────────────────────────────────────────────
+   DashboardKhoa – Quick Stats bar (bổ sung cho Dashboard.css)
+───────────────────────────────────────────────────────── */
+
+.dkk-quick-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dkk-quick-stat-item {
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-left: 3px solid #004f9f;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.dkk-quick-stat__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.dkk-quick-stat__value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  line-height: 1;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .dkk-quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .dkk-quick-stats {
+    grid-template-columns: 1fr;
+  }
+}

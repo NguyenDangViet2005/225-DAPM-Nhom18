@@ -111,25 +111,25 @@ const DoanPhiLop = () => {
       )}
 
       {activeTab === 'gui' && (
-        <div className="bt-glass" style={{ padding: '2rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--bt-text)', marginBottom: '0.5rem' }}>
+        <div className="bt-card" style={{ padding: '2.5rem' }}>
+          <h3 className="bt-table-card__title" style={{ marginBottom: '0.75rem' }}>
             Gửi danh sách nộp đoàn phí lên Đoàn trường
           </h3>
-          <p style={{ fontSize: '0.875rem', color: 'var(--bt-text-muted)', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.875rem', color: 'var(--bt-text-muted)', marginBottom: '1.75rem' }}>
             Sau khi thu đủ đoàn phí, lập phiếu thu và gửi lên Đoàn trường để xác nhận.
           </p>
-          <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: 12, padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ border: '1px solid var(--bt-border)', padding: '1.5rem', marginBottom: '1.75rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {[['Chi đoàn', MY_CHI_DOAN], ['Số đoàn viên đã đóng', `${daDong} / ${chiDoanMembers.length}`], ['Tổng tiền', `${tongThu.toLocaleString()} ₫`], ['Năm học', currentRate.namHoc]].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--bt-text-muted)' }}>
                 <span>{k}</span><strong style={{ color: 'var(--bt-text)' }}>{v}</strong>
               </div>
             ))}
           </div>
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '1.75rem' }}>
             <label className="bt-label" style={{ display: 'block', marginBottom: '0.5rem' }}>Đính kèm minh chứng (PDF/ảnh)</label>
-            <input type="file" accept=".pdf,image/*" className="bt-input" style={{ padding: '0.5rem' }} />
+            <input type="file" accept=".pdf,image/*" className="bt-input" style={{ padding: '0.5rem', width: '100%' }} />
           </div>
-          <button className="bt-btn bt-btn--primary"><Send size={15} /> Gửi danh sách nộp</button>
+          <button className="bt-btn bt-btn--primary"><Send size={15} /> GỬI DANH SÁCH NỘP</button>
         </div>
       )}
     </div>

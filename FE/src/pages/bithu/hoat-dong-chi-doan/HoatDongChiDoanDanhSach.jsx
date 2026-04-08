@@ -47,7 +47,7 @@ const HoatDongChiDoanDanhSach = () => {
           { label: 'Đã duyệt',     value: stats.approved, color: '#10b981' },
           { label: 'Từ chối',      value: stats.rejected, color: '#ef4444' },
         ].map((s, i) => (
-          <div key={i} className="bt-glass bt-stat-card">
+          <div key={i} className="bt-card bt-stat-card">
             <div className="bt-stat-card__icon" style={{ background: `${s.color}18`, color: s.color }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 900 }}>{s.value}</span>
             </div>
@@ -58,7 +58,7 @@ const HoatDongChiDoanDanhSach = () => {
         ))}
       </div>
 
-      <div className="bt-glass" style={{ padding: '0.875rem 1rem' }}>
+      <div className="bt-card" style={{ padding: '0.875rem 1rem' }}>
         <div className="bt-toolbar">
           <select className="bt-filter-select" value={selectedHD} onChange={e => setSelectedHD(e.target.value)}>
             <option value="all">Tất cả hoạt động</option>

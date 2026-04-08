@@ -31,8 +31,8 @@ const HoatDongChiDoanXacNhan = () => {
         </button>
       </div>
 
-      <div className="bt-glass bt-stat-card" style={{ maxWidth: 280 }}>
-        <div className="bt-stat-card__icon" style={{ background: '#10b98118', color: '#10b981' }}>
+      <div className="bt-card bt-stat-card" style={{ maxWidth: 320 }}>
+        <div className="bt-stat-card__icon" style={{ background: '#15803d18', color: '#15803d' }}>
           <CheckCircle size={20} />
         </div>
         <div>
@@ -41,7 +41,7 @@ const HoatDongChiDoanXacNhan = () => {
         </div>
       </div>
 
-      <div className="bt-glass" style={{ padding: '0.875rem 1rem' }}>
+      <div className="bt-card" style={{ padding: '0.875rem 1rem' }}>
         <div className="bt-search-wrap">
           <Search size={15} />
           <input className="bt-search-input" placeholder="Tìm tên đoàn viên, MSSV hoặc tên hoạt động..."
@@ -49,7 +49,7 @@ const HoatDongChiDoanXacNhan = () => {
         </div>
       </div>
 
-      <div className="bt-glass bt-table-card">
+      <div className="bt-card bt-table-card">
         <div style={{ overflowX: 'auto' }}>
           <table className="bt-table">
             <thead>

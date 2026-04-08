@@ -4,7 +4,7 @@ import ProtectedRoute from './ProtectedRoute';
 import DashboardLayout from '@/components/layouts/dashboardLayout/DashboardLayout';
 
 // Pages – Admin
-import Dashboard from '@/pages/dashboard/Dashboard';
+import Dashboard from '@/pages/doantruong/dashboard/Dashboard';
 import SoDoan from '@/pages/doantruong/so-doan/SoDoan';
 import DoanPhi from '@/pages/doantruong/doan-phi/DoanPhi';
 
