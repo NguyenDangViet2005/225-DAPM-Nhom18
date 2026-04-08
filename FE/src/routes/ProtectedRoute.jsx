@@ -9,15 +9,15 @@ import { useAuth } from '@/hooks/useAuth';
 const ProtectedRoute = ({ allowedRoles = [] }) => {
   const { user } = useAuth();
 
-  // 1. Kiểm tra đăng nhập
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  // 1. Kiểm tra đăng nhập (Tạm thời tắt để dev)
+  // if (!user) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
-  // 2. Kiểm tra quyền (nếu có yêu cầu)
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/login" replace />;
-  }
+  // 2. Kiểm tra quyền (Tạm thời tắt để dev)
+  // if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   // 3. Nếu OK, render con của Route
   return <Outlet />;

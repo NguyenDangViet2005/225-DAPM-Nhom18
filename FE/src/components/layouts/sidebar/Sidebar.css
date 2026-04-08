@@ -237,35 +237,57 @@
 .sidebar__user {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.75rem 1rem;
-  background-color: var(--sidebar-hover-bg);
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border: 1px solid var(--sidebar-border);
   margin-bottom: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.sidebar__user:hover {
+  background-color: #fff;
+  border-color: var(--sidebar-primary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transform: translateY(-1px);
 }
 
 .sidebar__user-avatar {
-  width: 32px;
-  height: 32px;
-  background-color: var(--sidebar-primary);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--sidebar-primary) 0%, #1e3a8a 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.875rem;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 79, 159, 0.2);
+}
+
+.sidebar__user-info {
+  flex: 1;
+  min-width: 0; /* Cho phép text-overflow hoạt động */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .sidebar__user-name {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--sidebar-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.2;
 }
 
 .sidebar__user-role {
   font-size: 0.75rem;
+  font-weight: 500;
   color: var(--sidebar-text-muted);
 }
 

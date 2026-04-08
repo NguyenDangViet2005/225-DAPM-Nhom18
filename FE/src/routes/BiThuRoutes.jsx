@@ -17,23 +17,24 @@ import HoatDongLichSu from '@/pages/doanvien/hoat-dong-ca-nhan/HoatDongLichSu';
 import HoatDongDiem from '@/pages/doanvien/hoat-dong-ca-nhan/HoatDongDiem';
 
 const BiThuRoutes = (
-  <Route element={<ProtectedRoute allowedRoles={[ROLES.BITHU]} />}>
+  <Route path="/bi-thu" element={<ProtectedRoute allowedRoles={[ROLES.BITHU]} />}>
     <Route element={<DashboardLayout />}>
-      <Route path="/dashboard" element={<BiThuDashboard />} />
+      <Route index element={<BiThuDashboard />} />
+      <Route path="dashboard" element={<BiThuDashboard />} />
 
       {/* ── Quyền riêng Bí thư ── */}
-      <Route path="/doan-phi-lop/lap-danh-sach" element={<DoanPhiLop />} />
-      <Route path="/doan-phi-lop/gui" element={<DoanPhiLop />} />
-      <Route path="/hoat-dong-chi-doan/danh-sach" element={<HoatDongChiDoanDanhSach />} />
-      <Route path="/hoat-dong-chi-doan/xac-nhan" element={<HoatDongChiDoanXacNhan />} />
-      <Route path="/gui-yeu-cau-hoat-dong" element={<GuiYeuCauHoatDong />} />
+      <Route path="doan-phi-lop/lap-danh-sach" element={<DoanPhiLop />} />
+      <Route path="doan-phi-lop/gui" element={<DoanPhiLop />} />
+      <Route path="hoat-dong-chi-doan/danh-sach" element={<HoatDongChiDoanDanhSach />} />
+      <Route path="hoat-dong-chi-doan/xac-nhan" element={<HoatDongChiDoanXacNhan />} />
+      <Route path="gui-yeu-cau-hoat-dong" element={<GuiYeuCauHoatDong />} />
 
       {/* ── Kế thừa từ Đoàn viên ── */}
-      <Route path="/so-doan" element={<SoDoanCaNhan />} />
-      <Route path="/doan-phi/lich-su" element={<DoanPhiLichSu />} />
-      <Route path="/hoat-dong-ca-nhan/dang-ky" element={<HoatDongDangKy />} />
-      <Route path="/hoat-dong-ca-nhan/lich-su" element={<HoatDongLichSu />} />
-      <Route path="/hoat-dong-ca-nhan/diem" element={<HoatDongDiem />} />
+      <Route path="so-doan" element={<SoDoanCaNhan />} />
+      <Route path="doan-phi/lich-su" element={<DoanPhiLichSu />} />
+      <Route path="hoat-dong-ca-nhan/dang-ky" element={<HoatDongDangKy />} />
+      <Route path="hoat-dong-ca-nhan/lich-su" element={<HoatDongLichSu />} />
+      <Route path="hoat-dong-ca-nhan/diem" element={<HoatDongDiem />} />
     </Route>
   </Route>
 );

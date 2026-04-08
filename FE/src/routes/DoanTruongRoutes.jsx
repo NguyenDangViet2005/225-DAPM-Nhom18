@@ -20,19 +20,20 @@ import TaiKhoan from '@/pages/doantruong/tai-khoan/TaiKhoan';
  * DoanTruongRoutes – chỉ cho phép role DOANTRUONG
  */
 const DoanTruongRoutes = (
-  <Route element={<ProtectedRoute allowedRoles={[ROLES.DOANTRUONG]} />}>
+  <Route path="/doan-truong" element={<ProtectedRoute allowedRoles={[ROLES.DOANTRUONG]} />}>
     <Route element={<DashboardLayout />}>
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/so-doan" element={<SoDoan />} />
-      <Route path="/doan-phi" element={<DoanPhi />} />
+      <Route index element={<Dashboard />} />
+      <Route path="dashboard" element={<Dashboard />} />
+      <Route path="so-doan" element={<SoDoan />} />
+      <Route path="doan-phi" element={<DoanPhi />} />
       
       {/* ── Hoạt động ─────────────────────────────────── */}
-      <Route path="/hoat-dong/quan-ly" element={<HoatDongQuanLy />} />
-      <Route path="/hoat-dong/duyet" element={<HoatDongDuyet />} />
-      <Route path="/hoat-dong/xac-nhan" element={<HoatDongXacNhan />} />
+      <Route path="hoat-dong/quan-ly" element={<HoatDongQuanLy />} />
+      <Route path="hoat-dong/duyet" element={<HoatDongDuyet />} />
+      <Route path="hoat-dong/xac-nhan" element={<HoatDongXacNhan />} />
 
-      <Route path="/yeu-cau" element={<YeuCau />} />
-      <Route path="/tai-khoan" element={<TaiKhoan />} />
+      <Route path="yeu-cau" element={<YeuCau />} />
+      <Route path="tai-khoan" element={<TaiKhoan />} />
     </Route>
   </Route>
 );
