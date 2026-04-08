@@ -6,6 +6,7 @@ import DashboardKhoa from '@/pages/doankhoa/dashboard/DashboardKhoa';
 import HoatDongKhoaQuanLy from '@/pages/doankhoa/hoat-dong-khoa/HoatDongKhoaQuanLy';
 import HoatDongKhoaDuyet from '@/pages/doankhoa/hoat-dong-khoa/HoatDongKhoaDuyet';
 import HoatDongKhoaXacNhan from '@/pages/doankhoa/hoat-dong-khoa/HoatDongKhoaXacNhan';
+import YeuCauChiDoan from '@/pages/doankhoa/yeu-cau-chi-doan/YeuCauChiDoan';
 
 /**
  * DoanKhoaRoutes – prefix /doankhoa để tránh conflict với DoanTruongRoutes
@@ -17,6 +18,7 @@ const DoanKhoaRoutes = (
     <Route path="hoat-dong-khoa/quan-ly" element={<HoatDongKhoaQuanLy />} />
     <Route path="hoat-dong-khoa/duyet" element={<HoatDongKhoaDuyet />} />
     <Route path="hoat-dong-khoa/xac-nhan" element={<HoatDongKhoaXacNhan />} />
+    <Route path="yeu-cau-chi-doan" element={<YeuCauChiDoan />} />
   </Route>
 );
 
