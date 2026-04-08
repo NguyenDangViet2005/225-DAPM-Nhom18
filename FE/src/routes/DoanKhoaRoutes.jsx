@@ -7,18 +7,20 @@ import HoatDongKhoaQuanLy from '@/pages/doankhoa/hoat-dong-khoa/HoatDongKhoaQuan
 import HoatDongKhoaDuyet from '@/pages/doankhoa/hoat-dong-khoa/HoatDongKhoaDuyet';
 import HoatDongKhoaXacNhan from '@/pages/doankhoa/hoat-dong-khoa/HoatDongKhoaXacNhan';
 import YeuCauChiDoan from '@/pages/doankhoa/yeu-cau-chi-doan/YeuCauChiDoan';
+import GuiYeuCau from '@/pages/doankhoa/gui-yeu-cau/GuiYeuCau';
 
 /**
- * DoanKhoaRoutes – prefix /doankhoa để tránh conflict với DoanTruongRoutes
+ * DoanKhoaRoutes – prefix /doan-khoa (theo convention của main)
  * TODO: Bật lại ProtectedRoute khi tích hợp BE
  */
 const DoanKhoaRoutes = (
-  <Route path="/doankhoa" element={<DashboardLayout />}>
+  <Route path="/doan-khoa" element={<DashboardLayout />}>
     <Route path="dashboard" element={<DashboardKhoa />} />
     <Route path="hoat-dong-khoa/quan-ly" element={<HoatDongKhoaQuanLy />} />
     <Route path="hoat-dong-khoa/duyet" element={<HoatDongKhoaDuyet />} />
     <Route path="hoat-dong-khoa/xac-nhan" element={<HoatDongKhoaXacNhan />} />
     <Route path="yeu-cau-chi-doan" element={<YeuCauChiDoan />} />
+    <Route path="gui-yeu-cau" element={<GuiYeuCau />} />
   </Route>
 );
 
