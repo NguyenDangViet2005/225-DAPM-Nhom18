@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   // Để hiển thị Dashboard ngay lập tức, ta gán user mặc định.
   // Hãy đổi role sang ROLES.DOANKHOA để test giao diện cấp Khoa.
   const [user, setUser] = useState({
-    name: 'Nguyễn Đăng Việt',
+    name: 'Nguyễn Thị Khánh Ly',
     role: ROLES.DOANVIEN,
   });
   
