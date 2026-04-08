@@ -93,7 +93,6 @@ const Sidebar = ({
             </div>
             <div className="sidebar__user-info">
               <span className="sidebar__user-name">{user.name ?? 'Người dùng'}</span>
-              <br/>
               <span className="sidebar__user-role">{ROLE_LABELS[role] ?? role}</span>
             </div>
           </div>

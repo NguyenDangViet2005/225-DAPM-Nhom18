@@ -13,7 +13,7 @@ import YeuCauChiDoan from '@/pages/doankhoa/yeu-cau-chi-doan/YeuCauChiDoan';
  * TODO: Bật lại ProtectedRoute khi tích hợp BE
  */
 const DoanKhoaRoutes = (
-  <Route path="/doankhoa" element={<DashboardLayout />}>
+  <Route path="/doan-khoa" element={<DashboardLayout />}>
     <Route path="dashboard" element={<DashboardKhoa />} />
     <Route path="hoat-dong-khoa/quan-ly" element={<HoatDongKhoaQuanLy />} />
     <Route path="hoat-dong-khoa/duyet" element={<HoatDongKhoaDuyet />} />

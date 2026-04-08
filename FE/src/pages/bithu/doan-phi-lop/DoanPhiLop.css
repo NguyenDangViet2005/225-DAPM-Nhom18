@@ -1,0 +1,208 @@
+.dpl-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dpl-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dpl-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+.dpl-chi-doan-badge {
+  background: #e0edff;
+  color: #004f9f;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+.dpl-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.dpl-stat-item {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  border-left: 3px solid #004f9f;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dpl-stat-item__label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dpl-stat-item__value {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  margin-top: 0.2rem;
+}
+
+/* Tabs */
+.dpl-tabs {
+  display: flex;
+  border-bottom: 1px solid #eef2f6;
+  background: #fff;
+}
+
+.dpl-tab-btn {
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dpl-tab-btn--active {
+  border-bottom-color: #004f9f;
+  color: #004f9f;
+}
+
+/* Table */
+.dpl-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.dpl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dpl-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.dpl-table td {
+  padding: 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.dpl-table tr:hover td { background: #f7faff; }
+
+.dpl-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dpl-badge--paid { background: #f0fdf4; color: #15803d; }
+.dpl-badge--unpaid { background: #fee2e2; color: #b91c1c; }
+
+/* Gửi panel */
+.dpl-gui-panel {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dpl-gui-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+.dpl-gui-desc {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.dpl-gui-summary {
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dpl-gui-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.dpl-gui-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dpl-gui-upload-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.dpl-gui-upload-input {
+  border: 1.5px dashed #cbd5e1;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.dpl-gui-submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #004f9f;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+}
+
+.dpl-gui-submit-btn:hover { opacity: 0.85; }
+
+@media (max-width: 768px) {
+  .dpl-container { padding: 2rem 1.25rem; }
+  .dpl-stats { grid-template-columns: repeat(2, 1fr); }
+  .dpl-card { overflow-x: auto; }
+  .dpl-table { min-width: 700px; }
+}

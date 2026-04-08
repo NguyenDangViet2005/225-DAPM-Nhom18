@@ -4,7 +4,7 @@ import { getDashboardMockData } from '@/data/mockDashboard';
 import { ACTIVITY_STATS_KHOA } from '@/data/mockHoatDongKhoa';
 import { useAuth } from '@/hooks/useAuth';
 import { ROLES } from '@/constants/roles';
-import '@/pages/dashboard/Dashboard.css';
+import '@/pages/doantruong/dashboard/Dashboard.css';
 import './DashboardKhoa.css';
 
 const DashboardKhoa = () => {

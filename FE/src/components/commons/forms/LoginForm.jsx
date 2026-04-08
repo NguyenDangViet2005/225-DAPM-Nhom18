@@ -1,17 +1,39 @@
 import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { ROLES } from '@/constants/roles';
+import { MOCK_USERS } from '@/data/mockUsers';
 
 const LoginForm = ({ onForgotPassword }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    // Giả lập logic login theo bộ mock data
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = '/dashboard';
-    }, 1400);
+      
+      const foundUser = Object.values(MOCK_USERS).find(
+        u => u.username === username.toLowerCase() && u.password === password
+      );
+
+      if (!foundUser) {
+        alert('Tài khoản demo: admin, khoa, bithu, sv01. Mật khẩu: 123');
+        return;
+      }
+
+      let redirectPath = '/bi-thu/dashboard';
+      if (foundUser.role === ROLES.DOANTRUONG) redirectPath = '/doan-truong/dashboard';
+      if (foundUser.role === ROLES.DOANKHOA) redirectPath = '/doan-khoa/dashboard';
+      if (foundUser.role === ROLES.DOANVIEN) redirectPath = '/doan-vien/dashboard';
+
+      login(foundUser);
+      window.location.href = redirectPath;
+    }, 1000);
   };
 
   return (

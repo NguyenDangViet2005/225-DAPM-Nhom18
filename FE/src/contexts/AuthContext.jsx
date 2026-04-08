@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { ROLE_PERMISSIONS } from '@/constants/permissions';
 import { ROLES } from '@/constants/roles';
 
+import { MOCK_USERS } from '@/data/mockUsers';
+
 /**
  * AuthContext – lưu trạng thái đăng nhập toàn cục.
  * Sau khi tích hợp BE, thay mock bằng API call + JWT decode.
@@ -10,18 +12,8 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   // ── MOCK LOGIN TRONG QUÁ TRÌNH DEV ──────────────────────────
-  // Để hiển thị Dashboard ngay lập tức, ta gán user mặc định.
-
-  /*
-  const [user, setUser] = useState({
-    name: 'Đoàn Trường',
-    role: ROLES.DOANTRUONG,
-  });
-  */ 
-  const [user, setUser] = useState({
-    name: 'Bí thư Liên chi đoàn',
-    role: ROLES.DOANKHOA,
-  });
+  // Để hiển thị Dashboard ngay lập tức, ta gán user mặc định từ mock data.
+  const [user, setUser] = useState(MOCK_USERS.bithu);
   
   const [isLoading, setIsLoading] = useState(true);
 
