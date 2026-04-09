@@ -3,8 +3,16 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/layouts/sidebar/Sidebar';
 import { ROLE_PERMISSIONS } from '@/constants/permissions';
 import { useAuth } from '@/hooks/useAuth';
+import { ROLES } from '@/constants/roles';
 import { Menu, X } from 'lucide-react';
 import './DashboardLayout.css';
+
+const ROLE_TITLES = {
+  [ROLES.DOANTRUONG]: 'UTE – Đoàn Trường',
+  [ROLES.DOANKHOA]:   'UTE – Đoàn Khoa',
+  [ROLES.BITHU]:      'UTE – Bí thư Chi đoàn',
+  [ROLES.DOANVIEN]:   'UTE – Đoàn Viên',
+};
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -14,6 +22,11 @@ const DashboardLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const userPerms = ROLE_PERMISSIONS[user?.role] ?? [];
+
+  // Set browser tab title theo role
+  useEffect(() => {
+    document.title = ROLE_TITLES[user?.role] ?? 'UTE – Hệ thống quản lý đoàn viên';
+  }, [user?.role]);
 
   // Đóng menu mobile mỗi khi chuyển trang
   useEffect(() => {

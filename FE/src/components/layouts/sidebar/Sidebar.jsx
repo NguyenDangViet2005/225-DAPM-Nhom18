@@ -36,7 +36,7 @@ const Sidebar = ({
       <div className="sidebar__brand">
         <div className="sidebar__brand-logo-wrapper">
           <img src="/images/ute.png" alt="UTE Logo" className="sidebar__logo" />
-          {(!isCollapsed || isMobileOpen) && <span className="sidebar__brand-name">UTE Đoàn</span>}
+          {(!isCollapsed || isMobileOpen) && <span className="sidebar__brand-name">UTE – {ROLE_LABELS[role] ?? 'Đoàn'}</span>}
         </div>
         
         {/* Toggle cho Desktop */}

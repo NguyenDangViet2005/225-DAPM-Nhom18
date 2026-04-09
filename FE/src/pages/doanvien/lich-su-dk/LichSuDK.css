@@ -1,0 +1,74 @@
+/* ─────────────────────────────────────────────────────────
+   LichSuDK – Lịch sử đăng ký hoạt động
+───────────────────────────────────────────────────────── */
+
+.lsdk-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lsdk-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+.lsdk-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.lsdk-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lsdk-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.lsdk-table td {
+  padding: 1.125rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.lsdk-table tr:hover td { background-color: #f7fafc; }
+
+.lsdk-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.lsdk-badge--green  { background: #f0fdf4; color: #15803d; }
+.lsdk-badge--yellow { background: #fffbeb; color: #b45309; }
+.lsdk-badge--red    { background: #fee2e2; color: #b91c1c; }
+.lsdk-badge--gray   { background: #f1f5f9; color: #475569; }
+
+.lsdk-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 1024px) { .lsdk-container { padding: 2rem 1.5rem; } }
+@media (max-width: 768px)  { .lsdk-card { overflow-x: auto; } .lsdk-table { min-width: 750px; } }
+@media (max-width: 480px)  { .lsdk-container { padding: 1.5rem 1rem; } }
+

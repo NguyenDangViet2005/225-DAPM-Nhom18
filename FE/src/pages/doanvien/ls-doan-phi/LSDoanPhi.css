@@ -1,0 +1,98 @@
+/* ─────────────────────────────────────────────────────────
+   LSDoanPhi – Lịch sử đóng đoàn phí
+───────────────────────────────────────────────────────── */
+
+.lsdp-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lsdp-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+/* ── Stats ──────────────────────────────────────────────── */
+.lsdp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.lsdp-stat-item {
+  background: #fff;
+  padding: 1.25rem;
+  border: 1px solid #eef2f6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.lsdp-stat-item__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lsdp-stat-item__value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+}
+
+/* ── Card / Table ───────────────────────────────────────── */
+.lsdp-card {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+}
+
+.lsdp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lsdp-table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid #eef2f6;
+}
+
+.lsdp-table td {
+  padding: 1.125rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.lsdp-table tr:hover td { background-color: #f7fafc; }
+
+.lsdp-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.lsdp-badge--paid   { background: #f0fdf4; color: #15803d; }
+.lsdp-badge--unpaid { background: #fee2e2; color: #b91c1c; }
+
+@media (max-width: 1024px) { .lsdp-container { padding: 2rem 1.5rem; } }
+@media (max-width: 768px)  { .lsdp-stats { grid-template-columns: 1fr 1fr; } .lsdp-card { overflow-x: auto; } .lsdp-table { min-width: 600px; } }
+@media (max-width: 480px)  { .lsdp-container { padding: 1.5rem 1rem; } .lsdp-stats { grid-template-columns: 1fr; } }
+
