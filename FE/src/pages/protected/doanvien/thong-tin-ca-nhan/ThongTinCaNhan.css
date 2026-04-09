@@ -1,0 +1,345 @@
+/* ──────────────────────────────────────────────────────────
+   ThongTinCaNhan – Xem & cập nhật thông tin cá nhân
+──────────────────────────────────────────────────────── */
+
+.ttcn-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ttcn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ttcn-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0d1f3c;
+  letter-spacing: -0.5px;
+}
+
+/* ── Main Layout: 2 Columns ─────────────────────────────── */
+.ttcn-main {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+}
+
+/* ── Left Sidebar: ID Card & Info ─────────────────────── */
+.ttcn-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ttcn-card-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 220px;
+}
+
+/* ID Card – Rectangular ─────────────────────────────────── */
+.ttcn-id-card__rect {
+  width: 220px;
+  aspect-ratio: 3 / 4;
+  background: #f8fafc;
+  border: 2px dashed #004f9f;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 79, 159, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.ttcn-id-card__rect::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 79, 159, 0.03) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.ttcn-id-card__avatar-rect {
+  width: 100px;
+  height: 100px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #004f9f 0%, #0066cc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #fff;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.ttcn-upload-btn {
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-flex;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.7rem 1.25rem;
+}
+
+/* Info Box ──────────────────────────────────────────────── */
+.ttcn-info-box {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #eef2f6;
+  padding: 1.5rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ttcn-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ttcn-info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ttcn-info-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0d1f3c;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ── Right Side: Form ───────────────────────────────────── */
+.ttcn-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.ttcn-form-section {
+  background: #fff;
+  border: 1px solid #eef2f6;
+  padding: 2rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ttcn-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ttcn-form-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d1f3c;
+  margin: 0;
+}
+
+.ttcn-edit-btn {
+  white-space: nowrap;
+}
+
+.ttcn-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem 1.5rem;
+}
+
+.ttcn-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ttcn-form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ttcn-required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.ttcn-form-input {
+  padding: 0.65rem 0.875rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 4px;
+  outline: none;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #0d1f3c;
+  transition: border-color 0.2s;
+}
+
+.ttcn-form-input:focus {
+  border-color: #004f9f;
+  box-shadow: 0 0 0 3px rgba(0, 79, 159, 0.1);
+}
+
+.ttcn-form-input:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.ttcn-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #eef2f6;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.ttcn-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.625rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.ttcn-btn:hover {
+  opacity: 0.85;
+}
+
+.ttcn-btn--primary {
+  background: #004f9f;
+  color: #fff;
+  border-color: #004f9f;
+}
+
+.ttcn-btn--primary:hover {
+  background: #003d7e;
+  border-color: #003d7e;
+}
+
+.ttcn-btn--outline {
+  background: transparent;
+  color: #004f9f;
+  border-color: #004f9f;
+}
+
+.ttcn-btn--outline:hover {
+  background: #f0f4f8;
+}
+
+.ttcn-btn--ghost {
+  background: transparent;
+  color: #64748b;
+  border-color: #e2e8f0;
+}
+
+.ttcn-btn--ghost:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .ttcn-main {
+    grid-template-columns: 220px 1fr;
+    gap: 1.5rem;
+  }
+  .ttcn-container {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .ttcn-main {
+    grid-template-columns: 1fr;
+  }
+  .ttcn-left {
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .ttcn-card-box {
+    flex-direction: column;
+    width: 220px;
+    gap: 1rem;
+  }
+  .ttcn-id-card__rect {
+    width: 220px;
+  }
+  .ttcn-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ttcn-container {
+    padding: 1.5rem;
+  }
+  .ttcn-main {
+    gap: 1rem;
+  }
+  .ttcn-left {
+    flex-direction: column;
+  }
+  .ttcn-card-box {
+    flex-direction: column;
+    width: 220px;
+  }
+  .ttcn-id-card__rect {
+    width: 220px;
+  }
+  .ttcn-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .ttcn-form-section {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ttcn-container {
+    padding: 1rem;
+  }
+  .ttcn-title {
+    font-size: 1.25rem;
+  }
+  .ttcn-form-grid {
+    gap: 0.8rem 1rem;
+  }
+}

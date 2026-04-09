@@ -1,24 +1,28 @@
-import { Route } from 'react-router-dom';
-import { ROLES } from '@/constants/roles';
-import ProtectedRoute from './ProtectedRoute';
-import DashboardLayout from '@/components/layouts/dashboardLayout/DashboardLayout';
+import { Route } from "react-router-dom";
+import { ROLES } from "@/constants/roles";
+import ProtectedRoute from "./ProtectedRoute";
+import DashboardLayout from "@/components/layouts/dashboardLayout/DashboardLayout";
 
-import ThongTinCaNhan   from '@/pages/doanvien/thong-tin-ca-nhan/ThongTinCaNhan';
-import TinhTrangSo      from '@/pages/doanvien/tinh-trang-so/TinhTrangSo';
-import LSDoanPhi        from '@/pages/doanvien/ls-doan-phi/LSDoanPhi';
-import DangKy           from '@/pages/doanvien/dang-ky/DangKy';
-import LichSuDK         from '@/pages/doanvien/lich-su-dk/LichSuDK';
-import XemDiem          from '@/pages/doanvien/xem-diem/XemDiem';
+import ThongTinCaNhan from "@/pages/protected/doanvien/thong-tin-ca-nhan/ThongTinCaNhan";
+import TinhTrangSo from "@/pages/protected/doanvien/tinh-trang-so/TinhTrangSo";
+import LSDoanPhi from "@/pages/protected/doanvien/ls-doan-phi/LSDoanPhi";
+import DangKy from "@/pages/protected/doanvien/dang-ky/DangKy";
+import LichSuDK from "@/pages/protected/doanvien/lich-su-dk/LichSuDK";
+import XemDiem from "@/pages/protected/doanvien/xem-diem/XemDiem";
 
 const DoanVienRoutes = (
-  <Route element={<ProtectedRoute allowedRoles={[ROLES.DOANVIEN, ROLES.BITHU]} />}>
+  <Route
+    path="/doan-vien"
+    element={<ProtectedRoute allowedRoles={[ROLES.DOANVIEN, ROLES.BITHU]} />}
+  >
     <Route element={<DashboardLayout />}>
-      <Route path="/thong-tin-ca-nhan"            element={<ThongTinCaNhan />} />
-      <Route path="/so-doan"                      element={<TinhTrangSo />} />
-      <Route path="/doan-phi/lich-su"             element={<LSDoanPhi />} />
-      <Route path="/hoat-dong-ca-nhan/dang-ky"    element={<DangKy />} />
-      <Route path="/hoat-dong-ca-nhan/lich-su"    element={<LichSuDK />} />
-      <Route path="/hoat-dong-ca-nhan/diem"       element={<XemDiem />} />
+      <Route index element={<ThongTinCaNhan />} />
+      <Route path="thong-tin-ca-nhan" element={<ThongTinCaNhan />} />
+      <Route path="tinh-trang-so" element={<TinhTrangSo />} />
+      <Route path="doan-phi/tinh-trang" element={<LSDoanPhi />} />
+      <Route path="hoat-dong/dang-ky" element={<DangKy />} />
+      <Route path="hoat-dong/lich-su" element={<LichSuDK />} />
+      <Route path="hoat-dong/diem" element={<XemDiem />} />
     </Route>
   </Route>
 );

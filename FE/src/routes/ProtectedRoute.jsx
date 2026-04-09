@@ -6,7 +6,9 @@ import { useAuth } from "@/hooks/useAuth";
  *
  * @param {string[]} allowedRoles – mảng các vai trò được phép truy cập
  */
+// eslint-disable-next-line no-unused-vars
 const ProtectedRoute = ({ allowedRoles = [] }) => {
+  // eslint-disable-next-line no-unused-vars
   const { user } = useAuth();
 
   // 1. Kiểm tra đăng nhập (Tạm thời tắt để dev)

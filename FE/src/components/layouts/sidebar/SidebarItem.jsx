@@ -3,15 +3,15 @@
  * Bao gồm cả mục đơn và mục có chứa các sub-item (dropdown)
  */
 
-const SidebarItem = ({ 
-  item, 
-  isCollapsed, 
-  isActive, 
-  isGroupActive, 
-  isOpen, 
-  toggleGroup, 
+const SidebarItem = ({
+  item,
+  isCollapsed,
+  isActive,
+  isGroupActive,
+  isOpen,
+  toggleGroup,
   navigate,
-  SidebarIcon
+  SidebarIcon,
 }) => {
   const hasChildren = item.children && item.children.length > 0;
   const groupActive = isGroupActive(item);
@@ -21,9 +21,9 @@ const SidebarItem = ({
       <button
         className={`sidebar__item${
           isActive(item.path) || (groupActive && !hasChildren)
-            ? ' sidebar__item--active'
-            : ''
-        }${groupActive && hasChildren ? ' sidebar__item--group-active' : ''}`}
+            ? " sidebar__item--active"
+            : ""
+        }${groupActive && hasChildren ? " sidebar__item--group-active" : ""}`}
         onClick={() => {
           if (hasChildren) {
             toggleGroup(item.key);
@@ -40,7 +40,9 @@ const SidebarItem = ({
           <>
             <span className="sidebar__item-label">{item.label}</span>
             {hasChildren && (
-              <span className={`sidebar__chevron${isOpen ? ' sidebar__chevron--open' : ''}`}>
+              <span
+                className={`sidebar__chevron${isOpen ? " sidebar__chevron--open" : ""}`}
+              >
                 <SidebarIcon name="ChevronRight" />
               </span>
             )}
@@ -54,7 +56,7 @@ const SidebarItem = ({
             <button
               key={child.key}
               className={`sidebar__child-item${
-                isActive(child.path) ? ' sidebar__child-item--active' : ''
+                isActive(child.path) ? " sidebar__child-item--active" : ""
               }`}
               onClick={() => navigate(child.path)}
             >

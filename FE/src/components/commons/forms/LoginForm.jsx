@@ -32,7 +32,7 @@ const LoginForm = ({ onForgotPassword }) => {
       if (foundUser.role === ROLES.DOANKHOA)
         redirectPath = "/doan-khoa/dashboard";
       if (foundUser.role === ROLES.DOANVIEN)
-        redirectPath = "/doan-vien/dashboard";
+        redirectPath = "/doan-vien/thong-tin-ca-nhan";
 
       login(foundUser);
       window.location.href = redirectPath;

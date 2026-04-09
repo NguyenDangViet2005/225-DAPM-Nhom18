@@ -3,42 +3,49 @@ import { PERMISSIONS } from "@/constants/permissions";
 
 const DOANVIEN_SIDEBAR_ITEMS = [
   {
-    key: "so-doan",
-    label: "Sổ đoàn",
+    key: "thong-tin-ca-nhan",
+    label: "Thông tin cá nhân",
+    icon: "User",
+    path: "/thong-tin-ca-nhan",
+    permission: PERMISSIONS.PROFILE_VIEW_UPDATE,
+  },
+  {
+    key: "tinh-trang-so",
+    label: "Tình trạng sổ",
     icon: "BookOpen",
-    path: "/so-doan",
+    path: "/tinh-trang-so",
     permission: PERMISSIONS.SO_DOAN_VIEW,
   },
   {
-    key: "doan-phi-lich-su",
-    label: "Lịch sử đoàn phí",
+    key: "ls-doan-phi",
+    label: "Tình trạng đoàn phí",
     icon: "Wallet",
-    path: "/doan-phi/lich-su",
+    path: "/doan-phi/tinh-trang",
     permission: PERMISSIONS.DOAN_PHI_VIEW_HISTORY,
   },
   {
-    key: "hoat-dong-ca-nhan",
-    label: "Hoạt động của tôi",
+    key: "hoat-dong",
+    label: "Hoạt động",
     icon: "CalendarCheck",
-    path: "/hoat-dong-ca-nhan",
+    path: "/hoat-dong",
     permission: PERMISSIONS.ACTIVITY_REGISTER,
     children: [
       {
-        key: "hoat-dong-dang-ky",
+        key: "dang-ky",
         label: "Đăng ký hoạt động",
-        path: "/hoat-dong-ca-nhan/dang-ky",
+        path: "/hoat-dong/dang-ky",
         permission: PERMISSIONS.ACTIVITY_REGISTER,
       },
       {
-        key: "hoat-dong-lich-su",
+        key: "lich-su-dk",
         label: "Lịch sử đăng ký",
-        path: "/hoat-dong-ca-nhan/lich-su",
+        path: "/hoat-dong/lich-su",
         permission: PERMISSIONS.ACTIVITY_VIEW_HISTORY,
       },
       {
-        key: "hoat-dong-diem",
+        key: "xem-diem",
         label: "Điểm hoạt động",
-        path: "/hoat-dong-ca-nhan/diem",
+        path: "/hoat-dong/diem",
         permission: PERMISSIONS.ACTIVITY_VIEW_SCORE,
       },
     ],
@@ -235,35 +242,67 @@ const SIDEBAR_CONFIG = {
       permission: PERMISSIONS.ACTIVITY_CLASS_VIEW_REGISTRATIONS,
     },
     // ── Kế thừa từ Đoàn viên ──────────────────────────────
-    ...DOANVIEN_SIDEBAR_ITEMS.map((item) => ({
-      ...item,
-      path: `/bi-thu${item.path}`,
-      children: item.children?.map((child) => ({
-        ...child,
-        path: `/bi-thu${child.path}`,
-      })),
-    })),
+    {
+      key: "thong-tin-ca-nhan",
+      label: "Thông tin cá nhân",
+      icon: "User",
+      path: "/bi-thu/thong-tin-ca-nhan",
+      permission: PERMISSIONS.PROFILE_VIEW_UPDATE,
+    },
+    {
+      key: "tinh-trang-so",
+      label: "Tình trạng sổ",
+      icon: "BookOpen",
+      path: "/bi-thu/tinh-trang-so",
+      permission: PERMISSIONS.SO_DOAN_VIEW,
+    },
+    {
+      key: "ls-doan-phi",
+      label: "Tình trạng đoàn phí",
+      icon: "Wallet",
+      path: "/bi-thu/doan-phi/tinh-trang",
+      permission: PERMISSIONS.DOAN_PHI_VIEW_HISTORY,
+    },
+    {
+      key: "hoat-dong",
+      label: "Hoạt động",
+      icon: "CalendarCheck",
+      path: "/bi-thu/hoat-dong",
+      permission: PERMISSIONS.ACTIVITY_REGISTER,
+      children: [
+        {
+          key: "dang-ky",
+          label: "Đăng ký hoạt động",
+          path: "/bi-thu/hoat-dong/dang-ky",
+          permission: PERMISSIONS.ACTIVITY_REGISTER,
+        },
+        {
+          key: "lich-su-dk",
+          label: "Lịch sử đăng ký",
+          path: "/bi-thu/hoat-dong/lich-su",
+          permission: PERMISSIONS.ACTIVITY_VIEW_HISTORY,
+        },
+        {
+          key: "xem-diem",
+          label: "Điểm hoạt động",
+          path: "/bi-thu/hoat-dong/diem",
+          permission: PERMISSIONS.ACTIVITY_VIEW_SCORE,
+        },
+      ],
+    },
   ],
 
   // ══════════════════════════════════════════════════════════
   //  DOANVIEN – Đoàn viên (Sinh viên)
   // ══════════════════════════════════════════════════════════
-  [ROLES.DOANVIEN]: [
-    {
-      key: "dashboard",
-      label: "Tổng quan",
-      icon: "LayoutDashboard",
-      path: "/doan-vien/dashboard",
-    },
-    ...DOANVIEN_SIDEBAR_ITEMS.map((item) => ({
-      ...item,
-      path: `/doan-vien${item.path}`,
-      children: item.children?.map((child) => ({
-        ...child,
-        path: `/doan-vien${child.path}`,
-      })),
+  [ROLES.DOANVIEN]: DOANVIEN_SIDEBAR_ITEMS.map((item) => ({
+    ...item,
+    path: `/doan-vien${item.path}`,
+    children: item.children?.map((child) => ({
+      ...child,
+      path: `/doan-vien${child.path}`,
     })),
-  ],
+  })),
 };
 
 /**

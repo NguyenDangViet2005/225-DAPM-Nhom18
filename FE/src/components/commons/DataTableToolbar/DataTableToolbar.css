@@ -82,7 +82,7 @@
     align-items: stretch;
     gap: 1rem;
   }
-  
+
   .common-toolbar-actions {
     flex-wrap: wrap;
     justify-content: space-between;
