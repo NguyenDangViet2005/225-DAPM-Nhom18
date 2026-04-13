@@ -61,10 +61,20 @@ CREATE TABLE TaiKhoan (
     trangThai BIT DEFAULT 1,
     ngayTao DATETIME, 
     idVaiTro CHAR(15),
-    idDV CHAR(15) UNIQUE,
+    idDV CHAR(15),
+    idKhoa CHAR(15), -- Cho role Đoàn khoa
+    idChiDoan CHAR(15), -- Cho role Bí thư Chi đoàn
     CONSTRAINT FK_TaiKhoan_VaiTro FOREIGN KEY (idVaiTro) REFERENCES VaiTro(idVaiTro),
-    CONSTRAINT FK_TaiKhoan_DoanVien FOREIGN KEY (idDV) REFERENCES DoanVien(idDV)
+    CONSTRAINT FK_TaiKhoan_DoanVien FOREIGN KEY (idDV) REFERENCES DoanVien(idDV),
+    CONSTRAINT FK_TaiKhoan_Khoa FOREIGN KEY (idKhoa) REFERENCES Khoa(idKhoa),
+    CONSTRAINT FK_TaiKhoan_ChiDoan FOREIGN KEY (idChiDoan) REFERENCES ChiDoan(idChiDoan)
 );
+GO
+
+-- Tạo Index unique cho idDV nhưng cho phép NHIỀU giá trị NULL (dành cho Admin/Khoa)
+-- SQL Server quy định: UNIQUE constraint chỉ cho phép 1 giá trị NULL. 
+-- Do đó phải dùng Filtered Index này thay thế.
+CREATE UNIQUE INDEX UIX_TaiKhoan_idDV ON TaiKhoan(idDV) WHERE idDV IS NOT NULL;
 GO
 
 CREATE TABLE SoDoan (
