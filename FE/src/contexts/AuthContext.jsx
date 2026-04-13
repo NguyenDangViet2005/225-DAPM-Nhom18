@@ -13,7 +13,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   // ── MOCK LOGIN TRONG QUÁ TRÌNH DEV ──────────────────────────
   // Để hiển thị Dashboard ngay lập tức, ta gán user mặc định từ mock data.
-  const [user, setUser] = useState(MOCK_USERS.khoa);
+  const [user, setUser] = useState(MOCK_USERS.bithu);
 
   const [isLoading, setIsLoading] = useState(true);
 
