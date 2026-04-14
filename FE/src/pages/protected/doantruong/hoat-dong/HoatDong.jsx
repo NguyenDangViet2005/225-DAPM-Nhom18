@@ -1,43 +1,49 @@
-import { useState, useMemo } from 'react';
-import { 
-  Search, 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  CheckCircle, 
+import { useState, useMemo } from "react";
+import {
+  Search,
+  Calendar,
+  MapPin,
+  Users,
+  Plus,
+  Edit,
+  Trash2,
+  CheckCircle,
   XCircle,
   Filter,
   BarChart,
   ClipboardCheck,
-  MoreHorizontal
-} from 'lucide-react';
-import { MOCK_HOAT_DONG, MOCK_DANG_KY_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
-import './HoatDong.css';
+  MoreHorizontal,
+} from "lucide-react";
+import {
+  MOCK_HOAT_DONG,
+  MOCK_DANG_KY_HOAT_DONG,
+  ACTIVITY_STATS,
+} from "@/data/mockHoatDong";
+import "./HoatDong.css";
 
 const HoatDong = () => {
-  const [activeTab, setActiveTab] = useState('activities'); // activities | registrations
-  const [searchTerm, setSearchTerm] = useState('');
-  const [hdFilter, setHdFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState("activities"); // activities | registrations
+  const [searchTerm, setSearchTerm] = useState("");
+  const [hdFilter, setHdFilter] = useState("all");
 
   // Logic lọc hoạt động
   const filteredActivities = useMemo(() => {
-    return MOCK_HOAT_DONG.filter(hd => {
-      const matchesSearch = hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           hd.donViToChuc.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = hdFilter === 'all' || hd.trangThaiHD === hdFilter;
+    return MOCK_HOAT_DONG.filter((hd) => {
+      const matchesSearch =
+        hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        hd.donViToChuc.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = hdFilter === "all" || hd.trangThaiHD === hdFilter;
       return matchesSearch && matchesFilter;
     });
   }, [searchTerm, hdFilter]);
 
   // Logic lọc đăng ký
   const filteredRegistrations = useMemo(() => {
-    return MOCK_DANG_KY_HOAT_DONG.filter(reg => {
-      const matchesSearch = reg.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           reg.idDV.includes(searchTerm) || 
-                           reg.tenHD.toLowerCase().includes(searchTerm.toLowerCase());
+    return MOCK_DANG_KY_HOAT_DONG.filter((reg) => {
+      const matchesSearch =
+        reg.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reg.idDV.includes(searchTerm) ||
+        reg.tenHD.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesSearch;
     });
   }, [searchTerm]);
@@ -48,11 +54,21 @@ const HoatDong = () => {
       <div className="hd-header">
         <h1 className="hd-title">Quản lý Hoạt động Đoàn</h1>
         <div className="hd-actions">
-          <button className="hd-update-btn" style={{ borderColor: '#004f9f', color: '#004f9f' }}>
+          <button
+            className="hd-update-btn"
+            style={{ borderColor: "#004f9f", color: "#004f9f" }}
+          >
             <BarChart size={18} />
             Báo cáo tổng kết
           </button>
-          <button className="hd-update-btn" style={{ backgroundColor: '#004f9f', borderColor: '#004f9f', color: '#fff' }}>
+          <button
+            className="hd-update-btn"
+            style={{
+              backgroundColor: "#004f9f",
+              borderColor: "#004f9f",
+              color: "#fff",
+            }}
+          >
             <Plus size={18} />
             Tạo hoạt động mới
           </button>
@@ -63,51 +79,84 @@ const HoatDong = () => {
       <div className="hd-stats">
         <div className="hd-stat-item">
           <span className="hd-stat-item__label">Tổng hoạt động</span>
-          <span className="hd-stat-item__value">{ACTIVITY_STATS.tongHoatDong}</span>
+          <span className="hd-stat-item__value">
+            {ACTIVITY_STATS.tongHoatDong}
+          </span>
         </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #15803d' }}>
+        <div
+          className="hd-stat-item"
+          style={{ borderLeft: "3px solid #15803d" }}
+        >
           <span className="hd-stat-item__label">Đang mở đăng ký</span>
           <span className="hd-stat-item__value">{ACTIVITY_STATS.dangMo}</span>
         </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #0369a1' }}>
+        <div
+          className="hd-stat-item"
+          style={{ borderLeft: "3px solid #0369a1" }}
+        >
           <span className="hd-stat-item__label">Sắp diễn ra</span>
-          <span className="hd-stat-item__value">{ACTIVITY_STATS.sapDienRa}</span>
+          <span className="hd-stat-item__value">
+            {ACTIVITY_STATS.sapDienRa}
+          </span>
         </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #b45309' }}>
+        <div
+          className="hd-stat-item"
+          style={{ borderLeft: "3px solid #b45309" }}
+        >
           <span className="hd-stat-item__label">Đăng ký chờ duyệt</span>
-          <span className="hd-stat-item__value">{ACTIVITY_STATS.choDuyetDK}</span>
+          <span className="hd-stat-item__value">
+            {ACTIVITY_STATS.choDuyetDK}
+          </span>
         </div>
       </div>
 
       {/* ── Tabs Navigation ─────────────────────────────── */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #eef2f6', marginBottom: '1rem' }}>
-        <button 
-          onClick={() => setActiveTab('activities')}
-          style={{ 
-            padding: '1rem 1.5rem', 
-            background: 'none', 
-            border: 'none', 
-            borderBottom: activeTab === 'activities' ? '3px solid #004f9f' : '3px solid transparent',
+      <div
+        style={{
+          display: "flex",
+          borderBottom: "1px solid #eef2f6",
+          marginBottom: "1rem",
+        }}
+      >
+        <button
+          onClick={() => setActiveTab("activities")}
+          style={{
+            padding: "1rem 1.5rem",
+            background: "none",
+            border: "none",
+            borderBottom:
+              activeTab === "activities"
+                ? "3px solid #004f9f"
+                : "3px solid transparent",
             fontWeight: 700,
-            color: activeTab === 'activities' ? '#004f9f' : '#64748b',
-            cursor: 'pointer'
+            color: activeTab === "activities" ? "#004f9f" : "#64748b",
+            cursor: "pointer",
           }}
         >
           Danh sách Hoạt động
         </button>
-        <button 
-          onClick={() => setActiveTab('registrations')}
-          style={{ 
-            padding: '1rem 1.5rem', 
-            background: 'none', 
-            border: 'none', 
-            borderBottom: activeTab === 'registrations' ? '3px solid #004f9f' : '3px solid transparent',
+        <button
+          onClick={() => setActiveTab("registrations")}
+          style={{
+            padding: "1rem 1.5rem",
+            background: "none",
+            border: "none",
+            borderBottom:
+              activeTab === "registrations"
+                ? "3px solid #004f9f"
+                : "3px solid transparent",
             fontWeight: 700,
-            color: activeTab === 'registrations' ? '#004f9f' : '#64748b',
-            cursor: 'pointer'
+            color: activeTab === "registrations" ? "#004f9f" : "#64748b",
+            cursor: "pointer",
           }}
         >
-          Duyệt đăng ký ({MOCK_DANG_KY_HOAT_DONG.filter(r => r.trangThaiDuyet === 'Chờ duyệt').length})
+          Duyệt đăng ký (
+          {
+            MOCK_DANG_KY_HOAT_DONG.filter(
+              (r) => r.trangThaiDuyet === "Chờ duyệt",
+            ).length
+          }
+          )
         </button>
       </div>
 
@@ -115,16 +164,20 @@ const HoatDong = () => {
       <div className="hd-toolbar">
         <div className="hd-search-wrap">
           <Search size={18} />
-          <input 
-            type="text" 
-            className="hd-search-input" 
-            placeholder={activeTab === 'activities' ? "Tìm theo tên hoạt động, đơn vị tổ chức..." : "Tìm theo tên đoàn viên, MSSV, hoạt động..."} 
+          <input
+            type="text"
+            className="hd-search-input"
+            placeholder={
+              activeTab === "activities"
+                ? "Tìm theo tên hoạt động, đơn vị tổ chức..."
+                : "Tìm theo tên đoàn viên, MSSV, hoạt động..."
+            }
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        {activeTab === 'activities' && (
-          <select 
+        {activeTab === "activities" && (
+          <select
             className="hd-filter-select"
             value={hdFilter}
             onChange={(e) => setHdFilter(e.target.value)}
@@ -143,7 +196,7 @@ const HoatDong = () => {
 
       {/* ── Table Area ────────────────────────────────────── */}
       <div className="hd-card">
-        {activeTab === 'activities' ? (
+        {activeTab === "activities" ? (
           <table className="hd-table">
             <thead>
               <tr>
@@ -156,7 +209,7 @@ const HoatDong = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredActivities.map(hd => (
+              {filteredActivities.map((hd) => (
                 <tr key={hd.idHD}>
                   <td className="hd-name-cell">
                     <span className="hd-activity-title">{hd.tenHD}</span>
@@ -166,40 +219,60 @@ const HoatDong = () => {
                   </td>
                   <td>
                     <div className="hd-activity-info">
-                      <Calendar size={14} /> {new Date(hd.ngayToChuc).toLocaleDateString('vi-VN')}
+                      <Calendar size={14} />{" "}
+                      {new Date(hd.ngayToChuc).toLocaleDateString("vi-VN")}
                     </div>
                     <div className="hd-activity-info">
                       <MapPin size={14} /> {hd.diaDiem}
                     </div>
                   </td>
                   <td>
-                    <div className="hd-activity-info" style={{ justifyContent: 'space-between' }}>
-                      <span>{hd.soLuongDaDK}/{hd.soLuongMax}</span>
+                    <div
+                      className="hd-activity-info"
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <span>
+                        {hd.soLuongDaDK}/{hd.soLuongMax}
+                      </span>
                     </div>
                     <div className="hd-progress-wrap">
-                      <div 
-                        className="hd-progress-bar" 
-                        style={{ width: `${(hd.soLuongDaDK / hd.soLuongMax) * 100}%` }}
+                      <div
+                        className="hd-progress-bar"
+                        style={{
+                          width: `${(hd.soLuongDaDK / hd.soLuongMax) * 100}%`,
+                        }}
                       />
                     </div>
                   </td>
-                  <td style={{ fontWeight: 700, color: '#004f9f' }}>
+                  <td style={{ fontWeight: 700, color: "#004f9f" }}>
                     {hd.diemHD}
                   </td>
                   <td>
-                    <span className={`hd-badge ${
-                      hd.trangThaiHD === 'Đang mở đăng ký' ? 'hd-badge--open' :
-                      hd.trangThaiHD === 'Đang diễn ra' ? 'hd-badge--ongoing' :
-                      hd.trangThaiHD === 'Đã kết thúc' ? 'hd-badge--ended' : 'hd-badge--closed'
-                    }`}>
+                    <span
+                      className={`hd-badge ${
+                        hd.trangThaiHD === "Đang mở đăng ký"
+                          ? "hd-badge--open"
+                          : hd.trangThaiHD === "Đang diễn ra"
+                            ? "hd-badge--ongoing"
+                            : hd.trangThaiHD === "Đã kết thúc"
+                              ? "hd-badge--ended"
+                              : "hd-badge--closed"
+                      }`}
+                    >
                       {hd.trangThaiHD}
                     </span>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button className="hd-update-btn" title="Chỉnh sửa"><Edit size={16} /></button>
-                      <button className="hd-update-btn" title="Xóa"><Trash2 size={16} /></button>
-                      <button className="hd-update-btn" title="Khác"><MoreHorizontal size={16} /></button>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button className="hd-update-btn" title="Chỉnh sửa">
+                        <Edit size={16} />
+                      </button>
+                      <button className="hd-update-btn" title="Xóa">
+                        <Trash2 size={16} />
+                      </button>
+                      <button className="hd-update-btn" title="Khác">
+                        <MoreHorizontal size={16} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -221,23 +294,46 @@ const HoatDong = () => {
             <tbody>
               {filteredRegistrations.map((reg, idx) => (
                 <tr key={`${reg.idDV}-${reg.idHD}-${idx}`}>
-                  <td style={{ fontWeight: 600, color: '#004f9f' }}>{reg.idDV}</td>
+                  <td style={{ fontWeight: 600, color: "#004f9f" }}>
+                    {reg.idDV}
+                  </td>
                   <td>{reg.hoTen}</td>
                   <td style={{ fontWeight: 600 }}>{reg.tenHD}</td>
-                  <td>{new Date(reg.ngayDangKi).toLocaleDateString('vi-VN')}</td>
                   <td>
-                    <span className={`hd-badge ${
-                      reg.trangThaiDuyet === 'Đã duyệt' ? 'hd-badge--open' :
-                      reg.trangThaiDuyet === 'Chờ duyệt' ? 'hd-badge--ongoing' : 'hd-badge--closed'
-                    }`}>
-                      {reg.trangThaiDuyet}
+                    {new Date(reg.ngayDangKi).toLocaleDateString("vi-VN")}
+                  </td>
+                  <td>
+                    <span
+                      className={`hd-badge ${
+                        reg.trangThaiDuyet?.trim() === "Đã duyệt"
+                          ? "hd-badge--approved"
+                          : reg.trangThaiDuyet?.trim() === "Chờ duyệt"
+                            ? "hd-badge--pending"
+                            : "hd-badge--rejected"
+                      }`}
+                    >
+                      {reg.trangThaiDuyet?.trim()}
                     </span>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button className="hd-update-btn" style={{ color: '#15803d' }} title="Duyệt"><CheckCircle size={18} /></button>
-                      <button className="hd-update-btn" style={{ color: '#b91c1c' }} title="Từ chối"><XCircle size={18} /></button>
-                      <button className="hd-update-btn" title="Lý do"><ClipboardCheck size={18} /></button>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button
+                        className="hd-update-btn"
+                        style={{ color: "#15803d" }}
+                        title="Duyệt"
+                      >
+                        <CheckCircle size={18} />
+                      </button>
+                      <button
+                        className="hd-update-btn"
+                        style={{ color: "#b91c1c" }}
+                        title="Từ chối"
+                      >
+                        <XCircle size={18} />
+                      </button>
+                      <button className="hd-update-btn" title="Lý do">
+                        <ClipboardCheck size={18} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -245,8 +341,13 @@ const HoatDong = () => {
             </tbody>
           </table>
         )}
-        {(activeTab === 'activities' ? filteredActivities : filteredRegistrations).length === 0 && (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+        {(activeTab === "activities"
+          ? filteredActivities
+          : filteredRegistrations
+        ).length === 0 && (
+          <div
+            style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}
+          >
             Không tìm thấy dữ liệu phù hợp
           </div>
         )}

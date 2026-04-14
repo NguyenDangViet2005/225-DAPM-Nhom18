@@ -1,83 +1,222 @@
-import { useState, useMemo } from 'react';
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import { useState, useEffect } from "react";
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Plus,
+  Edit,
+  Trash2,
   BarChart,
-} from 'lucide-react';
-import { MOCK_HOAT_DONG, MOCK_DANG_KY_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
-import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
-import RegistrationListModal from '@/components/commons/modals/DanhSachDoanVienDangKiModal';
-import './HoatDong.css';
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import hoatdongAPI from "@/apis/hoatdong.api";
+import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
+import RegistrationListModal from "@/components/commons/modals/DanhSachDoanVienDangKiModal";
+import HoatDongModal from "@/components/commons/modals/HoatDongModal";
+import DeleteConfirmModal from "@/components/commons/modals/DeleteConfirmModal";
+import "./HoatDong.css";
+
+const PAGE_SIZE = 10;
 
 const HoatDongQuanLy = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [hdFilter, setHdFilter] = useState('all');
-  
-  // State for view registration list modal
+  const [activities, setActivities] = useState([]);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, totalPages: 1, page: 1, limit: PAGE_SIZE });
+
+  // Search & Filter
+  const [searchTerm, setSearchTerm] = useState("");
+  const [hdFilter, setHdFilter] = useState("all");
+
+  // Modals
   const [showRegModal, setShowRegModal] = useState(false);
   const [selectedHD, setSelectedHD] = useState(null);
+  const [registrations, setRegistrations] = useState([]);
+  const [isLoadingRegistrations, setIsLoadingRegistrations] = useState(false);
 
-  const filteredActivities = useMemo(() => {
-    return MOCK_HOAT_DONG.filter(hd => {
-      const matchesSearch = hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           hd.donViToChuc.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = hdFilter === 'all' || hd.trangThaiHD === hdFilter;
-      return matchesSearch && matchesFilter;
-    });
-  }, [searchTerm, hdFilter]);
+  const [showHDModal, setShowHDModal] = useState(false);
+  const [editingActivity, setEditingActivity] = useState(null);
+  const [isSavingActivity, setIsSavingActivity] = useState(false);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingActivity, setDeletingActivity] = useState(null);
+  const [isDeletingActivity, setIsDeletingActivity] = useState(false);
+
+  useEffect(() => {
+    loadActivities(currentPage);
+  }, [currentPage]);
+
+  const loadActivities = async (page = 1) => {
+    try {
+      setIsLoadingActivities(true);
+      setError(null);
+      const result = await hoatdongAPI.getAllSchoolActivities({ page, limit: PAGE_SIZE });
+      if (result.success) {
+        setActivities(result.data || []);
+        if (result.pagination) setPagination(result.pagination);
+      } else {
+        setError(result.message || "Không thể tải danh sách hoạt động");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Lỗi khi tải hoạt động");
+    } finally {
+      setIsLoadingActivities(false);
+    }
+  };
+
+  // Client-side filter within current page data
+  const filteredActivities = activities.filter((hd) => {
+    const matchesSearch =
+      hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hd.donViToChuc?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = hdFilter === "all" || hd.trangThaiHD?.trim() === hdFilter;
+    return matchesSearch && matchesFilter;
+  });
 
   const filterOptions = [
-    { value: 'all', label: 'Tất cả trạng thái' },
-    { value: 'Đang mở đăng ký', label: 'Đang mở đăng ký' },
-    { value: 'Đang diễn ra', label: 'Đang diễn ra' },
-    { value: 'Đã kết thúc', label: 'Đã kết thúc' }
+    { value: "all", label: "Tất cả trạng thái" },
+    { value: "Đã duyệt", label: "Đã duyệt" },
+    { value: "Chưa duyệt", label: "Chưa duyệt" },
   ];
 
-  // Logic lấy danh sách ĐOÀN VIÊN ĐÃ DUYỆT cho hoạt động được chọn
-  const registrations = useMemo(() => {
-    if (!selectedHD) return [];
-    return MOCK_DANG_KY_HOAT_DONG.filter(reg => reg.idHD === selectedHD.idHD && reg.trangThaiDuyet === 'Đã duyệt');
-  }, [selectedHD]);
+  // Only school-level activities (no idKhoa, no idChiDoan) can be edited/deleted
+  const isSchoolLevel = (hd) => !hd.idKhoa && !hd.idChiDoan;
+
+  const handleOpenCreateModal = () => {
+    setEditingActivity(null);
+    setShowHDModal(true);
+  };
+
+  const handleOpenEditModal = (activity) => {
+    setEditingActivity(activity);
+    setShowHDModal(true);
+  };
+
+  const handleSaveActivity = async (formData) => {
+    try {
+      setIsSavingActivity(true);
+      const result = editingActivity
+        ? await hoatdongAPI.updateActivity(editingActivity.idHD, formData)
+        : await hoatdongAPI.createActivity(formData);
+
+      if (result.success) {
+        await loadActivities(currentPage);
+        setShowHDModal(false);
+        setEditingActivity(null);
+      } else {
+        setError(result.message || "Không thể lưu hoạt động");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Lỗi khi lưu hoạt động");
+    } finally {
+      setIsSavingActivity(false);
+    }
+  };
+
+  const handleDeleteActivity = (activity) => {
+    setDeletingActivity(activity);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setIsDeletingActivity(true);
+      const result = await hoatdongAPI.deleteActivity(deletingActivity.idHD);
+      if (result.success) {
+        const newPage = activities.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
+        setCurrentPage(newPage);
+        await loadActivities(newPage);
+        setShowDeleteModal(false);
+        setDeletingActivity(null);
+      } else {
+        setError(result.message || "Không thể xóa hoạt động");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Lỗi khi xóa hoạt động");
+    } finally {
+      setIsDeletingActivity(false);
+    }
+  };
+
+  const handleViewRegistrations = (activity) => {
+    setSelectedHD(activity);
+    setShowRegModal(true);
+    loadRegistrations(activity.idHD);
+  };
+
+  const loadRegistrations = async (idHD) => {
+    try {
+      setIsLoadingRegistrations(true);
+      const result = await hoatdongAPI.getActivityRegistrations(idHD);
+      if (result.success) {
+        setRegistrations(result.data || []);
+      } else {
+        setError(result.message || "Không thể tải danh sách đăng ký");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Lỗi khi tải đăng ký");
+    } finally {
+      setIsLoadingRegistrations(false);
+    }
+  };
 
   return (
     <div className="hd-container">
+      {/* Header */}
       <div className="hd-header">
         <h1 className="hd-title">Quản lý Hoạt động</h1>
         <div className="hd-actions">
-          <button className="hd-update-btn" style={{ borderColor: '#004f9f', color: '#004f9f' }}>
-            <BarChart size={18} />
-            Thống kê chung
+          <button className="hd-update-btn" style={{ borderColor: "#004f9f", color: "#004f9f" }}>
+            <BarChart size={18} /> Thống kê chung
           </button>
-          <button className="hd-update-btn" style={{ backgroundColor: '#004f9f', borderColor: '#004f9f', color: '#fff' }}>
-            <Plus size={18} />
-            Tạo hoạt động mới
+          <button
+            className="hd-update-btn"
+            style={{ backgroundColor: "#004f9f", borderColor: "#004f9f", color: "#fff" }}
+            onClick={handleOpenCreateModal}
+          >
+            <Plus size={18} /> Tạo hoạt động mới
           </button>
         </div>
       </div>
 
+      {/* Error banner */}
+      {error && (
+        <div style={{ padding: "12px 16px", backgroundColor: "#fee2e2", color: "#b91c1c", borderRadius: "6px", marginBottom: "16px" }}>
+          {error}
+        </div>
+      )}
+
+      {/* Stats */}
       <div className="hd-stats">
         <div className="hd-stat-item">
           <span className="hd-stat-item__label">Tổng hoạt động</span>
-          <span className="hd-stat-item__value">{ACTIVITY_STATS.tongHoatDong}</span>
+          <span className="hd-stat-item__value">{pagination.total}</span>
         </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #15803d' }}>
+        <div className="hd-stat-item" style={{ borderLeft: "3px solid #15803d" }}>
+          <span className="hd-stat-item__label">Đã duyệt</span>
+          <span className="hd-stat-item__value">
+            {activities.filter((a) => a.trangThaiHD?.trim() === "Đã duyệt").length}
+          </span>
+        </div>
+        <div className="hd-stat-item" style={{ borderLeft: "3px solid #0369a1" }}>
+          <span className="hd-stat-item__label">Chờ duyệt</span>
+          <span className="hd-stat-item__value">
+            {activities.filter((a) => a.trangThaiHD?.trim() === "Chưa duyệt").length}
+          </span>
+        </div>
+        <div className="hd-stat-item" style={{ borderLeft: "3px solid #b45309" }}>
           <span className="hd-stat-item__label">Đang mở đăng ký</span>
-          <span className="hd-stat-item__value">{ACTIVITY_STATS.dangMo}</span>
-        </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #0369a1' }}>
-          <span className="hd-stat-item__label">Sắp diễn ra</span>
-          <span className="hd-stat-item__value">{ACTIVITY_STATS.sapDienRa}</span>
-        </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #b45309' }}>
-          <span className="hd-stat-item__label">Hoàn thành tháng này</span>
-          <span className="hd-stat-item__value">5</span>
+          <span className="hd-stat-item__value">
+            {activities.filter((a) => a.trangThai?.trim() === "Đang mở").length}
+          </span>
         </div>
       </div>
 
+      {/* Search & Filter Toolbar */}
       <DataTableToolbar
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
@@ -87,76 +226,139 @@ const HoatDongQuanLy = () => {
         filterOptions={filterOptions}
       />
 
+      {/* Table Card */}
       <div className="hd-card">
-        <table className="hd-table">
-          <thead>
-            <tr>
-              <th>Thông tin hoạt động</th>
-              <th>Thời gian & Địa điểm</th>
-              <th>Số lượng đăng ký</th>
-              <th>Trạng thái</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredActivities.map(hd => (
-              <tr key={hd.idHD}>
-                <td className="hd-name-cell">
-                  <span className="hd-activity-title">{hd.tenHD}</span>
-                  <span className="hd-activity-info">
-                    <Users size={12} /> {hd.donViToChuc}
-                  </span>
-                </td>
-                <td>
-                  <div className="hd-activity-info">
-                    <Calendar size={14} /> {new Date(hd.ngayToChuc).toLocaleDateString('vi-VN')}
-                  </div>
-                  <div className="hd-activity-info">
-                    <MapPin size={14} /> {hd.diaDiem}
-                  </div>
-                </td>
-                <td>
-                  <div className="hd-activity-info" style={{ justifyContent: 'space-between', cursor: 'pointer', color: '#004f9f', fontWeight: 700 }} 
-                       onClick={() => { setSelectedHD(hd); setShowRegModal(true); }}>
-                    <span>{hd.soLuongDaDK}/{hd.soLuongMax} (Xem)</span>
-                  </div>
-                  <div className="hd-progress-wrap">
-                    <div 
-                      className="hd-progress-bar" 
-                      style={{ width: `${(hd.soLuongDaDK / hd.soLuongMax) * 100}%` }}
-                    />
-                  </div>
-                </td>
-                <td>
-                  <span className={`hd-badge ${
-                    hd.trangThaiHD === 'Đang mở đăng ký' ? 'hd-badge--open' :
-                    hd.trangThaiHD === 'Đang diễn ra' ? 'hd-badge--ongoing' :
-                    hd.trangThaiHD === 'Đã kết thúc' ? 'hd-badge--ended' : 'hd-badge--closed'
-                  }`}>
-                    {hd.trangThaiHD}
-                  </span>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="hd-update-btn" title="Danh sách đăng ký" onClick={() => { setSelectedHD(hd); setShowRegModal(true); }}>
-                      <Users size={16} />
-                    </button>
-                    <button className="hd-update-btn" title="Chỉnh sửa"><Edit size={16} /></button>
-                    <button className="hd-update-btn" title="Xóa"><Trash2 size={16} /></button>
-                  </div>
-                </td>
+        {isLoadingActivities ? (
+          <div style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}>
+            Đang tải hoạt động...
+          </div>
+        ) : filteredActivities.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}>
+            Không có hoạt động nào
+          </div>
+        ) : (
+          <table className="hd-table">
+            <thead>
+              <tr>
+                <th>Thông tin hoạt động</th>
+                <th>Thời gian & Địa điểm</th>
+                <th>Số lượng đăng ký</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredActivities.map((hd) => (
+                <tr key={hd.idHD}>
+                  <td className="hd-name-cell">
+                    <span className="hd-activity-title">{hd.tenHD}</span>
+                    <span className="hd-activity-info">
+                      <Users size={12} /> {hd.donViToChuc}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="hd-activity-info">
+                      <Calendar size={14} /> {new Date(hd.ngayToChuc).toLocaleDateString("vi-VN")}
+                    </div>
+                    <div className="hd-activity-info">
+                      <MapPin size={14} /> {hd.diaDiem}
+                    </div>
+                  </td>
+                  <td>
+                    <div
+                      className="hd-activity-info"
+                      style={{ justifyContent: "space-between", cursor: "pointer", color: "#004f9f", fontWeight: 700 }}
+                      onClick={() => handleViewRegistrations(hd)}
+                    >
+                      <span>{hd.soLuongDaDK || 0}/{hd.soLuongMax} (Xem)</span>
+                    </div>
+                    <div className="hd-progress-wrap">
+                      <div
+                        className="hd-progress-bar"
+                        style={{ width: `${((hd.soLuongDaDK || 0) / hd.soLuongMax) * 100}%` }}
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`hd-badge ${hd.trangThaiHD?.trim() === "Đã duyệt" ? "hd-badge--activity-approved" : "hd-badge--activity-unapproved"}`}>
+                      {hd.trangThaiHD?.trim()}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button className="hd-update-btn" title="Danh sách đăng ký" onClick={() => handleViewRegistrations(hd)}>
+                        <Users size={16} />
+                      </button>
+                      {/* Chỉ hiện Edit/Delete với hoạt động cấp Đoàn Trường */}
+                      {isSchoolLevel(hd) && (
+                        <>
+                          <button className="hd-update-btn" title="Chỉnh sửa" onClick={() => handleOpenEditModal(hd)}>
+                            <Edit size={16} />
+                          </button>
+                          <button className="hd-update-btn" title="Xóa" onClick={() => handleDeleteActivity(hd)}>
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px", padding: "16px", borderTop: "1px solid #e2e8f0" }}>
+            <button
+              className="hd-update-btn"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1 || isLoadingActivities}
+              title="Trang trước"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <span style={{ fontSize: "14px", color: "#4a5568" }}>
+              Trang <strong>{currentPage}</strong> / {pagination.totalPages}
+              <span style={{ marginLeft: "8px", color: "#94a3b8" }}>({pagination.total} hoạt động)</span>
+            </span>
+            <button
+              className="hd-update-btn"
+              onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
+              disabled={currentPage === pagination.totalPages || isLoadingActivities}
+              title="Trang sau"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Modals */}
+      <HoatDongModal
+        show={showHDModal}
+        onClose={() => { setShowHDModal(false); setEditingActivity(null); }}
+        onSave={handleSaveActivity}
+        activity={editingActivity}
+        isLoading={isSavingActivity}
+      />
+
+      <DeleteConfirmModal
+        show={showDeleteModal}
+        onClose={() => { setShowDeleteModal(false); setDeletingActivity(null); }}
+        onConfirm={handleConfirmDelete}
+        activityName={deletingActivity?.tenHD}
+        isLoading={isDeletingActivity}
+      />
 
       <RegistrationListModal
         show={showRegModal}
-        onClose={() => setShowRegModal(false)}
+        onClose={() => { setShowRegModal(false); setSelectedHD(null); setRegistrations([]); }}
         activity={selectedHD}
         registrations={registrations}
-        title="Danh sách Đăng ký đã Duyệt"
+        isLoading={isLoadingRegistrations}
+        title="Danh sách Đăng ký"
       />
     </div>
   );

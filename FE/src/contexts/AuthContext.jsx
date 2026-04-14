@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { ROLE_PERMISSIONS } from "@/constants/permissions";
 import { MOCK_USERS } from "@/data/mockUsers";
-import { logoutAPI } from "@/services/api";
+import { logoutAPI } from "@/apis/auth.api";
 
 const AuthContext = createContext(null);
 

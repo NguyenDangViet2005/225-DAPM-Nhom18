@@ -1,12 +1,12 @@
 export const getRoleBasedRedirectPath = (userType, chucVu) => {
   switch (userType) {
-    case "DOAN_TRUONG":
+    case "DOANTRUONG":
       return "/doan-truong/dashboard";
 
-    case "DOAN_KHOA":
+    case "DOANKHOA":
       return "/doan-khoa/dashboard";
 
-    case "DOAN_VIEN":
+    case "DOANVIEN":
       if (chucVu === "Bí thư Chi đoàn") {
         return "/bi-thu/dashboard";
       }

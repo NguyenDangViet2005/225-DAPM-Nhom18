@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLES } from "@/constants/roles";
-import { loginAPI } from "@/services/api";
+import { loginAPI } from "@/apis/auth.api";
 import { getRoleBasedRedirectPath } from "@/utils/getRoleBasedRedirectPath";
 
 const LoginForm = ({ onForgotPassword }) => {

@@ -154,6 +154,24 @@ HoatDongDoan.belongsToMany(DoanVien, {
 });
 
 /**
+ * 10a. DoanVienDangKi - DoanVien (N:1)
+ * DoanVienDangKi belongs to DoanVien
+ */
+DoanVienDangKi.belongsTo(DoanVien, {
+  foreignKey: "idDV",
+  as: "doanVien",
+});
+
+/**
+ * 10b. DoanVienDangKi - HoatDongDoan (N:1)
+ * DoanVienDangKi belongs to HoatDongDoan
+ */
+DoanVienDangKi.belongsTo(HoatDongDoan, {
+  foreignKey: "idHD",
+  as: "hoatDong",
+});
+
+/**
  * 11. DoanVien - DoanPhi (1:N)
  * One DoanVien has many DoanPhis
  */
