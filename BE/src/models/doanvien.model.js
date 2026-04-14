@@ -5,12 +5,12 @@ const DoanVien = sequelize.define(
   "DoanVien",
   {
     idDV: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     hoTen: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     ngaySinh: {
@@ -18,24 +18,24 @@ const DoanVien = sequelize.define(
       allowNull: true,
     },
     gioiTinh: {
-      type: DataTypes.NVARCHAR(10),
+      type: DataTypes.STRING(10),
       allowNull: true,
     },
     SDT: {
-      type: DataTypes.VARCHAR(11),
+      type: DataTypes.STRING(11),
       allowNull: true,
     },
     email: {
-      type: DataTypes.VARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
       unique: true,
     },
     diaChi: {
-      type: DataTypes.NVARCHAR(200),
+      type: DataTypes.STRING(200),
       allowNull: true,
     },
     idChiDoan: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "ChiDoan",
@@ -47,7 +47,7 @@ const DoanVien = sequelize.define(
       allowNull: true,
     },
     noiChuyenDen: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: true,
     },
     ngayChuyenDen: {
@@ -55,7 +55,7 @@ const DoanVien = sequelize.define(
       allowNull: true,
     },
     trangThaiSH: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     diemHD: {
@@ -63,7 +63,7 @@ const DoanVien = sequelize.define(
       allowNull: true,
     },
     chucVu: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: true,
     },
   },

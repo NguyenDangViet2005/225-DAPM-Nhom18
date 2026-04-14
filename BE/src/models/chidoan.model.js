@@ -5,16 +5,16 @@ const ChiDoan = sequelize.define(
   "ChiDoan",
   {
     idChiDoan: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     tenChiDoan: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     nienKhoa: {
-      type: DataTypes.VARCHAR(20),
+      type: DataTypes.STRING(20),
       allowNull: true,
     },
     siSo: {
@@ -22,7 +22,7 @@ const ChiDoan = sequelize.define(
       allowNull: true,
     },
     idKhoa: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "Khoa",

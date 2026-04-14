@@ -5,16 +5,16 @@ const HoatDongDoan = sequelize.define(
   "HoatDongDoan",
   {
     idHD: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     tenHD: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     moTa: {
-      type: DataTypes.NVARCHAR(500),
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
     ngayToChuc: {
@@ -22,7 +22,7 @@ const HoatDongDoan = sequelize.define(
       allowNull: true,
     },
     diaDiem: {
-      type: DataTypes.NVARCHAR(200),
+      type: DataTypes.STRING(200),
       allowNull: true,
     },
     soLuongMax: {
@@ -34,15 +34,15 @@ const HoatDongDoan = sequelize.define(
       allowNull: true,
     },
     trangThai: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     trangThaiHD: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     donViToChuc: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     diemHD: {
@@ -50,7 +50,7 @@ const HoatDongDoan = sequelize.define(
       allowNull: true,
     },
     idKhoa: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "Khoa",
@@ -58,7 +58,7 @@ const HoatDongDoan = sequelize.define(
       },
     },
     idChiDoan: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "ChiDoan",

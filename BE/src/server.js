@@ -7,7 +7,13 @@ const app = express();
 
 // MIDDLEWARES
 app.use(cors());
-app.use(express.json());
+
+// Parse JSON requests
+app.use(
+  express.json({
+    type: ["application/json", "text/plain"],
+  }),
+);
 app.use(express.urlencoded({ extended: true }));
 
 // ROUTES
@@ -15,8 +21,6 @@ app.use("/api", require("./routes"));
 
 // ERROR HANDLER MIDDLEWARE
 app.use((err, req, res, next) => {
-  console.error("❌ Error:", err.stack);
-
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
@@ -33,12 +37,8 @@ const startServer = async () => {
     await connectDB();
 
     // Start listening
-    app.listen(PORT, () => {
-      console.log(`✅ Server running on port ${PORT}`);
-      console.log(`✅ Environment: ${process.env.NODE_ENV || "development"}`);
-    });
+    app.listen(PORT, () => {});
   } catch (error) {
-    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 };

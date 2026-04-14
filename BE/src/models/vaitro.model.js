@@ -5,12 +5,12 @@ const VaiTro = sequelize.define(
   "VaiTro",
   {
     idVaiTro: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     tenVaiTro: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
   },

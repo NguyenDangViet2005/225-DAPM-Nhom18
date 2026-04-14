@@ -5,7 +5,7 @@ const DoanVienDangKi = sequelize.define(
   "DoanVienDangKi",
   {
     idDV: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       references: {
         model: "DoanVien",
@@ -13,7 +13,7 @@ const DoanVienDangKi = sequelize.define(
       },
     },
     idHD: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       references: {
         model: "HoatDongDoan",
@@ -25,11 +25,11 @@ const DoanVienDangKi = sequelize.define(
       allowNull: true,
     },
     trangThaiDuyet: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     lyDoTuChoi: {
-      type: DataTypes.NVARCHAR(500),
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
   },

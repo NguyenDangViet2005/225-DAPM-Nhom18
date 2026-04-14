@@ -5,12 +5,12 @@ const DoanPhi = sequelize.define(
   "DoanPhi",
   {
     idDoanPhi: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     idDV: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "DoanVien",
@@ -18,7 +18,7 @@ const DoanPhi = sequelize.define(
       },
     },
     trangThai: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     ngayDong: {
@@ -26,7 +26,7 @@ const DoanPhi = sequelize.define(
       allowNull: true,
     },
     idPhieuThu: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "PhieuThuDoanPhi",
@@ -34,7 +34,7 @@ const DoanPhi = sequelize.define(
       },
     },
     idMucDP: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "MucDoanPhi",

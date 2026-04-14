@@ -5,7 +5,7 @@ const SoDoan = sequelize.define(
   "SoDoan",
   {
     idSoDoan: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
@@ -23,11 +23,11 @@ const SoDoan = sequelize.define(
       allowNull: true,
     },
     noiCap: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: true,
     },
     trangThai: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
     ngayRutSo: {

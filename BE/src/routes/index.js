@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+// Import routes
+const taiKhoanRoutes = require("./auth.routes");
+
 // Health check route
 router.get("/health", (req, res) => {
   return res.status(200).json({
@@ -9,5 +12,8 @@ router.get("/health", (req, res) => {
     timestamp: new Date(),
   });
 });
+
+// Auth routes
+router.use("/auth", taiKhoanRoutes);
 
 module.exports = router;

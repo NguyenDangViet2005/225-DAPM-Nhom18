@@ -5,16 +5,16 @@ const TaiKhoan = sequelize.define(
   "TaiKhoan",
   {
     idUser: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     tenNguoiDung: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     matKhau: {
-      type: DataTypes.NVARCHAR(100),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     trangThai: {
@@ -26,7 +26,7 @@ const TaiKhoan = sequelize.define(
       allowNull: true,
     },
     idVaiTro: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "VaiTro",
@@ -34,7 +34,7 @@ const TaiKhoan = sequelize.define(
       },
     },
     idDV: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "DoanVien",
@@ -42,7 +42,7 @@ const TaiKhoan = sequelize.define(
       },
     },
     idKhoa: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "Khoa",

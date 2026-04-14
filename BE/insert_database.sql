@@ -29,54 +29,54 @@ INSERT INTO ChiDoan (idChiDoan, tenChiDoan, nienKhoa, siSo, idKhoa) VALUES
 ('CD010', N'Chi đoàn 23D3', '2023-2027', 4, 'KHOA002');
 GO
 
--- 2. Chèn Đoàn viên (40 người)
+-- 2. Chèn Đoàn viên (40 người) - Người thứ nhất mỗi chi đoàn là Bí thư
 INSERT INTO DoanVien (idDV, hoTen, ngaySinh, gioiTinh, SDT, email, diaChi, idChiDoan, ngayVaoDoan, trangThaiSH, diemHD, chucVu) VALUES
--- CD001
-('23115053122201', N'Nguyễn Văn An', '2005-01-15', N'Nam', '0901234501', 'an01@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 85, NULL),
-('23115053122202', N'Trần Thị Bình', '2005-03-20', N'Nữ', '0901234502', 'binh02@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 90, N'Bí thư Chi đoàn'),
+-- CD001 - Người 201 là Bí thư
+('23115053122201', N'Nguyễn Văn An', '2005-01-15', N'Nam', '0901234501', 'an01@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 85, N'Bí thư Chi đoàn'),
+('23115053122202', N'Trần Thị Bình', '2005-03-20', N'Nữ', '0901234502', 'binh02@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 90, NULL),
 ('23115053122203', N'Lê Hoàng Cường', '2005-05-10', N'Nam', '0901234503', 'cuong03@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 78, NULL),
 ('23115053122204', N'Phạm Thị Dung', '2005-07-25', N'Nữ', '0901234504', 'dung04@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 92, NULL),
--- CD002
+-- CD002 - Người 205 là Bí thư
 ('23115053122205', N'Hoàng Văn Em', '2005-02-14', N'Nam', '0901234505', 'em05@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2021-09-15', N'Đang sinh hoạt', 88, N'Bí thư Chi đoàn'),
 ('23115053122206', N'Võ Thị Phương', '2005-01-20', N'Nữ', '0901234506', 'phuong06@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2022-09-15', N'Đang sinh hoạt', 86, NULL),
 ('23115053122207', N'Đặng Văn Giang', '2005-03-15', N'Nam', '0901234507', 'giang07@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2022-09-15', N'Đang sinh hoạt', 91, NULL),
 ('23115053122208', N'Bùi Thị Hà', '2005-05-22', N'Nữ', '0901234508', 'ha08@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2022-09-15', N'Đang sinh hoạt', 84, NULL),
--- CD003
+-- CD003 - Người 209 là Bí thư
 ('23115053122209', N'Trương Văn Ích', '2005-07-30', N'Nam', '0901234509', 'ich09@student.ute.udn.vn', N'Huế', 'CD003', '2022-09-15', N'Đang sinh hoạt', 89, N'Bí thư Chi đoàn'),
 ('23115053122210', N'Lý Thị Kim', '2005-09-12', N'Nữ', '0901234510', 'kim10@student.ute.udn.vn', N'Huế', 'CD003', '2022-09-15', N'Đang sinh hoạt', 93, NULL),
 ('23115053122211', N'Phan Văn Long', '2005-01-18', N'Nam', '0901234511', 'long11@student.ute.udn.vn', N'Huế', 'CD003', '2023-09-15', N'Đang sinh hoạt', 87, NULL),
 ('23115053122212', N'Ngô Thị Mai', '2005-03-25', N'Nữ', '0901234512', 'mai12@student.ute.udn.vn', N'Huế', 'CD003', '2023-09-15', N'Đang sinh hoạt', 90, NULL),
--- CD004
+-- CD004 - Người 213 là Bí thư
 ('23115053122213', N'Đinh Văn Nam', '2005-05-14', N'Nam', '0901234513', 'nam13@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2023-09-15', N'Đang sinh hoạt', 82, N'Bí thư Chi đoàn'),
 ('23115053122214', N'Huỳnh Thị Oanh', '2005-07-20', N'Nữ', '0901234514', 'oanh14@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2023-09-15', N'Đang sinh hoạt', 94, NULL),
 ('23115053122215', N'Vũ Văn Phúc', '2005-09-08', N'Nam', '0901234515', 'phuc15@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2023-09-15', N'Đang sinh hoạt', 88, NULL),
 ('23115053122216', N'Dương Thị Quỳnh', '2005-01-12', N'Nữ', '0901234516', 'quynh16@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2024-09-15', N'Đang sinh hoạt', 85, NULL),
--- CD005
+-- CD005 - Người 217 là Bí thư
 ('23115053122217', N'Tô Văn Rồng', '2005-03-19', N'Nam', '0901234517', 'rong17@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 91, N'Bí thư Chi đoàn'),
 ('23115053122218', N'Mai Thị Sương', '2005-05-27', N'Nữ', '0901234518', 'suong18@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 89, NULL),
 ('23115053122219', N'Lâm Văn Tài', '2005-07-15', N'Nam', '0901234519', 'tai19@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 86, NULL),
 ('23115053122220', N'Cao Thị Uyên', '2005-09-22', N'Nữ', '0901234520', 'uyen20@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 92, NULL),
--- CD006
+-- CD006 - Người 221 là Bí thư
 ('23115053122221', N'Đỗ Văn Vinh', '2005-02-10', N'Nam', '0901234521', 'vinh21@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 87, N'Bí thư Chi đoàn'),
 ('23115053122222', N'Hồ Thị Xuân', '2005-04-18', N'Nữ', '0901234522', 'xuan22@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 90, NULL),
 ('23115053122223', N'Trịnh Văn Yên', '2005-06-25', N'Nam', '0901234523', 'yen23@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 83, NULL),
 ('23115053122224', N'Lưu Thị Ánh', '2005-08-30', N'Nữ', '0901234524', 'anh24@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 95, NULL),
--- CD007
+-- CD007 - Người 225 là Bí thư
 ('23115053122225', N'Kiều Văn Bảo', '2005-10-05', N'Nam', '0901234525', 'bao25@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2021-09-15', N'Đang sinh hoạt', 88, N'Bí thư Chi đoàn'),
 ('23115053122226', N'Ông Thị Chi', '2005-02-14', N'Nữ', '0901234526', 'chi26@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2022-09-15', N'Đang sinh hoạt', 86, NULL),
 ('23115053122227', N'Tạ Văn Đức', '2005-04-20', N'Nam', '0901234527', 'duc27@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2022-09-15', N'Đang sinh hoạt', 91, NULL),
 ('23115053122228', N'Lương Thị Ê', '2005-06-28', N'Nữ', '0901234528', 'e28@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2022-09-15', N'Đang sinh hoạt', 84, NULL),
--- CD008
+-- CD008 - Người 229 là Bí thư
 ('23115053122229', N'Hà Văn Phong', '2005-08-15', N'Nam', '0901234529', 'phong29@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2022-09-15', N'Đang sinh hoạt', 89, N'Bí thư Chi đoàn'),
 ('23115053122230', N'Thái Thị Giang', '2005-10-22', N'Nữ', '0901234530', 'giang30@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2022-09-15', N'Đang sinh hoạt', 93, NULL),
 ('23115053122231', N'Quách Văn Hải', '2005-02-16', N'Nam', '0901234531', 'hai31@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2023-09-15', N'Đang sinh hoạt', 87, NULL),
 ('23115053122232', N'Từ Thị Ích', '2005-04-23', N'Nữ', '0901234532', 'ich32@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2023-09-15', N'Đang sinh hoạt', 90, NULL),
--- CD009
+-- CD009 - Người 233 là Bí thư
 ('23115053122233', N'Ứng Văn Khang', '2005-06-30', N'Nam', '0901234533', 'khang33@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2023-09-15', N'Đang sinh hoạt', 82, N'Bí thư Chi đoàn'),
 ('23115053122234', N'Vương Thị Linh', '2005-08-17', N'Nữ', '0901234534', 'linh34@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2023-09-15', N'Đang sinh hoạt', 94, NULL),
 ('23115053122235', N'Xa Văn Minh', '2005-10-24', N'Nam', '0901234535', 'minh35@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2023-09-15', N'Đang sinh hoạt', 88, NULL),
 ('23115053122236', N'Yên Thị Nga', '2005-03-11', N'Nữ', '0901234536', 'nga36@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2022-09-15', N'Đang sinh hoạt', 85, NULL),
--- CD010
+-- CD010 - Người 237 là Bí thư
 ('23115053122237', N'Gia Văn Oanh', '2005-05-19', N'Nam', '0901234537', 'oanh37@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 91, N'Bí thư Chi đoàn'),
 ('23115053122238', N'Âu Thị Phượng', '2005-07-26', N'Nữ', '0901234538', 'phuong38@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 89, NULL),
 ('23115053122239', N'Ê Văn Quang', '2005-09-13', N'Nam', '0901234539', 'quang39@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 86, NULL),
@@ -84,69 +84,70 @@ INSERT INTO DoanVien (idDV, hoTen, ngaySinh, gioiTinh, SDT, email, diaChi, idChi
 GO
 
 -- 3. Chèn Tài khoản (Admin, Đoàn khoa, Đoàn viên/Bí thư)
+-- Password hash: $2b$10$JfRl4R4YdXKCf2RjJMOYH.xv.z2uMNqPt1Y6FGpJkPf2DrPvx8FaC (password: 123456)
 INSERT INTO TaiKhoan (idUser, tenNguoiDung, matKhau, trangThai, ngayTao, idVaiTro, idDV, idKhoa) VALUES
 -- Admin
-('ADMIN01', N'doantruong', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT001', NULL, NULL),
+('ADMIN01', N'doantruong', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT001', NULL, NULL),
 
 -- Đoàn khoa
-('KHOA_CNS', N'khoacns', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT002', NULL, 'KHOA001'),
-('KHOA_DDT', N'khoaddt', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT002', NULL, 'KHOA002'),
-('KHOA_SPCN', N'khoaspcn', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT002', NULL, 'KHOA003'),
-('KHOA_CK', N'khoack', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT002', NULL, 'KHOA004'),
-('KHOA_XD', N'khoaxd', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT002', NULL, 'KHOA005'),
-('KHOA_HH', N'khoahh', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT002', NULL, 'KHOA006'),
+('KHOA_CNS', N'khoacns', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT002', NULL, 'KHOA001'),
+('KHOA_DDT', N'khoaddt', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT002', NULL, 'KHOA002'),
+('KHOA_SPCN', N'khoaspcn', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT002', NULL, 'KHOA003'),
+('KHOA_CK', N'khoack', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT002', NULL, 'KHOA004'),
+('KHOA_XD', N'khoaxd', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT002', NULL, 'KHOA005'),
+('KHOA_HH', N'khoahh', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT002', NULL, 'KHOA006'),
 
 -- Tài khoản đoàn viên và bí thư
 -- CD001
-('USER01', N'23115053122201', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122201', NULL),
-('USER02', N'23115053122202', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122202', NULL),
-('USER03', N'23115053122203', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122203', NULL),
-('USER04', N'23115053122204', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122204', NULL),
+('USER01', N'23115053122201', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122201', NULL),
+('USER02', N'23115053122202', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122202', NULL),
+('USER03', N'23115053122203', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122203', NULL),
+('USER04', N'23115053122204', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122204', NULL),
 -- CD002
-('USER05', N'23115053122205', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122205', NULL),
-('USER06', N'23115053122206', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122206', NULL),
-('USER07', N'23115053122207', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122207', NULL),
-('USER08', N'23115053122208', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122208', NULL),
+('USER05', N'23115053122205', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122205', NULL),
+('USER06', N'23115053122206', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122206', NULL),
+('USER07', N'23115053122207', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122207', NULL),
+('USER08', N'23115053122208', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122208', NULL),
 -- CD003
-('USER09', N'23115053122209', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122209', NULL),
-('USER10', N'23115053122210', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122210', NULL),
-('USER11', N'23115053122211', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122211', NULL),
-('USER12', N'23115053122212', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122212', NULL),
+('USER09', N'23115053122209', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122209', NULL),
+('USER10', N'23115053122210', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122210', NULL),
+('USER11', N'23115053122211', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122211', NULL),
+('USER12', N'23115053122212', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122212', NULL),
 -- CD004
-('USER13', N'23115053122213', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122213', NULL),
-('USER14', N'23115053122214', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122214', NULL),
-('USER15', N'23115053122215', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122215', NULL),
-('USER16', N'23115053122216', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122216', NULL),
+('USER13', N'23115053122213', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122213', NULL),
+('USER14', N'23115053122214', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122214', NULL),
+('USER15', N'23115053122215', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122215', NULL),
+('USER16', N'23115053122216', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122216', NULL),
 -- CD005
-('USER17', N'23115053122217', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122217', NULL),
-('USER18', N'23115053122218', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122218', NULL),
-('USER19', N'23115053122219', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122219', NULL),
-('USER20', N'23115053122220', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122220', NULL),
+('USER17', N'23115053122217', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122217', NULL),
+('USER18', N'23115053122218', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122218', NULL),
+('USER19', N'23115053122219', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122219', NULL),
+('USER20', N'23115053122220', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122220', NULL),
 -- CD006
-('USER21', N'23115053122221', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122221', NULL),
-('USER22', N'23115053122222', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122222', NULL),
-('USER23', N'23115053122223', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122223', NULL),
-('USER24', N'23115053122224', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122224', NULL),
+('USER21', N'23115053122221', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122221', NULL),
+('USER22', N'23115053122222', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122222', NULL),
+('USER23', N'23115053122223', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122223', NULL),
+('USER24', N'23115053122224', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122224', NULL),
 -- CD007
-('USER25', N'23115053122225', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122225', NULL),
-('USER26', N'23115053122226', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122226', NULL),
-('USER27', N'23115053122227', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122227', NULL),
-('USER28', N'23115053122228', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122228', NULL),
+('USER25', N'23115053122225', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122225', NULL),
+('USER26', N'23115053122226', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122226', NULL),
+('USER27', N'23115053122227', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122227', NULL),
+('USER28', N'23115053122228', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122228', NULL),
 -- CD008
-('USER29', N'23115053122229', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122229', NULL),
-('USER30', N'23115053122230', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122230', NULL),
-('USER31', N'23115053122231', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122231', NULL),
-('USER32', N'23115053122232', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122232', NULL),
+('USER29', N'23115053122229', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122229', NULL),
+('USER30', N'23115053122230', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122230', NULL),
+('USER31', N'23115053122231', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122231', NULL),
+('USER32', N'23115053122232', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122232', NULL),
 -- CD009
-('USER33', N'23115053122233', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122233', NULL),
-('USER34', N'23115053122234', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122234', NULL),
-('USER35', N'23115053122235', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122235', NULL),
-('USER36', N'23115053122236', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122236', NULL),
+('USER33', N'23115053122233', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122233', NULL),
+('USER34', N'23115053122234', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122234', NULL),
+('USER35', N'23115053122235', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122235', NULL),
+('USER36', N'23115053122236', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122236', NULL),
 -- CD010
-('USER37', N'23115053122237', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT003', '23115053122237', NULL),
-('USER38', N'23115053122238', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122238', NULL),
-('USER39', N'23115053122239', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122239', NULL),
-('USER40', N'23115053122240', '$2b$10$abcdefghijklmnopqrstuv', 1, GETDATE(), 'VT004', '23115053122240', NULL);
+('USER37', N'23115053122237', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT003', '23115053122237', NULL),
+('USER38', N'23115053122238', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122238', NULL),
+('USER39', N'23115053122239', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122239', NULL),
+('USER40', N'23115053122240', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122240', NULL);
 GO
 
 -- 4. Chèn Sổ đoàn & Tiểu sử

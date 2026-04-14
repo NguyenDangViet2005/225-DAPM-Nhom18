@@ -5,12 +5,12 @@ const PhieuThuDoanPhi = sequelize.define(
   "PhieuThuDoanPhi",
   {
     idPhieuThu: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     nguoiNop: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "TaiKhoan",
@@ -18,11 +18,11 @@ const PhieuThuDoanPhi = sequelize.define(
       },
     },
     fileDinhKem: {
-      type: DataTypes.NVARCHAR(200),
+      type: DataTypes.STRING(200),
       allowNull: true,
     },
     trangThai: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
   },

@@ -5,12 +5,12 @@ const MucDoanPhi = sequelize.define(
   "MucDoanPhi",
   {
     idMucDP: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     namHoc: {
-      type: DataTypes.VARCHAR(10),
+      type: DataTypes.STRING(10),
       allowNull: true,
     },
     soTien: {
@@ -18,7 +18,7 @@ const MucDoanPhi = sequelize.define(
       allowNull: true,
     },
     trangThai: {
-      type: DataTypes.NVARCHAR(50),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
   },

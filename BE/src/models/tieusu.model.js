@@ -5,12 +5,12 @@ const TieuSu = sequelize.define(
   "TieuSu",
   {
     idTieuSu: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
     idDV: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: true,
       references: {
         model: "DoanVien",
@@ -26,11 +26,11 @@ const TieuSu = sequelize.define(
       allowNull: true,
     },
     donViCongTac: {
-      type: DataTypes.NVARCHAR(200),
+      type: DataTypes.STRING(200),
       allowNull: true,
     },
     chucVuCu: {
-      type: DataTypes.NVARCHAR(200),
+      type: DataTypes.STRING(200),
       allowNull: true,
     },
   },
