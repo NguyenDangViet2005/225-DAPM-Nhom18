@@ -2,16 +2,14 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.accessToken;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Token không được cung cấp hoặc định dạng không đúng",
+        message: "Token không được cung cấp",
       });
     }
-
-    const token = authHeader.slice(7); // Remove "Bearer " prefix
 
     jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
       if (err) {
@@ -21,7 +19,6 @@ const verifyToken = (req, res, next) => {
         });
       }
 
-      // Attach user info to request
       req.user = decoded;
       next();
     });

@@ -1,4 +1,4 @@
-const { loginService } = require("../services/taikhoan.service");
+const { loginService } = require("../services/auth.service");
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -9,7 +9,6 @@ const login = async (req, res) => {
   try {
     const { tenNguoiDung, matKhau } = req.body;
 
-    // Call login service
     const result = await loginService(tenNguoiDung, matKhau);
 
     if (!result.success) {
@@ -19,7 +18,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Generate access token
     const accessToken = generateAccessToken({
       idUser: result.data.idUser,
       tenNguoiDung: result.data.tenNguoiDung,
@@ -27,17 +25,27 @@ const login = async (req, res) => {
       idVaiTro: result.data.idVaiTro,
     });
 
-    // Generate refresh token
     const refreshToken = generateRefreshToken({
       idUser: result.data.idUser,
     });
 
-    // Return success response with tokens and user data
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       success: true,
       message: result.message,
-      accessToken,
-      refreshToken,
       user: result.data,
     });
   } catch (error) {
@@ -50,7 +58,7 @@ const login = async (req, res) => {
 
 const refreshTokenHandler = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
       return res.status(400).json({
@@ -59,18 +67,22 @@ const refreshTokenHandler = async (req, res) => {
       });
     }
 
-    // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
 
-    // Generate new access token
     const newAccessToken = generateAccessToken({
       idUser: decoded.idUser,
+    });
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
     });
 
     res.status(200).json({
       success: true,
       message: "Làm mới token thành công",
-      accessToken: newAccessToken,
     });
   } catch (error) {
     res.status(401).json({
@@ -80,7 +92,18 @@ const refreshTokenHandler = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+
+  res.status(200).json({
+    success: true,
+    message: "Đăng xuất thành công",
+  });
+};
+
 module.exports = {
   login,
   refreshTokenHandler,
+  logout,
 };

@@ -1,10 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { login, refreshTokenHandler } = require('../controllers/taikhoan.controller');
-const { loginValidator } = require('../validators/taikhoan.validator');
+const {
+  login,
+  refreshTokenHandler,
+  logout,
+} = require("../controllers/auth.controller");
+const { loginValidator } = require("../validators/auth.validator");
 
-// Public routes (no authentication required)
-router.post('/login', loginValidator, login);
-router.post('/refresh-token', refreshTokenHandler);
+router.post("/login", loginValidator, login);
+router.post("/refresh-token", refreshTokenHandler);
+router.post("/logout", logout);
 
 module.exports = router;

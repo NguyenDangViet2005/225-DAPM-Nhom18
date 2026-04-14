@@ -43,8 +43,10 @@ const loginService = async (tenNguoiDung, matKhau) => {
     if (account.idDV) {
       // Has idDV -> Bí thư Chi đoàn or Đoàn viên
       const doanVien = account.doanVien;
+      const role =
+        doanVien.chucVu === "Bí thư Chi đoàn" ? "BITHU" : "DOANVIEN";
       roleInfo = {
-        type: "DOAN_VIEN",
+        type: role,
         idDV: account.idDV,
         hoTen: doanVien.hoTen,
         chucVu: doanVien.chucVu, // 'Bí thư Chi đoàn' or 'Đoàn viên'
@@ -55,14 +57,14 @@ const loginService = async (tenNguoiDung, matKhau) => {
       // Has idKhoa -> Đoàn Khoa
       const khoa = account.khoaTK;
       roleInfo = {
-        type: "DOAN_KHOA",
+        type: "DOANKHOA",
         idKhoa: account.idKhoa,
         tenKhoa: khoa.tenKhoa,
       };
     } else {
       // No idDV, no idKhoa -> Đoàn Trưởng (Admin)
       roleInfo = {
-        type: "DOAN_TRUONG",
+        type: "DOANTRUONG",
       };
     }
 
