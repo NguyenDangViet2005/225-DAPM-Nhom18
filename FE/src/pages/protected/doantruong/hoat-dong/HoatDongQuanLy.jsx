@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { 
   Calendar, 
   MapPin, 
@@ -8,7 +8,7 @@ import {
   Trash2, 
   BarChart,
 } from 'lucide-react';
-import { MOCK_HOAT_DONG, MOCK_DANG_KY_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
+import { MOCK_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
 import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
 import RegistrationListModal from '@/components/commons/modals/DanhSachDoanVienDangKiModal';
 import './HoatDong.css';
@@ -17,9 +17,10 @@ const HoatDongQuanLy = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [hdFilter, setHdFilter] = useState('all');
   
-  // State for view registration list modal
   const [showRegModal, setShowRegModal] = useState(false);
   const [selectedHD, setSelectedHD] = useState(null);
+  const [registrations, setRegistrations] = useState([]);
+  const [loadingRegs, setLoadingRegs] = useState(false);
 
   const filteredActivities = useMemo(() => {
     return MOCK_HOAT_DONG.filter(hd => {
@@ -37,10 +38,23 @@ const HoatDongQuanLy = () => {
     { value: 'Đã kết thúc', label: 'Đã kết thúc' }
   ];
 
-  // Logic lấy danh sách ĐOÀN VIÊN ĐÃ DUYỆT cho hoạt động được chọn
-  const registrations = useMemo(() => {
-    if (!selectedHD) return [];
-    return MOCK_DANG_KY_HOAT_DONG.filter(reg => reg.idHD === selectedHD.idHD && reg.trangThaiDuyet === 'Đã duyệt');
+  // Fetch danh sách đăng ký từ API khi chọn hoạt động
+  useEffect(() => {
+    if (!selectedHD) return;
+    const fetchDangKy = async () => {
+      setLoadingRegs(true);
+      try {
+        const res = await fetch(`http://localhost:5000/api/hoatdong/${selectedHD.idHD}/dangky`);
+        const json = await res.json();
+        if (json.success) setRegistrations(json.data);
+      } catch (err) {
+        console.error('Lỗi fetch danh sách đăng ký:', err);
+        setRegistrations([]);
+      } finally {
+        setLoadingRegs(false);
+      }
+    };
+    fetchDangKy();
   }, [selectedHD]);
 
   return (
@@ -153,10 +167,11 @@ const HoatDongQuanLy = () => {
 
       <RegistrationListModal
         show={showRegModal}
-        onClose={() => setShowRegModal(false)}
+        onClose={() => { setShowRegModal(false); setSelectedHD(null); }}
         activity={selectedHD}
         registrations={registrations}
-        title="Danh sách Đăng ký đã Duyệt"
+        loading={loadingRegs}
+        title="Danh sách Đăng ký"
       />
     </div>
   );

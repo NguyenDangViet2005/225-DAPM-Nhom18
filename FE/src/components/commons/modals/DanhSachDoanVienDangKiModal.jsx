@@ -6,12 +6,13 @@ import {
 } from 'lucide-react';
 
 /**
- * RegistrationListModal - Hiển thị danh sách sinh viên đã duyệt cho một hoạt động
+ * RegistrationListModal - Hiển thị danh sách sinh viên đã đăng ký cho một hoạt động
  * 
  * @param {boolean} show        - Trạng thái đóng/mở modal
  * @param {Function} onClose    - Hàm xử lý đóng modal
  * @param {Object} activity     - Thông tin hoạt động được chọn
- * @param {Array} registrations - Danh sách các đoàn viên đã đăng ký/được duyệt
+ * @param {Array} registrations - Danh sách các đoàn viên (từ API hoặc mock)
+ * @param {boolean} loading     - Trạng thái đang tải dữ liệu
  * @param {string} title        - Tiêu đề modal
  */
 const RegistrationListModal = ({ 
@@ -19,6 +20,7 @@ const RegistrationListModal = ({
   onClose, 
   activity, 
   registrations = [],
+  loading = false,
   title = "Danh sách Tham gia"
 }) => {
   if (!show || !activity) return null;
@@ -30,7 +32,7 @@ const RegistrationListModal = ({
           <div>
             <h2 className="dp-modal-title">{title} - {activity.tenHD}</h2>
             <div className="hd-activity-info" style={{ color: '#15803d', fontWeight: 700 }}>
-              <FileCheck size={14} /> Số lượng đã duyệt: {registrations.length}
+              <FileCheck size={14} /> Số lượng: {registrations.length}
             </div>
           </div>
           <button className="dp-update-btn" onClick={onClose}>
@@ -39,35 +41,48 @@ const RegistrationListModal = ({
         </div>
         
         <div className="hd-card" style={{ marginTop: '1.5rem', maxHeight: '400px', overflowY: 'auto' }}>
-          <table className="hd-table">
-            <thead>
-              <tr>
-                <th>MSSV</th>
-                <th>Họ và Tên</th>
-                <th>Ngày đăng ký</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {registrations.map((reg, idx) => (
-                <tr key={`${reg.idDV}-${idx}`}>
-                  <td style={{ fontWeight: 600, color: '#004f9f' }}>{reg.idDV}</td>
-                  <td>{reg.hoTen}</td>
-                  <td>{new Date(reg.ngayDangKi).toLocaleDateString('vi-VN')}</td>
-                  <td>
-                    <span className="hd-badge hd-badge--open">ĐÃ DUYỆT</span>
-                  </td>
-                </tr>
-              ))}
-              {registrations.length === 0 && (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+              Đang tải dữ liệu...
+            </div>
+          ) : (
+            <table className="hd-table">
+              <thead>
                 <tr>
-                  <td colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
-                    Không tìm thấy sinh viên nào đã được duyệt cho hoạt động này
-                  </td>
+                  <th>MSSV</th>
+                  <th>Họ và Tên</th>
+                  <th>Chi đoàn</th>
+                  <th>Ngày đăng ký</th>
+                  <th>Trạng thái</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {registrations.map((reg, idx) => (
+                  <tr key={`${reg.maSV || reg.idDV}-${idx}`}>
+                    <td style={{ fontWeight: 600, color: '#004f9f' }}>{reg.maSV || reg.idDV}</td>
+                    <td>{reg.hoTen}</td>
+                    <td>{reg.tenChiDoan || '—'}</td>
+                    <td>{new Date(reg.ngayDangKy || reg.ngayDangKi).toLocaleDateString('vi-VN')}</td>
+                    <td>
+                      <span className={`hd-badge ${
+                        (reg.trangThai || reg.trangThaiDuyet) === 'Đã duyệt' ? 'hd-badge--open' :
+                        (reg.trangThai || reg.trangThaiDuyet) === 'Chờ duyệt' ? 'hd-badge--ongoing' : 'hd-badge--closed'
+                      }`}>
+                        {reg.trangThai || reg.trangThaiDuyet}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {registrations.length === 0 && (
+                  <tr>
+                    <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                      Không có đoàn viên nào
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="dp-modal-actions">
