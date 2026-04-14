@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { CheckCircle, XCircle, X, Filter } from 'lucide-react';
-import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
+import { CheckCircle, XCircle, X, Filter, Search } from 'lucide-react';
 import './HoatDong.css';
 
 const API = 'http://localhost:5000/api/hoatdong';
@@ -148,19 +147,19 @@ const HoatDongDuyet = () => {
           <span className="hd-stat-item__label">Từ chối</span>
           <span className="hd-stat-item__value" style={{ color: '#dc2626' }}>{rejectedRegs.length} đơn</span>
         </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #004f9f' }}>
-          <span className="hd-stat-item__label">Tổng hoạt động quản lý</span>
-          <span className="hd-stat-item__value">{schoolActivities.length}</span>
-        </div>
+
       </div>
 
       {/* Toolbar + Bộ lọc */}
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '1rem' }}>
-        <div style={{ flex: 1 }}>
-          <DataTableToolbar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
+        <div className="hd-search-wrap" style={{ flex: 1 }}>
+          <Search size={18} />
+          <input
+            type="text"
+            className="hd-search-input"
             placeholder="Tìm tên đoàn viên, MSSV hoặc tên hoạt động (Trường)..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
         <button
