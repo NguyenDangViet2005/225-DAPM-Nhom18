@@ -50,6 +50,7 @@ CREATE TABLE DoanVien (
     ngayChuyenDen DATE, 
     trangThaiSH NVARCHAR(50),
     diemHD INT,
+    chucVu NVARCHAR(100),
     CONSTRAINT FK_DoanVien_ChiDoan FOREIGN KEY (idChiDoan) REFERENCES ChiDoan(idChiDoan)
 );
 GO
@@ -62,12 +63,10 @@ CREATE TABLE TaiKhoan (
     ngayTao DATETIME, 
     idVaiTro CHAR(15),
     idDV CHAR(15),
-    idKhoa CHAR(15), -- Cho role Đoàn khoa
-    idChiDoan CHAR(15), -- Cho role Bí thư Chi đoàn
+    idKhoa CHAR(15),
     CONSTRAINT FK_TaiKhoan_VaiTro FOREIGN KEY (idVaiTro) REFERENCES VaiTro(idVaiTro),
     CONSTRAINT FK_TaiKhoan_DoanVien FOREIGN KEY (idDV) REFERENCES DoanVien(idDV),
-    CONSTRAINT FK_TaiKhoan_Khoa FOREIGN KEY (idKhoa) REFERENCES Khoa(idKhoa),
-    CONSTRAINT FK_TaiKhoan_ChiDoan FOREIGN KEY (idChiDoan) REFERENCES ChiDoan(idChiDoan)
+    CONSTRAINT FK_TaiKhoan_Khoa FOREIGN KEY (idKhoa) REFERENCES Khoa(idKhoa)
 );
 GO
 
@@ -80,7 +79,7 @@ GO
 CREATE TABLE SoDoan (
     idSoDoan CHAR(15) PRIMARY KEY,
     idDV CHAR(15) UNIQUE NOT NULL,
-    idCap CHAR(15),
+    ngayCap DATE,
     noiCap NVARCHAR(100),
     trangThai NVARCHAR(50),
     ngayRutSo DATE,
@@ -91,6 +90,7 @@ GO
 CREATE TABLE TieuSu (
     idTieuSu CHAR(15) PRIMARY KEY,
     idDV CHAR(15),
+    tuThoiGian DATE,
     denThoiGian DATE,
     donViCongTac NVARCHAR(200),
     chucVuCu NVARCHAR(200),
@@ -109,6 +109,7 @@ CREATE TABLE HoatDongDoan (
     trangThai NVARCHAR(50),
     trangThaiHD NVARCHAR(50),
     donViToChuc NVARCHAR(50),
+    diemHD INT,
     idKhoa CHAR(15),
     idChiDoan CHAR(15),
     CONSTRAINT FK_HoatDongDoan_Khoa FOREIGN KEY (idKhoa) REFERENCES Khoa(idKhoa),
@@ -141,7 +142,6 @@ CREATE TABLE PhieuThuDoanPhi (
     nguoiNop CHAR(15),
     fileDinhKem NVARCHAR(200),
     trangThai NVARCHAR(50),
-    nguoiDuyet CHAR(15), 
     CONSTRAINT FK_PhieuThuDoanPhi_TaiKhoan FOREIGN KEY (nguoiNop) REFERENCES TaiKhoan(idUser)
 );
 GO
