@@ -65,6 +65,7 @@ const createActivity = async (req, res) => {
       diaDiem,
       soLuongMax,
       diemHD,
+      creatorRole: req.user?.type, // Pass role so service can decide approval status
     });
 
     if (!result.success) {

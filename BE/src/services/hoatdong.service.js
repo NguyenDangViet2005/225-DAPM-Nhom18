@@ -53,9 +53,11 @@ const hoatdongService = {
     }
   },
 
-  // Create new school-level activity — trangThaiHD defaults to 'Đã duyệt' for Đoàn Trường
+  // Create activity — auto-approve only if creator is DOANTRUONG
   async createActivity(activityData) {
     try {
+      const isDoanTruong = activityData.creatorRole === "DOANTRUONG";
+
       const activity = await HoatDongDoan.create({
         idHD: activityData.idHD,
         tenHD: activityData.tenHD,
@@ -65,7 +67,7 @@ const hoatdongService = {
         soLuongMax: activityData.soLuongMax,
         soLuongDaDK: 0,
         trangThai: activityData.trangThai || "Đang mở",
-        trangThaiHD: "Đã duyệt", // Đoàn Trường is the highest authority — auto-approved
+        trangThaiHD: isDoanTruong ? "Đã duyệt" : "Chưa duyệt",
         donViToChuc: activityData.donViToChuc || "Đoàn Trường",
         diemHD: activityData.diemHD || 0,
         idKhoa: null,

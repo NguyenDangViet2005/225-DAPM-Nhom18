@@ -102,8 +102,17 @@ const logout = (req, res) => {
   });
 };
 
+const getMe = (req, res) => {
+  // req.user is populated by verifyToken middleware
+  return res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+};
+
 module.exports = {
   login,
   refreshTokenHandler,
   logout,
+  getMe,
 };

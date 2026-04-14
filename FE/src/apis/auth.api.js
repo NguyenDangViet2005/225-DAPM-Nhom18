@@ -18,4 +18,9 @@ export const logoutAPI = async () => {
   return response.data;
 };
 
+export const getMeAPI = async () => {
+  const response = await apiClient.get("/auth/me");
+  return response.data;
+};
+
 export default apiClient;
