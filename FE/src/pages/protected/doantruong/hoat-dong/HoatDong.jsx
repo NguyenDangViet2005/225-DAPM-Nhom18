@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
   Search, 
   Calendar, 
@@ -11,16 +11,92 @@ import {
   XCircle,
   Filter,
   BarChart,
-  ClipboardCheck,
-  MoreHorizontal
+  MoreHorizontal,
+  X,
 } from 'lucide-react';
-import { MOCK_HOAT_DONG, MOCK_DANG_KY_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
+import { MOCK_HOAT_DONG, ACTIVITY_STATS } from '@/data/mockHoatDong';
 import './HoatDong.css';
 
 const HoatDong = () => {
-  const [activeTab, setActiveTab] = useState('activities'); // activities | registrations
+  const [activeTab, setActiveTab] = useState('activities');
   const [searchTerm, setSearchTerm] = useState('');
   const [hdFilter, setHdFilter] = useState('all');
+
+  // State cho tab đăng ký
+  const [registrations, setRegistrations] = useState([]);
+  const [loadingRegs, setLoadingRegs] = useState(false);
+  const [processingId, setProcessingId] = useState(null); // maSV-idHD đang xử lý
+
+  // State modal từ chối
+  const [rejectTarget, setRejectTarget] = useState(null); // { maSV, idHD, hoTen }
+  const [lyDoTuChoi, setLyDoTuChoi] = useState('');
+
+  // Fetch danh sách đăng ký chờ duyệt từ tất cả hoạt động
+  const fetchRegistrations = useCallback(async () => {
+    setLoadingRegs(true);
+    try {
+      // Lấy danh sách từ tất cả hoạt động đang mở
+      const openActivities = MOCK_HOAT_DONG.filter(hd => hd.trangThaiHD === 'Đang mở đăng ký');
+      const results = await Promise.all(
+        openActivities.map(hd =>
+          fetch(`http://localhost:5000/api/hoatdong/${hd.idHD}/dangky`)
+            .then(r => r.json())
+            .then(json => json.success
+              ? json.data.map(reg => ({ ...reg, idHD: hd.idHD, tenHD: hd.tenHD }))
+              : []
+            )
+            .catch(() => [])
+        )
+      );
+      setRegistrations(results.flat());
+    } catch (err) {
+      console.error('Lỗi fetch đăng ký:', err);
+    } finally {
+      setLoadingRegs(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'registrations') fetchRegistrations();
+  }, [activeTab, fetchRegistrations]);
+
+  // Duyệt hoặc từ chối
+  const handleDuyet = async (maSV, idHD, trangThai, lyDo = null) => {
+    const key = `${maSV}-${idHD}`;
+    setProcessingId(key);
+    try {
+      const res = await fetch(`http://localhost:5000/api/hoatdong/${idHD}/duyet`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ maSV, trangThai, lyDo }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        // Cập nhật state local thay vì fetch lại toàn bộ
+        setRegistrations(prev =>
+          prev.map(r =>
+            r.maSV === maSV && r.idHD === idHD
+              ? { ...r, trangThai }
+              : r
+          )
+        );
+      } else {
+        alert(json.message || 'Có lỗi xảy ra');
+      }
+    } catch (err) {
+      console.error('Lỗi duyệt đăng ký:', err);
+      alert('Không thể kết nối server');
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleConfirmReject = async () => {
+    if (!rejectTarget) return;
+    await handleDuyet(rejectTarget.maSV, rejectTarget.idHD, 'Từ chối', lyDoTuChoi);
+    setRejectTarget(null);
+    setLyDoTuChoi('');
+  };
 
   // Logic lọc hoạt động
   const filteredActivities = useMemo(() => {
@@ -34,13 +110,16 @@ const HoatDong = () => {
 
   // Logic lọc đăng ký
   const filteredRegistrations = useMemo(() => {
-    return MOCK_DANG_KY_HOAT_DONG.filter(reg => {
-      const matchesSearch = reg.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           reg.idDV.includes(searchTerm) || 
-                           reg.tenHD.toLowerCase().includes(searchTerm.toLowerCase());
+    return registrations.filter(reg => {
+      const matchesSearch =
+        (reg.hoTen || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (reg.maSV || '').includes(searchTerm) ||
+        (reg.tenHD || '').toLowerCase().includes(searchTerm.toLowerCase());
       return matchesSearch;
     });
-  }, [searchTerm]);
+  }, [registrations, searchTerm]);
+
+  const pendingCount = registrations.filter(r => r.trangThai === 'Chờ duyệt').length;
 
   return (
     <div className="hd-container">
@@ -107,7 +186,7 @@ const HoatDong = () => {
             cursor: 'pointer'
           }}
         >
-          Duyệt đăng ký ({MOCK_DANG_KY_HOAT_DONG.filter(r => r.trangThaiDuyet === 'Chờ duyệt').length})
+          Duyệt đăng ký ({pendingCount})
         </button>
       </div>
 
@@ -212,6 +291,7 @@ const HoatDong = () => {
               <tr>
                 <th>MSSV</th>
                 <th>Họ và Tên</th>
+                <th>Chi đoàn</th>
                 <th>Hoạt động đăng ký</th>
                 <th>Ngày đăng ký</th>
                 <th>Trạng thái</th>
@@ -219,38 +299,94 @@ const HoatDong = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredRegistrations.map((reg, idx) => (
-                <tr key={`${reg.idDV}-${reg.idHD}-${idx}`}>
-                  <td style={{ fontWeight: 600, color: '#004f9f' }}>{reg.idDV}</td>
-                  <td>{reg.hoTen}</td>
-                  <td style={{ fontWeight: 600 }}>{reg.tenHD}</td>
-                  <td>{new Date(reg.ngayDangKi).toLocaleDateString('vi-VN')}</td>
-                  <td>
-                    <span className={`hd-badge ${
-                      reg.trangThaiDuyet === 'Đã duyệt' ? 'hd-badge--open' :
-                      reg.trangThaiDuyet === 'Chờ duyệt' ? 'hd-badge--ongoing' : 'hd-badge--closed'
-                    }`}>
-                      {reg.trangThaiDuyet}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button className="hd-update-btn" style={{ color: '#15803d' }} title="Duyệt"><CheckCircle size={18} /></button>
-                      <button className="hd-update-btn" style={{ color: '#b91c1c' }} title="Từ chối"><XCircle size={18} /></button>
-                      <button className="hd-update-btn" title="Lý do"><ClipboardCheck size={18} /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {loadingRegs ? (
+                <tr><td colSpan="7" style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Đang tải...</td></tr>
+              ) : filteredRegistrations.map((reg, idx) => {
+                const key = `${reg.maSV}-${reg.idHD}`;
+                const isProcessing = processingId === key;
+                const isDone = reg.trangThai !== 'Chờ duyệt';
+                return (
+                  <tr key={`${key}-${idx}`}>
+                    <td style={{ fontWeight: 600, color: '#004f9f' }}>{reg.maSV}</td>
+                    <td>{reg.hoTen}</td>
+                    <td style={{ fontSize: '0.82rem', color: '#64748b' }}>{reg.tenChiDoan || '—'}</td>
+                    <td style={{ fontWeight: 600 }}>{reg.tenHD}</td>
+                    <td>{new Date(reg.ngayDangKy).toLocaleDateString('vi-VN')}</td>
+                    <td>
+                      <span className={`hd-badge ${
+                        reg.trangThai === 'Đã duyệt' ? 'hd-badge--open' :
+                        reg.trangThai === 'Chờ duyệt' ? 'hd-badge--ongoing' : 'hd-badge--closed'
+                      }`}>
+                        {reg.trangThai}
+                      </span>
+                    </td>
+                    <td>
+                      {isDone ? (
+                        <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Đã xử lý</span>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            className="hd-update-btn"
+                            style={{ color: '#15803d' }}
+                            title="Duyệt"
+                            disabled={isProcessing}
+                            onClick={() => handleDuyet(reg.maSV, reg.idHD, 'Đã duyệt')}
+                          >
+                            <CheckCircle size={18} />
+                          </button>
+                          <button
+                            className="hd-update-btn"
+                            style={{ color: '#b91c1c' }}
+                            title="Từ chối"
+                            disabled={isProcessing}
+                            onClick={() => setRejectTarget({ maSV: reg.maSV, idHD: reg.idHD, hoTen: reg.hoTen })}
+                          >
+                            <XCircle size={18} />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
-        {(activeTab === 'activities' ? filteredActivities : filteredRegistrations).length === 0 && (
+        {(activeTab === 'activities' ? filteredActivities : filteredRegistrations).length === 0 && !loadingRegs && (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
             Không tìm thấy dữ liệu phù hợp
           </div>
         )}
       </div>
+
+      {/* Modal nhập lý do từ chối */}
+      {rejectTarget && (
+        <div className="dp-modal-overlay">
+          <div className="dp-modal" style={{ width: '480px', maxWidth: '95%' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 className="dp-modal-title">Từ chối đăng ký</h2>
+              <button className="dp-update-btn" onClick={() => { setRejectTarget(null); setLyDoTuChoi(''); }}>
+                <X size={20} />
+              </button>
+            </div>
+            <p style={{ margin: '0.75rem 0', color: '#475569' }}>
+              Từ chối đăng ký của <strong>{rejectTarget.hoTen}</strong>
+            </p>
+            <textarea
+              style={{ width: '100%', minHeight: '100px', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.9rem', resize: 'vertical', boxSizing: 'border-box' }}
+              placeholder="Nhập lý do từ chối (không bắt buộc)..."
+              value={lyDoTuChoi}
+              onChange={e => setLyDoTuChoi(e.target.value)}
+            />
+            <div className="dp-modal-actions">
+              <button className="dp-btn-cancel" onClick={() => { setRejectTarget(null); setLyDoTuChoi(''); }}>Hủy</button>
+              <button className="dp-btn-save" style={{ background: '#b91c1c', borderColor: '#b91c1c' }} onClick={handleConfirmReject}>
+                Xác nhận từ chối
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

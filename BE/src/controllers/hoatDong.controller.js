@@ -33,6 +33,30 @@ const hoatDongController = {
         }
     },
 
+    // API: Lấy danh sách hoạt động theo đơn vị tổ chức
+    getDanhSachHoatDong: async (req, res) => {
+        try {
+            const { donViToChuc } = req.query; 
+            const pool = await poolPromise;
+            let query = `
+                SELECT idHD, tenHD, donViToChuc, trangThaiHD, ngayToChuc,
+                       soLuongMax, soLuongDaDK
+                FROM HoatDongDoan
+            `;
+            const request = pool.request();
+            if (donViToChuc) {
+                query += ` WHERE donViToChuc = @donViToChuc`;
+                request.input('donViToChuc', sql.NVarChar(50), donViToChuc);
+            }
+            query += ` ORDER BY ngayToChuc DESC`;
+            const result = await request.query(query);
+            res.status(200).json({ success: true, data: result.recordset });
+        } catch (error) {
+            console.error("Lỗi getDanhSachHoatDong:", error);
+            res.status(500).json({ success: false, message: "Lỗi Server" });
+        }
+    },
+
     // API: Duyệt hoặc Từ chối sinh viên đăng ký
     duyetDangKy: async (req, res) => {
         try {
