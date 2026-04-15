@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { CreditCard, Download, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import useDoanPhi from '@/hooks/useDoanPhi';
 import UpdateFeeModal from '@/components/commons/modals/UpdateMucDoanPhiModal';
@@ -10,7 +10,7 @@ const fmtDate  = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—';
 
 const DoanPhi = () => {
   const {
-    mucDoanPhi, doanPhiList, phieuThuList, chiDoanList, pagination,
+    mucDoanPhi, doanPhiList, phieuThuList, chiDoanList, stats, pagination,
     loading,
     fetchMucDoanPhi, createMucDoanPhi,
     fetchChiDoan, fetchDoanPhi,
@@ -39,17 +39,12 @@ const DoanPhi = () => {
 
   const currentRate = mucDoanPhi.find(r => r.trangThai === 'Đang áp dụng') ?? mucDoanPhi[0];
 
-  const stats = useMemo(() => {
-    const daDong   = doanPhiList.filter(p => p.trangThai === 'Đã đóng').length;
-    const choDuyet = phieuThuList.filter(r => r.trangThai === 'Chờ duyệt').length;
-    const soTien   = currentRate?.soTien ?? 0;
-    return {
-      tongPhaiThu: fmtMoney(pagination.total * soTien),
-      daThu:       fmtMoney(daDong * soTien),
-      choDuyet,
-      tyLe: pagination.total ? `${Math.round((daDong / pagination.total) * 100)}%` : '0%',
-    };
-  }, [doanPhiList, phieuThuList, pagination, currentRate]);
+  const statCards = {
+    tongPhaiThu: fmtMoney(stats?.tongPhaiThu ?? 0),
+    daThu:       fmtMoney(stats?.tongDaThu   ?? 0),
+    choDuyet:    phieuThuList.filter(r => r.trangThai === 'Chờ duyệt').length,
+    tyLe:        stats ? `${stats.tyLe}%` : '0%',
+  };
 
   const handleConfirmUpdate = async () => {
     const res = await createMucDoanPhi({ namHoc: newFee.namHoc, soTien: Number(newFee.soTien) });
@@ -84,7 +79,7 @@ const DoanPhi = () => {
     <div className="doan-phi-container">
       {/* ── Header ─────────────────────────────────────── */}
       <div className="dp-header">
-        <h1 className="dp-title">Quản lý Đoàn Phí</h1>
+        <h1 className="dp-title">QUẢN LSY ĐOÀN PHÍ</h1>
         <div className="dp-actions">
           <button className="dp-update-btn" style={{ borderColor: '#004f9f', color: '#004f9f' }}>
             <Download size={18} /> Xuất báo cáo
@@ -110,22 +105,22 @@ const DoanPhi = () => {
       <div className="dp-stats">
         <div className="dp-stat-item">
           <span className="dp-stat-item__label">Tổng phải thu (Dự kiến)</span>
-          <span className="dp-stat-item__value">{stats.tongPhaiThu}</span>
+          <span className="dp-stat-item__value">{statCards.tongPhaiThu}</span>
           <CreditCard size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.05 }} />
         </div>
         <div className="dp-stat-item" style={{ borderLeft: '3px solid #15803d' }}>
           <span className="dp-stat-item__label">Đã thu thực tế</span>
-          <span className="dp-stat-item__value">{stats.daThu}</span>
+          <span className="dp-stat-item__value">{statCards.daThu}</span>
           <CheckCircle size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.1, color: '#15803d' }} />
         </div>
         <div className="dp-stat-item" style={{ borderLeft: '3px solid #b45309' }}>
           <span className="dp-stat-item__label">Phiếu thu chờ duyệt</span>
-          <span className="dp-stat-item__value">{stats.choDuyet} Phiếu</span>
+          <span className="dp-stat-item__value">{statCards.choDuyet} Phiếu</span>
           <Clock size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.1, color: '#b45309' }} />
         </div>
         <div className="dp-stat-item" style={{ borderLeft: '3px solid #004f9f' }}>
           <span className="dp-stat-item__label">Tỷ lệ hoàn thành</span>
-          <span className="dp-stat-item__value">{stats.tyLe}</span>
+          <span className="dp-stat-item__value">{statCards.tyLe}</span>
           <TrendingUp size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.1, color: '#004f9f' }} />
         </div>
       </div>
@@ -196,7 +191,7 @@ const DoanPhi = () => {
                 <tr key={p.idDoanPhi}>
                   <td className="dp-id-cell">{p.doanVien?.idDV ?? p.idDV}</td>
                   <td style={{ fontWeight: 600 }}>{p.doanVien?.hoTen ?? '—'}</td>
-                  <td>{p.doanVien?.idChiDoan ?? '—'}</td>
+                  <td>{p.doanVien?.chiDoan?.tenChiDoan ?? p.doanVien?.idChiDoan ?? '—'}</td>
                   <td>{p.mucDoanPhi?.namHoc ?? '—'}</td>
                   <td className="dp-amount-cell">{fmtMoney(p.mucDoanPhi?.soTien)}</td>
                   <td>{fmtDate(p.ngayDong)}</td>
@@ -237,7 +232,7 @@ const DoanPhi = () => {
                   <td style={{ fontWeight: 600 }}>
                     {pt.nguoiNopTK?.doanVien?.hoTen ?? pt.nguoiNopTK?.tenNguoiDung ?? '—'}
                     <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                      {pt.nguoiNopTK?.doanVien?.idChiDoan ?? ''}
+                      {pt.nguoiNopTK?.doanVien?.chiDoan?.tenChiDoan ?? pt.nguoiNopTK?.doanVien?.idChiDoan ?? ''}
                     </div>
                   </td>
                   <td>

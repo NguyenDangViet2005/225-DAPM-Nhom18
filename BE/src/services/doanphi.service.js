@@ -60,14 +60,25 @@ const getAllDoanPhi = async ({ search, trangThai, idChiDoan, page = 1, limit = 2
   const whereDP = {};
   if (trangThai && trangThai !== "all") whereDP.trangThai = trangThai;
 
-  const whereDV = {};
+  // Search theo hoTen hoặc idDV: lấy idDV match trước rồi dùng IN
   if (search) {
-    whereDV[Op.or] = [
-      { hoTen: { [Op.like]: `%${search}%` } },
-      { idDV: { [Op.like]: `%${search}%` } },
-    ];
+    const matchDV = await DoanVien.findAll({
+      where: {
+        [Op.or]: [
+          { hoTen: { [Op.like]: `%${search}%` } },
+          sequelize.where(
+            sequelize.fn("RTRIM", sequelize.col("idDV")),
+            { [Op.like]: `%${search}%` }
+          ),
+        ],
+      },
+      attributes: ["idDV"],
+    });
+    whereDP.idDV = matchDV.map(dv => dv.idDV);
   }
-  if (idChiDoan && idChiDoan !== "all") whereDV.idChiDoan = idChiDoan;
+
+  const whereDVFinal = {};
+  if (idChiDoan && idChiDoan !== "all") whereDVFinal.idChiDoan = idChiDoan;
 
   const { count, rows } = await DoanPhi.findAndCountAll({
     where: whereDP,
@@ -75,8 +86,9 @@ const getAllDoanPhi = async ({ search, trangThai, idChiDoan, page = 1, limit = 2
       {
         model: DoanVien,
         as: "doanVien",
-        where: Object.keys(whereDV).length ? whereDV : undefined,
+        where: Object.keys(whereDVFinal).length ? whereDVFinal : undefined,
         attributes: ["idDV", "hoTen", "idChiDoan"],
+        include: [{ model: ChiDoan, as: "chiDoan", attributes: ["tenChiDoan"] }],
       },
       { model: MucDoanPhi, as: "mucDoanPhi", attributes: ["namHoc", "soTien"] },
     ],
@@ -109,6 +121,7 @@ const getAllPhieuThu = async ({ trangThai }) => {
             model: DoanVien,
             as: "doanVien",
             attributes: ["hoTen", "idChiDoan"],
+            include: [{ model: ChiDoan, as: "chiDoan", attributes: ["tenChiDoan"] }],
           },
         ],
       },
@@ -155,6 +168,43 @@ const getAllChiDoan = async () => {
   });
 };
 
+const getStats = async ({ idChiDoan, namHoc } = {}) => {
+  // Lấy mức phí đang áp dụng để lấy soTien hiển thị
+  const mucPhi = namHoc
+    ? await MucDoanPhi.findOne({ where: { namHoc } })
+    : await MucDoanPhi.findOne({ where: { trangThai: "Đang áp dụng" } });
+
+  const soTien = Number(mucPhi?.soTien ?? 0);
+
+  // Lấy idDV thuộc chi đoàn nếu có filter
+  let whereDP = {};
+  if (idChiDoan && idChiDoan !== "all") {
+    const dvList = await DoanVien.findAll({
+      where: { idChiDoan },
+      attributes: ["idDV"],
+    });
+    whereDP.idDV = dvList.map(dv => dv.idDV);
+  }
+
+  const [tongDoanVien, daDong, dangChoDuyet] = await Promise.all([
+    DoanPhi.count({ where: whereDP }),
+    DoanPhi.count({ where: { ...whereDP, trangThai: "Đã đóng" } }),
+    DoanPhi.count({ where: { ...whereDP, trangThai: "Đang chờ duyệt" } }),
+  ]);
+
+  return {
+    tongDoanVien,
+    daDong,
+    chuaDong: tongDoanVien - daDong - dangChoDuyet,
+    dangChoDuyet,
+    tongDaThu:   daDong * soTien,
+    tongPhaiThu: tongDoanVien * soTien,
+    tyLe: tongDoanVien ? Math.round((daDong / tongDoanVien) * 100) : 0,
+    namHoc: mucPhi?.namHoc ?? null,
+    soTien,
+  };
+};
+
 module.exports = {
   getAllMucDoanPhi,
   createMucDoanPhi,
@@ -163,4 +213,5 @@ module.exports = {
   getAllPhieuThu,
   duyetPhieuThu,
   getAllChiDoan,
+  getStats,
 };

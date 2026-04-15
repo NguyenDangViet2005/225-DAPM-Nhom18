@@ -24,6 +24,13 @@ export const getChiDoanAPI = async () => {
   return res.data;
 };
 
+export const getDoanPhiStatsAPI = async ({ idChiDoan = "all", namHoc } = {}) => {
+  const res = await apiClient.get("/doan-phi/stats", {
+    params: { idChiDoan, namHoc },
+  });
+  return res.data;
+};
+
 export const getDoanPhiAPI = async ({ search = "", trangThai = "all", idChiDoan = "all", page = 1, limit = 20 } = {}) => {
   const res = await apiClient.get("/doan-phi", {
     params: { search, trangThai, idChiDoan, page, limit },

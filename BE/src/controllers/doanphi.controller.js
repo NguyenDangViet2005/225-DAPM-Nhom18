@@ -7,6 +7,7 @@ const {
   getAllPhieuThu,
   duyetPhieuThu,
   getAllChiDoan,
+  getStats,
 } = require("../services/doanphi.service");
 
 // ── MUC DOAN PHI ─────────────────────────────────────────
@@ -64,6 +65,16 @@ const getChiDoan = async (req, res) => {
   }
 };
 
+const getDoanPhiStats = async (req, res) => {
+  try {
+    const { idChiDoan, namHoc } = req.query;
+    const data = await getStats({ idChiDoan, namHoc });
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ── PHIEU THU ────────────────────────────────────────────
 
 const getPhieuThu = async (req, res) => {
@@ -96,6 +107,7 @@ module.exports = {
   putMucDoanPhi,
   getDoanPhi,
   getChiDoan,
+  getDoanPhiStats,
   getPhieuThu,
   putDuyetPhieuThu,
 };

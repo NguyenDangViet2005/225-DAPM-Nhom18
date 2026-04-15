@@ -3,6 +3,7 @@ import {
   getMucDoanPhiAPI,
   createMucDoanPhiAPI,
   getDoanPhiAPI,
+  getDoanPhiStatsAPI,
   getChiDoanAPI,
   getPhieuThuAPI,
   duyetPhieuThuAPI,
@@ -13,6 +14,7 @@ const useDoanPhi = () => {
   const [doanPhiList, setDoanPhiList]   = useState([]);
   const [phieuThuList, setPhieuThuList] = useState([]);
   const [chiDoanList, setChiDoanList]   = useState([]);
+  const [stats, setStats]               = useState(null);
   const [pagination, setPagination]     = useState({ page: 1, limit: 20, total: 0 });
   const [loading, setLoading]           = useState(false);
   const [error, setError]               = useState(null);
@@ -57,11 +59,15 @@ const useDoanPhi = () => {
   const fetchDoanPhi = useCallback(async (params = {}) => {
     try {
       setLoading(true);
-      const res = await getDoanPhiAPI(params);
-      if (res.success) {
-        setDoanPhiList(res.data);
-        setPagination(res.pagination);
+      const [resData, resStats] = await Promise.all([
+        getDoanPhiAPI(params),
+        getDoanPhiStatsAPI({ idChiDoan: params.idChiDoan }),
+      ]);
+      if (resData.success) {
+        setDoanPhiList(resData.data);
+        setPagination(resData.pagination);
       }
+      if (resStats.success) setStats(resStats.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -96,7 +102,7 @@ const useDoanPhi = () => {
   }, [fetchPhieuThu]);
 
   return {
-    mucDoanPhi, doanPhiList, phieuThuList, chiDoanList, pagination,
+    mucDoanPhi, doanPhiList, phieuThuList, chiDoanList, stats, pagination,
     loading, error,
     fetchMucDoanPhi, createMucDoanPhi,
     fetchChiDoan, fetchDoanPhi,
