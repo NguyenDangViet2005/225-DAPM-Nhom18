@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   MapPin, 
   Calendar,
@@ -15,6 +15,8 @@ const HoatDongXacNhan = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedHD, setSelectedHD] = useState(null);
   const [showMemberModal, setShowMemberModal] = useState(false);
+  const [approvedMembers, setApprovedMembers] = useState([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
 
   // Lọc hoạt động đã kết thúc hoặc đang diễn ra để xác nhận
   const activitiesToConfirm = MOCK_HOAT_DONG.filter(hd => 
@@ -22,10 +24,27 @@ const HoatDongXacNhan = () => {
     hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Logic lấy danh sách ĐOÀN VIÊN ĐÃ ĐƯỢC DUYỆT cho hoạt động được chọn
-  const approvedMembers = selectedHD ? MOCK_DANG_KY_HOAT_DONG.filter(reg => 
-    reg.idHD === selectedHD.idHD && reg.trangThaiDuyet === 'Đã duyệt'
-  ) : [];
+  // Fetch danh sách đoàn viên đã duyệt từ API khi chọn hoạt động
+  useEffect(() => {
+    if (!selectedHD) return;
+    const fetchMembers = async () => {
+      setLoadingMembers(true);
+      try {
+        const res = await fetch(`http://localhost:5000/api/hoatdong/${selectedHD.idHD}/dangky`);
+        const json = await res.json();
+        if (json.success) {
+          // Chỉ lấy đoàn viên đã duyệt
+          setApprovedMembers(json.data.filter(r => r.trangThai === 'Đã duyệt'));
+        }
+      } catch (err) {
+        console.error('Lỗi fetch danh sách tham gia:', err);
+        setApprovedMembers([]);
+      } finally {
+        setLoadingMembers(false);
+      }
+    };
+    fetchMembers();
+  }, [selectedHD]);
 
   return (
     <div className="hd-container">
@@ -105,9 +124,10 @@ const HoatDongXacNhan = () => {
 
       <RegistrationListModal
         show={showMemberModal}
-        onClose={() => setShowMemberModal(false)}
+        onClose={() => { setShowMemberModal(false); setSelectedHD(null); }}
         activity={selectedHD}
         registrations={approvedMembers}
+        loading={loadingMembers}
         title="Danh sách Tham gia thực tế"
       />
     </div>

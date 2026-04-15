@@ -4,6 +4,7 @@ const router = express.Router();
 // Import routes
 const taiKhoanRoutes = require("./auth.routes");
 const hoatdongRoutes = require("./hoatdong.routes");
+const doanviendangkiRoutes = require("./doanviendangki.routes");
 
 // Health check route
 router.get("/health", (req, res) => {
@@ -18,6 +19,9 @@ router.get("/health", (req, res) => {
 router.use("/auth", taiKhoanRoutes);
 
 // Hoạt động routes
-router.use("/hoat-dong-doan", hoatdongRoutes);
+router.use("/hoatdong", hoatdongRoutes);
+
+// Đoàn viên đăng ký routes
+router.use("/doanviendangki", doanviendangkiRoutes);
 
 module.exports = router;

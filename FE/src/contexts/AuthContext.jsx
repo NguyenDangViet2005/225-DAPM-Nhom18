@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import { ROLE_PERMISSIONS } from "@/constants/permissions";
 import { getMeAPI, logoutAPI } from "@/apis/auth.api";
 
@@ -7,9 +7,14 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const sessionRestoredRef = useRef(false);
 
   // On mount: restore session from cookie via /auth/me
   useEffect(() => {
+    // Prevent running restore more than once
+    if (sessionRestoredRef.current) return;
+    sessionRestoredRef.current = true;
+
     const restoreSession = async () => {
       try {
         const result = await getMeAPI();

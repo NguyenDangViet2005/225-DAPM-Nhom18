@@ -16,9 +16,7 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error) => {
-  failedQueue.forEach((prom) =>
-    error ? prom.reject(error) : prom.resolve()
-  );
+  failedQueue.forEach((prom) => (error ? prom.reject(error) : prom.resolve()));
   failedQueue = [];
 };
 
@@ -34,10 +32,12 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     // Only handle 401 and skip the refresh endpoint itself to avoid infinite loop
+    // Also skip /auth/me on initial load when not authenticated
     if (
       error.response?.status !== 401 ||
       originalRequest._retry ||
-      originalRequest.url?.includes("/auth/refresh-token")
+      originalRequest.url?.includes("/auth/refresh-token") ||
+      originalRequest.url?.includes("/auth/me")
     ) {
       return Promise.reject(error);
     }
@@ -59,7 +59,7 @@ apiClient.interceptors.response.use(
       await axios.post(
         `${API_URL}/auth/refresh-token`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       // New accessToken is now in cookie; process queued requests
@@ -73,7 +73,7 @@ apiClient.interceptors.response.use(
     } finally {
       isRefreshing = false;
     }
-  }
+  },
 );
 
 export default apiClient;

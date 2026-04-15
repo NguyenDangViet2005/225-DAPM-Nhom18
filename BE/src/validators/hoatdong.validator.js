@@ -51,7 +51,29 @@ const updateActivityValidator = (req, res, next) => {
   next();
 };
 
+const duyetDangKyValidator = (req, res, next) => {
+  const { maSV, trangThai } = req.body;
+
+  if (!maSV || !trangThai) {
+    return res.status(400).json({
+      success: false,
+      message: "Thiếu dữ liệu: maSV và trangThai là bắt buộc",
+    });
+  }
+
+  const validTrangThai = ["Đã duyệt", "Từ chối", "Chờ duyệt"];
+  if (!validTrangThai.includes(trangThai)) {
+    return res.status(400).json({
+      success: false,
+      message: `trangThai không hợp lệ. Chỉ chấp nhận: ${validTrangThai.join(", ")}`,
+    });
+  }
+
+  next();
+};
+
 module.exports = {
   createActivityValidator,
   updateActivityValidator,
+  duyetDangKyValidator,
 };

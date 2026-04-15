@@ -4,6 +4,7 @@ const {
   generateRefreshToken,
   verifyRefreshToken,
 } = require("../utils/jwt.util");
+const { TaiKhoan, DoanVien, Khoa, VaiTro } = require("../models");
 
 const login = async (req, res) => {
   try {
@@ -69,8 +70,38 @@ const refreshTokenHandler = async (req, res) => {
 
     const decoded = verifyRefreshToken(refreshToken);
 
+    // Get full user info from database to determine role
+    const account = await TaiKhoan.findOne({
+      where: { idUser: decoded.idUser },
+      include: [
+        { model: VaiTro, as: "vaiTro" },
+        { model: DoanVien, as: "doanVien" },
+        { model: Khoa, as: "khoaTK" },
+      ],
+    });
+
+    if (!account) {
+      return res.status(401).json({
+        success: false,
+        message: "Tài khoản không tồn tại",
+      });
+    }
+
+    // Determine role
+    let userType = "DOANTRUONG";
+    if (account.idDV) {
+      const doanVien = account.doanVien;
+      userType = doanVien.chucVu === "Bí thư Chi đoàn" ? "BITHU" : "DOANVIEN";
+    } else if (account.idKhoa) {
+      userType = "DOANKHOA";
+    }
+
+    // Create new access token with full user info (including type)
     const newAccessToken = generateAccessToken({
-      idUser: decoded.idUser,
+      idUser: account.idUser,
+      tenNguoiDung: account.tenNguoiDung,
+      type: userType,
+      idVaiTro: account.idVaiTro,
     });
 
     res.cookie("accessToken", newAccessToken, {

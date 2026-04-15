@@ -261,3 +261,8 @@ INSERT INTO DoanVienDangKi (idDV, idHD, ngayDangKi, trangThaiDuyet, lyDoTuChoi) 
 ('23115053122225', 'HD041', '2024-11-20', N'Chờ duyệt', NULL),
 ('23115053122226', 'HD041', '2024-11-21', N'Từ chối', N'Hết số lượng đăng ký tối đa');
 GO
+--- chèn dữ liệu chờ duyệt đăng ký hoạt động
+INSERT INTO DoanVienDangKi (idDV, idHD, ngayDangKi, trangThaiDuyet, lyDoTuChoi) VALUES
+('23115053122203', 'HD001', GETDATE(), N'Chờ duyệt', NULL),
+('23115053122204', 'HD001', GETDATE(), N'Chờ duyệt', NULL),
+('23115053122206', 'HD001', GETDATE(), N'Chờ duyệt', NULL);

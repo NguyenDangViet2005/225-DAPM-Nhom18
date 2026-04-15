@@ -23,12 +23,15 @@ const HoatDongModal = ({
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [errors, setErrors] = useState({});
 
-  // Reset/Set form data when modal opens or activity changes
+  // Reset errors when modal closes
+  const handleClose = () => {
+    setErrors({});
+    onClose();
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!show) {
-      setErrors({});
-      return;
-    }
+    if (!show) return;
 
     if (activity) {
       setFormData({
@@ -47,17 +50,16 @@ const HoatDongModal = ({
     } else {
       setFormData(INITIAL_FORM_STATE);
     }
-    setErrors({});
   }, [show, activity]);
 
   // Handle ESC key to close modal
   useEffect(() => {
     const handleEsc = (event) => {
-      if (event.key === "Escape" && show) onClose();
+      if (event.key === "Escape" && show) handleClose();
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [show, onClose]);
+  }, [show]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -98,11 +100,10 @@ const HoatDongModal = ({
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-    
+
     // Auto-convert number inputs to real numbers
-    const processedValue = type === 'number' 
-      ? (value === "" ? "" : Number(value)) 
-      : value;
+    const processedValue =
+      type === "number" ? (value === "" ? "" : Number(value)) : value;
 
     setFormData((prev) => ({
       ...prev,
@@ -122,13 +123,22 @@ const HoatDongModal = ({
   if (!show) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div
+      className="modal-overlay"
+      onClick={handleClose}
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2 className="modal-title">
             {activity ? "Chỉnh sửa hoạt động" : "Tạo hoạt động mới"}
           </h2>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Đóng">
+          <button
+            className="modal-close-btn"
+            onClick={handleClose}
+            aria-label="Đóng"
+          >
             <X size={24} />
           </button>
         </div>
@@ -161,7 +171,9 @@ const HoatDongModal = ({
                 <option value="Đoàn Khoa">Đoàn Khoa</option>
                 <option value="Chi đoàn">Chi đoàn</option>
               </select>
-              {errors.donViToChuc && <span className="error-text">{errors.donViToChuc}</span>}
+              {errors.donViToChuc && (
+                <span className="error-text">{errors.donViToChuc}</span>
+              )}
             </div>
           </div>
 
@@ -200,7 +212,9 @@ const HoatDongModal = ({
                 onChange={handleChange}
                 className={`form-input ${errors.ngayToChuc ? "error" : ""}`}
               />
-              {errors.ngayToChuc && <span className="error-text">{errors.ngayToChuc}</span>}
+              {errors.ngayToChuc && (
+                <span className="error-text">{errors.ngayToChuc}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -213,7 +227,9 @@ const HoatDongModal = ({
                 placeholder="VD: Sân trường chính"
                 className={`form-input ${errors.diaDiem ? "error" : ""}`}
               />
-              {errors.diaDiem && <span className="error-text">{errors.diaDiem}</span>}
+              {errors.diaDiem && (
+                <span className="error-text">{errors.diaDiem}</span>
+              )}
             </div>
           </div>
 
@@ -229,7 +245,9 @@ const HoatDongModal = ({
                 className={`form-input ${errors.soLuongMax ? "error" : ""}`}
                 min="1"
               />
-              {errors.soLuongMax && <span className="error-text">{errors.soLuongMax}</span>}
+              {errors.soLuongMax && (
+                <span className="error-text">{errors.soLuongMax}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -243,7 +261,9 @@ const HoatDongModal = ({
                 className={`form-input ${errors.diemHD ? "error" : ""}`}
                 min="0"
               />
-              {errors.diemHD && <span className="error-text">{errors.diemHD}</span>}
+              {errors.diemHD && (
+                <span className="error-text">{errors.diemHD}</span>
+              )}
             </div>
           </div>
 
@@ -261,11 +281,20 @@ const HoatDongModal = ({
           </div>
 
           <div className="modal-actions">
-            <button type="button" className="btn-cancel" onClick={onClose} disabled={isLoading}>
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={handleClose}
+              disabled={isLoading}
+            >
               Hủy bỏ
             </button>
             <button type="submit" className="btn-save" disabled={isLoading}>
-              {isLoading ? "Đang lưu..." : activity ? "Cập nhật" : "Tạo hoạt động"}
+              {isLoading
+                ? "Đang lưu..."
+                : activity
+                  ? "Cập nhật"
+                  : "Tạo hoạt động"}
             </button>
           </div>
         </form>

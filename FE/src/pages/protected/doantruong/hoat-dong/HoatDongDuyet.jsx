@@ -1,104 +1,219 @@
-import { useState, useMemo } from 'react';
-import { 
-  CheckCircle, 
-  XCircle,
-  ClipboardCheck,
-} from 'lucide-react';
-import { MOCK_DANG_KY_HOAT_DONG, MOCK_HOAT_DONG } from '@/data/mockHoatDong';
-import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
-import './HoatDong.css';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { CheckCircle } from "lucide-react";
+import doanviendangkiAPI from "@/apis/doanviendangki.api";
+import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
+import HoatDongDuyetTable from "@/components/commons/tables/HoatDongDuyetTable";
+import RejectRegistrationModal from "@/components/commons/modals/RejectRegistrationModal";
+import "./HoatDong.css";
 
 const HoatDongDuyet = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("Chờ duyệt"); // bộ lọc trạng thái
 
-  // Lọc chỉ các Hoạt động do ĐOÀN TRƯỜNG tổ chức
-  const schoolActivityIds = useMemo(() => {
-    return MOCK_HOAT_DONG.filter(hd => hd.donViToChuc === 'Đoàn Trường').map(hd => hd.idHD);
+  const [registrations, setRegistrations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [processingId, setProcessingId] = useState(null);
+
+  // Modal từ chối
+  const [rejectTarget, setRejectTarget] = useState(null);
+  const [lyDoTuChoi, setLyDoTuChoi] = useState("");
+
+  // Track if component has loaded to prevent duplicate fetches
+  const isInitialMount = useRef(true);
+
+  // Fetch danh sách đăng ký từ backend (1 API call duy nhất)
+  const fetchRegistrations = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result =
+        await doanviendangkiAPI.getPendingRegistrationsDoantruong();
+      if (result.success) {
+        setRegistrations(
+          result.data.map((reg) => ({
+            ...reg,
+            maSV: reg.maSV?.trim(),
+            idDV: reg.idDV?.trim(),
+            idHD: reg.idHD?.trim(),
+            tenHD: reg.tenHD?.trim(),
+            trangThaiDuyet: reg.trangThaiDuyet?.trim(),
+          })),
+        );
+      }
+    } catch (err) {
+      console.error("Lỗi fetch đăng ký:", err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const registrationsPending = useMemo(() => {
-    return MOCK_DANG_KY_HOAT_DONG.filter(reg => 
-      schoolActivityIds.includes(reg.idHD) &&
-      reg.trangThaiDuyet === 'Chờ duyệt' && (
-        reg.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        reg.idDV.includes(searchTerm) || 
-        reg.tenHD.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+  // Load dữ liệu khi component mount
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      fetchRegistrations();
+    }
+  }, [fetchRegistrations]);
+
+  // Duyệt / Từ chối
+  const handleDuyet = async (maSV, idHD, trangThai, lyDo = null) => {
+    const key = `${maSV}-${idHD}`;
+    setProcessingId(key);
+    try {
+      const result = await doanviendangkiAPI.duyetDangKy(
+        idHD,
+        maSV,
+        trangThai,
+        lyDo,
+      );
+      if (result.success) {
+        setRegistrations((prev) =>
+          prev.map((r) =>
+            r.maSV === maSV && r.idHD === idHD
+              ? { ...r, trangThaiDuyet: trangThai }
+              : r,
+          ),
+        );
+      } else {
+        alert(result.message || "Có lỗi xảy ra");
+      }
+    } catch (err) {
+      console.error("Lỗi duyệt đăng ký:", err);
+      alert("Không thể kết nối server");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleConfirmReject = async () => {
+    if (!rejectTarget) return;
+    await handleDuyet(
+      rejectTarget.maSV,
+      rejectTarget.idHD,
+      "Từ chối",
+      lyDoTuChoi,
     );
-  }, [searchTerm, schoolActivityIds]);
+    setRejectTarget(null);
+    setLyDoTuChoi("");
+  };
+
+  // Stats
+  const pendingRegs = registrations.filter(
+    (r) => r.trangThaiDuyet?.trim() === "Chờ duyệt",
+  );
+  const approvedRegs = registrations.filter(
+    (r) => r.trangThaiDuyet?.trim() === "Đã duyệt",
+  );
+  const rejectedRegs = registrations.filter(
+    (r) => r.trangThaiDuyet?.trim() === "Từ chối",
+  );
+
+  // Lọc hiển thị
+  const filtered = registrations.filter((reg) => {
+    const matchSearch =
+      (reg.hoTen || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (reg.maSV || "").includes(searchTerm) ||
+      (reg.tenHD || "").toLowerCase().includes(searchTerm.toLowerCase());
+    const matchStatus =
+      statusFilter === "all" || reg.trangThaiDuyet?.trim() === statusFilter;
+    return matchSearch && matchStatus;
+  });
 
   return (
     <div className="hd-container">
+      {/* Header */}
       <div className="hd-header">
         <h1 className="hd-title">Duyệt đăng ký Đoàn trường</h1>
         <div className="hd-actions">
-          <button className="hd-update-btn" style={{ backgroundColor: '#15803d', borderColor: '#15803d', color: '#fff' }}>
+          <button
+            className="hd-update-btn"
+            style={{
+              backgroundColor: "#15803d",
+              borderColor: "#15803d",
+              color: "#fff",
+            }}
+            disabled={pendingRegs.length === 0}
+            onClick={async () => {
+              for (const reg of pendingRegs)
+                await handleDuyet(reg.maSV, reg.idHD, "Đã duyệt");
+            }}
+          >
             <CheckCircle size={18} />
-            Duyệt hàng loạt (School)
+            Duyệt hàng loạt ({pendingRegs.length})
           </button>
         </div>
       </div>
 
+      {/* Stats — lấy từ DB */}
       <div className="hd-stats">
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #b45309' }}>
+        <div
+          className="hd-stat-item"
+          style={{ borderLeft: "3px solid #b45309", cursor: "pointer" }}
+          onClick={() => setStatusFilter("Chờ duyệt")}
+        >
           <span className="hd-stat-item__label">Chờ xử lý (Cấp trường)</span>
-          <span className="hd-stat-item__value">{registrationsPending.length} đơn</span>
+          <span className="hd-stat-item__value" style={{ color: "#b45309" }}>
+            {pendingRegs.length} đơn
+          </span>
         </div>
-        <div className="hd-stat-item" style={{ borderLeft: '3px solid #004f9f' }}>
-          <span className="hd-stat-item__label">Tổng hoạt động quản lý</span>
-          <span className="hd-stat-item__value">{schoolActivityIds.length}</span>
+        <div
+          className="hd-stat-item"
+          style={{ borderLeft: "3px solid #15803d", cursor: "pointer" }}
+          onClick={() => setStatusFilter("Đã duyệt")}
+        >
+          <span className="hd-stat-item__label">Đã duyệt</span>
+          <span className="hd-stat-item__value" style={{ color: "#15803d" }}>
+            {approvedRegs.length} đơn
+          </span>
+        </div>
+        <div
+          className="hd-stat-item"
+          style={{ borderLeft: "3px solid #dc2626", cursor: "pointer" }}
+          onClick={() => setStatusFilter("Từ chối")}
+        >
+          <span className="hd-stat-item__label">Từ chối</span>
+          <span className="hd-stat-item__value" style={{ color: "#dc2626" }}>
+            {rejectedRegs.length} đơn
+          </span>
         </div>
       </div>
 
+      {/* Toolbar + Bộ lọc */}
       <DataTableToolbar
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         placeholder="Tìm tên đoàn viên, MSSV hoặc tên hoạt động (Trường)..."
+        filterValue={statusFilter}
+        onFilterChange={setStatusFilter}
+        filterOptions={[
+          { value: "all", label: "Tất cả" },
+          { value: "Chờ duyệt", label: "Chờ duyệt" },
+          { value: "Đã duyệt", label: "Đã duyệt" },
+          { value: "Từ chối", label: "Từ chối" },
+        ]}
       />
 
+      {/* Table */}
       <div className="hd-card">
-        <table className="hd-table">
-          <thead>
-            <tr>
-              <th>MSSV</th>
-              <th>Họ và Tên</th>
-              <th>Hoạt động (Cấp trường)</th>
-              <th>Ngày đăng ký</th>
-              <th>Thao tác duyệt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {registrationsPending.map((reg, idx) => (
-              <tr key={`${reg.idDV}-${reg.idHD}-${idx}`}>
-                <td style={{ fontWeight: 600, color: '#004f9f' }}>{reg.idDV}</td>
-                <td>{reg.hoTen}</td>
-                <td style={{ fontWeight: 600, color: '#0d1f3c' }}>{reg.tenHD}</td>
-                <td>{new Date(reg.ngayDangKi).toLocaleDateString('vi-VN')}</td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="hd-update-btn" style={{ color: '#15803d' }} title="Duyệt tham gia">
-                      <CheckCircle size={18} /> Duyệt
-                    </button>
-                    <button className="hd-update-btn" style={{ color: '#b91c1c' }} title="Từ chối">
-                      <XCircle size={18} /> Từ chối
-                    </button>
-                    <button className="hd-update-btn" title="Ghi chú">
-                      <ClipboardCheck size={18} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {registrationsPending.length === 0 && (
-              <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                  Hiện tại không có đơn đăng ký nào cấp trường đang chờ duyệt
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <HoatDongDuyetTable
+          loading={loading}
+          filteredSelections={filtered}
+          processingId={processingId}
+          onApprove={handleDuyet}
+          onReject={setRejectTarget}
+        />
       </div>
+
+      {/* Modal từ chối */}
+      <RejectRegistrationModal
+        rejectTarget={rejectTarget}
+        lyDoTuChoi={lyDoTuChoi}
+        setLyDoTuChoi={setLyDoTuChoi}
+        onClose={() => {
+          setRejectTarget(null);
+          setLyDoTuChoi("");
+        }}
+        onConfirm={handleConfirmReject}
+      />
     </div>
   );
 };
