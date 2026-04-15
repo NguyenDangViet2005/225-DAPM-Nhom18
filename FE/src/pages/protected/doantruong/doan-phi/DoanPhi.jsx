@@ -79,7 +79,7 @@ const DoanPhi = () => {
     <div className="doan-phi-container">
       {/* ── Header ─────────────────────────────────────── */}
       <div className="dp-header">
-        <h1 className="dp-title">QUẢN LSY ĐOÀN PHÍ</h1>
+        <h1 className="dp-title">QUẢN LÝ ĐOÀN PHÍ</h1>
         <div className="dp-actions">
           <button className="dp-update-btn" style={{ borderColor: '#004f9f', color: '#004f9f' }}>
             <Download size={18} /> Xuất báo cáo
