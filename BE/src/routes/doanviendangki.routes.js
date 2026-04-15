@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getAllPendingRegistrations,
+  getAllRegistrations,
   duyetDangKy,
 } = require("../controllers/hoatdong.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
@@ -10,8 +11,14 @@ const { duyetDangKyValidator } = require("../validators/hoatdong.validator");
 // All routes require authentication
 router.use(verifyToken);
 
+// Get tất cả đơn đăng ký (mọi trạng thái) hoạt động Đoàn Trường
+router.get(
+  "/doantruong/registrations/all",
+  checkRole(["DOANTRUONG"]),
+  getAllRegistrations,
+);
+
 // Get tất cả đơn đăng ký chờ duyệt hoạt động Đoàn Trường
-// Route: GET /doanviendangki/doantruong/registrations/pending
 router.get(
   "/doantruong/registrations/pending",
   checkRole(["DOANTRUONG"]),
@@ -19,7 +26,6 @@ router.get(
 );
 
 // Duyệt hoặc từ chối đăng ký (Đoàn Trường only)
-// Route: PUT /doanviendangki/doantruong/registrations/:idHD/duyet
 router.put(
   "/doantruong/:idHD/duyet",
   checkRole(["DOANTRUONG"]),

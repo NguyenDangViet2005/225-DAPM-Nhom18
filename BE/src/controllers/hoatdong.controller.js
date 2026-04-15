@@ -219,6 +219,17 @@ const duyetDangKy = async (req, res) => {
   }
 };
 
+// Lấy tất cả đơn đăng ký (mọi trạng thái) từ tất cả hoạt động Đoàn Trường
+const getAllRegistrations = async (req, res) => {
+  try {
+    const result = await hoatdongService.getAllRegistrations();
+    if (!result.success) return res.status(400).json(result);
+    return res.status(200).json({ success: true, data: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
 // Lấy tất cả đơn đăng ký chờ duyệt từ tất cả hoạt động Đoàn Trường
 const getAllPendingRegistrations = async (req, res) => {
   try {
@@ -314,4 +325,5 @@ module.exports = {
   getDanhSachDangKy,
   duyetDangKy,
   getAllPendingRegistrations,
+  getAllRegistrations,
 };

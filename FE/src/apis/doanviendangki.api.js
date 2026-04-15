@@ -1,6 +1,13 @@
 import apiClient from "@/configs/axiosClient";
 
 export const doanviendangkiAPI = {
+  // Get tất cả đơn đăng ký (mọi trạng thái) hoạt động Đoàn Trường
+  getAllRegistrationsDoantruong: async () => {
+    const response = await apiClient.get(
+      "/doanviendangki/doantruong/registrations/all",
+    );
+    return response.data;
+  },
   // Get all pending registrations for school-level activities (DOANTRUONG only)
   getPendingRegistrationsDoantruong: async () => {
     const response = await apiClient.get(

@@ -327,6 +327,44 @@ const hoatdongService = {
     }
   },
 
+  // Lấy tất cả đơn đăng ký (mọi trạng thái) từ tất cả hoạt động Đoàn Trường
+  async getAllRegistrations() {
+    try {
+      const { DoanVienDangKi, DoanVien, ChiDoan, HoatDongDoan } = require("../models");
+      const registrations = await DoanVienDangKi.findAll({
+        attributes: ["idDV", "idHD", "ngayDangKi", "trangThaiDuyet", "lyDoTuChoi"],
+        include: [
+          {
+            model: DoanVien, as: "doanVien", attributes: ["idDV", "hoTen"],
+            include: [{ model: ChiDoan, as: "chiDoan", attributes: ["tenChiDoan"] }],
+          },
+          {
+            model: HoatDongDoan, as: "hoatDong", attributes: ["idHD", "tenHD"],
+            where: { idKhoa: null, idChiDoan: null },
+            required: true,
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const formattedData = registrations.map((reg) => ({
+        maSV: reg.idDV?.trim(),
+        idDV: reg.idDV?.trim(),
+        hoTen: reg.doanVien?.hoTen?.trim() || "",
+        tenChiDoan: reg.doanVien?.chiDoan?.tenChiDoan?.trim() || "—",
+        idHD: reg.idHD?.trim(),
+        tenHD: reg.hoatDong?.tenHD?.trim() || "",
+        ngayDangKi: reg.ngayDangKi,
+        trangThaiDuyet: reg.trangThaiDuyet?.trim(),
+        lyDoTuChoi: reg.lyDoTuChoi,
+      }));
+
+      return { success: true, data: formattedData };
+    } catch (error) {
+      return { success: false, message: "Lỗi lấy danh sách đăng ký", error: error.message };
+    }
+  },
+
   // Lấy tất cả đơn đăng ký chờ duyệt từ tất cả hoạt động Đoàn Trường
   async getAllPendingRegistrations() {
     try {

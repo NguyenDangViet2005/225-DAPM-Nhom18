@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Search } from "lucide-react";
 import doanviendangkiAPI from "@/apis/doanviendangki.api";
-import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
 import HoatDongDuyetTable from "@/components/commons/tables/HoatDongDuyetTable";
 import RejectRegistrationModal from "@/components/commons/modals/RejectRegistrationModal";
 import "./HoatDong.css";
@@ -21,12 +20,11 @@ const HoatDongDuyet = () => {
   // Track if component has loaded to prevent duplicate fetches
   const isInitialMount = useRef(true);
 
-  // Fetch danh sách đăng ký từ backend (1 API call duy nhất)
+  // Fetch danh sách đăng ký từ backend — tất cả trạng thái
   const fetchRegistrations = useCallback(async () => {
     setLoading(true);
     try {
-      const result =
-        await doanviendangkiAPI.getPendingRegistrationsDoantruong();
+      const result = await doanviendangkiAPI.getAllRegistrationsDoantruong();
       if (result.success) {
         setRegistrations(
           result.data.map((reg) => ({
@@ -177,20 +175,29 @@ const HoatDongDuyet = () => {
         </div>
       </div>
 
-      {/* Toolbar + Bộ lọc */}
-      <DataTableToolbar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        placeholder="Tìm tên đoàn viên, MSSV hoặc tên hoạt động (Trường)..."
-        filterValue={statusFilter}
-        onFilterChange={setStatusFilter}
-        filterOptions={[
-          { value: "all", label: "Tất cả" },
-          { value: "Chờ duyệt", label: "Chờ duyệt" },
-          { value: "Đã duyệt", label: "Đã duyệt" },
-          { value: "Từ chối", label: "Từ chối" },
-        ]}
-      />
+      {/* Toolbar */}
+      <div className="hd-toolbar" style={{ marginBottom: '1rem' }}>
+        <div className="hd-search-wrap" style={{ flex: 1 }}>
+          <Search size={18} />
+          <input
+            type="text"
+            className="hd-search-input"
+            placeholder="Tìm tên đoàn viên, MSSV hoặc tên hoạt động (Trường)..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <select
+          className="hd-filter-select"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="all">Tất cả</option>
+          <option value="Chờ duyệt">Chờ duyệt</option>
+          <option value="Đã duyệt">Đã duyệt</option>
+          <option value="Từ chối">Từ chối</option>
+        </select>
+      </div>
 
       {/* Table */}
       <div className="hd-card">

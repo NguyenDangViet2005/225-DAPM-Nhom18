@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Plus, BarChart, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";import { Plus, BarChart, ChevronLeft, ChevronRight } from "lucide-react";
 import hoatdongAPI from "@/apis/hoatdong.api";
 import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
 import RegistrationListModal from "@/components/commons/modals/DanhSachDoanVienDangKiModal";
@@ -9,8 +8,6 @@ import HoatDongTable from "../../../../components/commons/tables/HoatDongTable";
 import "./HoatDong.css";
 
 const PAGE_SIZE = 10;
-
-const API = 'http://localhost:5000/api/hoatdong';
 
 const HoatDongQuanLy = () => {
   const [activities, setActivities] = useState([]);
@@ -194,41 +191,7 @@ const HoatDongQuanLy = () => {
     }
   };
 
-  // Stats tính từ dữ liệu thực
-  const stats = useMemo(() => ({
-    tong:      activities.length,
-    dangMo:    activities.filter(h => h.trangThaiHD === 'Đang mở').length,
-    sapDienRa: activities.filter(h => h.trangThaiHD === 'Chưa duyệt').length,
-    daKetThuc: activities.filter(h => h.trangThaiHD === 'Đã kết thúc').length,
-  }), [activities]);
-
-  const filterOptions = [
-    { value: 'all',           label: 'Tất cả trạng thái' },
-    { value: 'Đang mở',       label: 'Đang mở đăng ký' },
-    { value: 'Đã đóng',       label: 'Đã đóng' },
-    { value: 'Đã kết thúc',   label: 'Đã kết thúc' },
-    { value: 'Chưa duyệt',    label: 'Chưa duyệt' },
-    { value: 'Đã duyệt',      label: 'Đã duyệt' },
-  ];
-
-  const filteredActivities = useMemo(() => {
-    return activities.filter(hd => {
-      const matchSearch = hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (hd.donViToChuc || '').toLowerCase().includes(searchTerm.toLowerCase());
-      const matchFilter = hdFilter === 'all' || hd.trangThaiHD === hdFilter;
-      return matchSearch && matchFilter;
-    });
-  }, [activities, searchTerm, hdFilter]);
-
-  const getBadgeClass = (trangThai) => {
-    switch (trangThai) {
-      case 'Đang mở':     return 'hd-badge--open';
-      case 'Đang diễn ra': return 'hd-badge--ongoing';
-      case 'Đã kết thúc': return 'hd-badge--ended';
-      default:            return 'hd-badge--closed';
-    }
-  };
-
+  // Stats tính từ dữ liệu thực — dùng trực tiếp trong JSX
   return (
     <div className="hd-container">
       {/* Header */}

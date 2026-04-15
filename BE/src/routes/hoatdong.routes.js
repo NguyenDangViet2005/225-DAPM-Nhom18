@@ -19,10 +19,6 @@ const { verifyToken } = require("../middlewares/auth.middleware");
 // All routes require authentication
 router.use(verifyToken);
 
-// ─────────────────────────────────────────────────────────
-// READ ENDPOINTS (all authenticated users can access)
-// ─────────────────────────────────────────────────────────
-
 // Get all school-level activities
 router.get("/doantruong", getAllSchoolActivities);
 
@@ -37,14 +33,6 @@ router.get("/:idHD/registrations", getActivityRegistrations);
 
 // Get activity by ID (must be last - generic pattern)
 router.get("/:idHD", getActivityById);
-
-// ─────────────────────────────────────────────────────────
-// WRITE ENDPOINTS
-// Role check in service/controller:
-// - DOANTRUONG: create/update/delete school-level (idKhoa=null, idChiDoan=null)
-// - DOANKHOA: create/update/delete khoa-level (idKhoa!=null, idChiDoan=null)
-// - BITHU: create/update/delete chi doan-level (idKhoa=null, idChiDoan!=null)
-// ─────────────────────────────────────────────────────────
 
 // Create new activity
 router.post("/", createActivityValidator, createActivity);
