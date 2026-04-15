@@ -151,8 +151,17 @@ INSERT INTO TaiKhoan (idUser, tenNguoiDung, matKhau, trangThai, ngayTao, idVaiTr
 GO
 
 -- 4. Chèn Sổ đoàn & Tiểu sử
-INSERT INTO SoDoan (idSoDoan, idDV, ngayCap, noiCap, trangThai)
-SELECT 'SD' + RIGHT('00' + CAST(ROW_NUMBER() OVER (ORDER BY idDV) AS VARCHAR), 3), idDV, '2023-09-01', N'Đoàn Trường ĐH Sư phạm Kỹ thuật', N'Đang hoạt động'
+INSERT INTO SoDoan (idSoDoan, idDV, ngayCap, noiCap, trangThai, ngayRutSo)
+SELECT 'SD' + RIGHT('00' + CAST(ROW_NUMBER() OVER (ORDER BY idDV) AS VARCHAR), 3), idDV, '2023-09-01', N'Đoàn Trường ĐH Sư phạm Kỹ thuật', 
+       CASE 
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 3) = 0 THEN N'Chưa nộp sổ'
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 4) = 0 THEN N'Đã rút sổ'
+         ELSE N'Đã nộp sổ' 
+       END,
+       CASE 
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 4) = 0 THEN '2024-01-15'
+         ELSE NULL 
+       END
 FROM DoanVien;
 
 INSERT INTO TieuSu (idTieuSu, idDV, tuThoiGian, denThoiGian, donViCongTac, chucVuCu)
