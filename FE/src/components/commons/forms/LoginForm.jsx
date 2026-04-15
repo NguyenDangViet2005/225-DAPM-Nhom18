@@ -1,42 +1,51 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLES } from "@/constants/roles";
-import { MOCK_USERS } from "@/data/mockUsers";
+import { loginAPI } from "@/apis/auth.api";
+import { getRoleBasedRedirectPath } from "@/utils/getRoleBasedRedirectPath";
 
 const LoginForm = ({ onForgotPassword }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    // Giả lập logic login theo bộ mock data
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await loginAPI(username, password);
 
-      const foundUser = Object.values(MOCK_USERS).find(
-        (u) => u.username === username.toLowerCase() && u.password === password,
+      const redirectPath = getRoleBasedRedirectPath(
+        response.user.type,
+        response.user.chucVu,
       );
 
-      if (!foundUser) {
-        alert("Tài khoản demo: admin, khoa, bithu, sv01. Mật khẩu: 123");
-        return;
-      }
+      const userData = {
+        idUser: response.user.idUser,
+        tenNguoiDung: response.user.tenNguoiDung,
+        type: response.user.type,
+        idVaiTro: response.user.idVaiTro,
+        hoTen: response.user.hoTen,
+        idDV: response.user.idDV,
+        idKhoa: response.user.idKhoa,
+        chucVu: response.user.chucVu,
+      };
 
-      let redirectPath = "/bi-thu/dashboard";
-      if (foundUser.role === ROLES.DOANTRUONG)
-        redirectPath = "/doan-truong/dashboard";
-      if (foundUser.role === ROLES.DOANKHOA)
-        redirectPath = "/doan-khoa/dashboard";
-      if (foundUser.role === ROLES.DOANVIEN)
-        redirectPath = "/doan-vien/thong-tin-ca-nhan";
+      login(userData);
 
-      login(foundUser);
       window.location.href = redirectPath;
-    }, 1000);
+    } catch (err) {
+      // Handle axios error
+      const errorMessage =
+        err.response?.data?.message || err.message || "Lỗi kết nối đến máy chủ";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -113,6 +122,25 @@ const LoginForm = ({ onForgotPassword }) => {
               />
             </div>
           </div>
+
+          {error && (
+            <div
+              className="login-error-message"
+              style={{
+                marginBottom: "15px",
+                padding: "10px 12px",
+                backgroundColor: "#fee",
+                border: "1px solid #fcc",
+                borderRadius: "4px",
+                color: "#c33",
+                fontSize: "14px",
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
           <div className="login-options-row">
             <label className="login-check-label">
               <input type="checkbox" className="login-checkbox" />

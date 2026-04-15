@@ -1,7 +1,10 @@
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useContext } from "react";
+import AuthContext from "@/contexts/AuthContext";
 
-/**
- * useAuth – shortcut hook để lấy auth state
- * Usage: const { user, permissions, login, logout } = useAuth();
- */
-export const useAuth = () => useAuthContext();
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used inside <AuthProvider>");
+  }
+  return ctx;
+};

@@ -1,65 +1,72 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import { ROLE_PERMISSIONS } from "@/constants/permissions";
-import { ROLES } from "@/constants/roles";
+import { getMeAPI, logoutAPI } from "@/apis/auth.api";
 
-import { MOCK_USERS } from "@/data/mockUsers";
-
-/**
- * AuthContext – lưu trạng thái đăng nhập toàn cục.
- * Sau khi tích hợp BE, thay mock bằng API call + JWT decode.
- */
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // ── MOCK LOGIN TRONG QUÁ TRÌNH DEV ──────────────────────────
-  // Để hiển thị Dashboard ngay lập tức, ta gán user mặc định từ mock data.
-  const [user, setUser] = useState(MOCK_USERS.bithu);
-
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const sessionRestoredRef = useRef(false);
 
-  // Restore session từ localStorage khi reload
+  // On mount: restore session from cookie via /auth/me
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("auth_user");
-      if (stored) setUser(JSON.parse(stored));
-    } catch {
-      //
-    } finally {
-      setIsLoading(false);
-    }
+    // Prevent running restore more than once
+    if (sessionRestoredRef.current) return;
+    sessionRestoredRef.current = true;
+
+    const restoreSession = async () => {
+      try {
+        const result = await getMeAPI();
+        if (result.success) {
+          setUser({
+            ...result.user,
+            role: result.user.type,
+          });
+        }
+      } catch {
+        // No valid session — user stays null
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    restoreSession();
   }, []);
 
-  /**
-   * login – gọi sau khi nhận response thành công từ API
-   * @param {{ id: string, name: string, role: string }} userData
-   */
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("auth_user", JSON.stringify(userData));
+    // Cookie is set by the server — just update React state
+    setUser({
+      ...userData,
+      role: userData.type,
+    });
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("auth_user");
+  const logout = async () => {
+    try {
+      await logoutAPI();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setUser(null);
+      window.location.href = "/login";
+    }
   };
 
   const permissions = ROLE_PERMISSIONS[user?.role] ?? [];
 
   return (
     <AuthContext.Provider
-      value={{ user, permissions, isLoading, login, logout }}
+      value={{
+        user,
+        permissions,
+        isLoading,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
-
-// helper hook – dùng thay vì import AuthContext trực tiếp
-export const useAuthContext = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx)
-    throw new Error("useAuthContext must be used inside <AuthProvider>");
-  return ctx;
 };
 
 export default AuthContext;
