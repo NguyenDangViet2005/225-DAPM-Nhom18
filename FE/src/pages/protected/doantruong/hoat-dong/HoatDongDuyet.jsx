@@ -20,11 +20,12 @@ const HoatDongDuyet = () => {
   // Track if component has loaded to prevent duplicate fetches
   const isInitialMount = useRef(true);
 
-  // Fetch danh sách đăng ký từ backend — tất cả trạng thái
+  // Fetch danh sách đăng ký từ backend — chỉ chờ duyệt từ hoạt động chưa kết thúc
   const fetchRegistrations = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await doanviendangkiAPI.getAllRegistrationsDoantruong();
+      const result =
+        await doanviendangkiAPI.getPendingRegistrationsDoantruong();
       if (result.success) {
         setRegistrations(
           result.data.map((reg) => ({
@@ -176,7 +177,7 @@ const HoatDongDuyet = () => {
       </div>
 
       {/* Toolbar */}
-      <div className="hd-toolbar" style={{ marginBottom: '1rem' }}>
+      <div className="hd-toolbar" style={{ marginBottom: "1rem" }}>
         <div className="hd-search-wrap" style={{ flex: 1 }}>
           <Search size={18} />
           <input

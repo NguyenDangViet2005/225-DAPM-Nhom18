@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";import { Plus, BarChart, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, BarChart, ChevronLeft, ChevronRight } from "lucide-react";
 import hoatdongAPI from "@/apis/hoatdong.api";
+import doanviendangkiAPI from "@/apis/doanviendangki.api";
 import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
 import RegistrationListModal from "@/components/commons/modals/DanhSachDoanVienDangKiModal";
 import HoatDongModal from "@/components/commons/modals/HoatDongModal";
@@ -10,6 +12,7 @@ import "./HoatDong.css";
 const PAGE_SIZE = 10;
 
 const HoatDongQuanLy = () => {
+  console.log("🔌 HoatDongQuanLy component rendering...");
   const [activities, setActivities] = useState([]);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +35,7 @@ const HoatDongQuanLy = () => {
 
   // Modals
   const [showRegModal, setShowRegModal] = useState(false);
-  const [selectedHD, setSelectedHD]     = useState(null);
+  const [selectedHD, setSelectedHD] = useState(null);
   const [registrations, setRegistrations] = useState([]);
   const [isLoadingRegistrations, setIsLoadingRegistrations] = useState(false);
 
@@ -44,46 +47,64 @@ const HoatDongQuanLy = () => {
   const [deletingActivity, setDeletingActivity] = useState(null);
   const [isDeletingActivity, setIsDeletingActivity] = useState(false);
 
+  // Define loadActivities PRIMEIRO, antes do useEffect
+  const loadActivities = useCallback(
+    async (page = 1) => {
+      try {
+        console.log(
+          "🔄 loadActivities called with page:",
+          page,
+          "tabMode:",
+          tabMode,
+        );
+        setIsLoadingActivities(true);
+        setError(null);
+        let result;
+        if (tabMode === "doantruong") {
+          result = await hoatdongAPI.getAllSchoolActivities({
+            page,
+            limit: PAGE_SIZE,
+          });
+        } else if (tabMode === "khoa") {
+          result = await hoatdongAPI.getAllKhoaActivities({
+            page,
+            limit: PAGE_SIZE,
+          });
+        } else if (tabMode === "chidoan") {
+          result = await hoatdongAPI.getAllChidoanActivities({
+            page,
+            limit: PAGE_SIZE,
+          });
+        }
+
+        if (result && result.success) {
+          console.log("✅ Activities loaded:", result.data?.length, "items");
+          setActivities(result.data || []);
+          if (result.pagination) setPagination(result.pagination);
+        } else {
+          console.error("❌ API error:", result?.message);
+          setError(result?.message || "Không thể tải danh sách hoạt động");
+        }
+      } catch (err) {
+        console.error("❌ Exception:", err.message);
+        setError(
+          err.response?.data?.message || err.message || "Lỗi khi tải hoạt động",
+        );
+      } finally {
+        setIsLoadingActivities(false);
+      }
+    },
+    [tabMode],
+  );
+
+  // Agora chama o useEffect DEPOIS de loadActivities estar definida
   useEffect(() => {
+    console.log(
+      "📡 useEffect triggered - calling loadActivities for page:",
+      currentPage,
+    );
     loadActivities(currentPage);
-  }, [currentPage, tabMode]);
-
-  const loadActivities = async (page = 1) => {
-    try {
-      setIsLoadingActivities(true);
-      setError(null);
-      let result;
-      if (tabMode === "doantruong") {
-        result = await hoatdongAPI.getAllSchoolActivities({
-          page,
-          limit: PAGE_SIZE,
-        });
-      } else if (tabMode === "khoa") {
-        result = await hoatdongAPI.getAllKhoaActivities({
-          page,
-          limit: PAGE_SIZE,
-        });
-      } else if (tabMode === "chidoan") {
-        result = await hoatdongAPI.getAllChidoanActivities({
-          page,
-          limit: PAGE_SIZE,
-        });
-      }
-
-      if (result && result.success) {
-        setActivities(result.data || []);
-        if (result.pagination) setPagination(result.pagination);
-      } else {
-        setError(result?.message || "Không thể tải danh sách hoạt động");
-      }
-    } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || "Lỗi khi tải hoạt động",
-      );
-    } finally {
-      setIsLoadingActivities(false);
-    }
-  };
+  }, [currentPage, tabMode, loadActivities]);
 
   // Client-side filter within current page data
   const filteredActivities = activities.filter((hd) => {
@@ -176,7 +197,8 @@ const HoatDongQuanLy = () => {
   const loadRegistrations = async (idHD) => {
     try {
       setIsLoadingRegistrations(true);
-      const result = await hoatdongAPI.getActivityRegistrations(idHD);
+      const result =
+        await doanviendangkiAPI.getApprovedActivityRegistrations(idHD);
       if (result.success) {
         setRegistrations(result.data || []);
       } else {

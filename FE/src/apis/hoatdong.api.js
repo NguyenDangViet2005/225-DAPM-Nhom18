@@ -55,12 +55,6 @@ export const hoatdongAPI = {
     return response.data;
   },
 
-  // Get registrations for an activity (full info)
-  getActivityRegistrations: async (idHD) => {
-    const response = await apiClient.get(`/hoatdong/${idHD}/registrations`);
-    return response.data;
-  },
-
   // Get danh sách đăng ký của 1 hoạt động (bao gồm thông tin chi đoàn)
   getDanhSachDangKy: async (idHD) => {
     const response = await apiClient.get(`/hoatdong/${idHD}/registrations`);

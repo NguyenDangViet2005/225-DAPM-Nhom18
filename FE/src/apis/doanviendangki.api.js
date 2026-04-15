@@ -27,6 +27,22 @@ export const doanviendangkiAPI = {
     );
     return response.data;
   },
+
+  // Get all registrations for a specific activity (all statuses)
+  getActivityRegistrations: async (idHD) => {
+    const response = await apiClient.get(
+      `/doanviendangki/${idHD}/registrations`,
+    );
+    return response.data;
+  },
+
+  // Get only approved registrations for a specific activity (trangThaiDuyet = "Đã duyệt")
+  getApprovedActivityRegistrations: async (idHD) => {
+    const response = await apiClient.get(
+      `/doanviendangki/${idHD}/approved-registrations`,
+    );
+    return response.data;
+  },
 };
 
 export default doanviendangkiAPI;
