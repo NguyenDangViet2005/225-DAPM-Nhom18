@@ -7,7 +7,9 @@ const UpdateFeeModal = ({
   onClose, 
   onConfirm, 
   feeValue, 
-  setFeeValue 
+  setFeeValue,
+  namHoc,
+  setNamHoc,
 }) => {
   if (!show) return null;
 
@@ -23,20 +25,24 @@ const UpdateFeeModal = ({
         
         <div className="dp-form-group">
           <label className="dp-form-label">Năm học áp dụng</label>
-          <input type="text" className="dp-form-input" defaultValue="2025-2026" />
+          <input
+            type="text"
+            className="dp-form-input"
+            placeholder="VD: 2025-2026"
+            value={namHoc ?? ''}
+            onChange={(e) => setNamHoc && setNamHoc(e.target.value)}
+          />
         </div>
 
         <div className="dp-form-group">
           <label className="dp-form-label">Số tiền thu (VNĐ)</label>
-          <div style={{ position: 'relative' }}>
-            <input 
-              type="number" 
-              className="dp-form-input" 
-              style={{ width: '100%' }}
-              value={feeValue}
-              onChange={(e) => setFeeValue(e.target.value)}
-            />
-          </div>
+          <input 
+            type="number" 
+            className="dp-form-input" 
+            style={{ width: '100%' }}
+            value={feeValue ?? ''}
+            onChange={(e) => setFeeValue(e.target.value)}
+          />
         </div>
 
         <div className="dp-modal-actions">

@@ -1,99 +1,118 @@
-import { useState, useMemo } from 'react';
-import { 
-  CreditCard, 
-  Download, 
-  Settings, 
-  CheckCircle, 
-  Clock, 
-  TrendingUp,
-} from 'lucide-react';
-import { MOCK_MUC_DOAN_PHI, MOCK_DOAN_PHI, MOCK_PHIEU_THU } from '@/data/mockDoanPhi';
+import { useState, useEffect, useMemo } from 'react';
+import { CreditCard, Download, CheckCircle, Clock, TrendingUp } from 'lucide-react';
+import useDoanPhi from '@/hooks/useDoanPhi';
 import UpdateFeeModal from '@/components/commons/modals/UpdateMucDoanPhiModal';
 import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
 import './DoanPhi.css';
 
+const fmtMoney = (n) => n ? `${Number(n).toLocaleString()} ₫` : '—';
+const fmtDate  = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—';
+
 const DoanPhi = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const {
+    mucDoanPhi, doanPhiList, phieuThuList, pagination,
+    loading,
+    fetchMucDoanPhi, createMucDoanPhi,
+    fetchDoanPhi,
+    fetchPhieuThu, duyetPhieuThu,
+  } = useDoanPhi();
+
+  const [searchTerm, setSearchTerm]   = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [activeTab, setActiveTab] = useState('payments'); // payments | receipts | rates
-  
-  // State cho việc cập nhật mức đoàn phí
+  const [activeTab, setActiveTab]     = useState('payments');
   const [showUpdateFee, setShowUpdateFee] = useState(false);
-  const [newFee, setNewFee] = useState(60000);
+  const [newFee, setNewFee]           = useState({ namHoc: '', soTien: '' });
 
-  // Lấy mức đoàn phí hiện tại
-  const currentRate = MOCK_MUC_DOAN_PHI.find(r => r.trangThai === 'Áp dụng') || MOCK_MUC_DOAN_PHI[0];
+  // Fetch data khi mount và khi tab thay đổi
+  useEffect(() => { fetchMucDoanPhi(); }, [fetchMucDoanPhi]);
 
-  // Logic lọc dữ liệu cho bảng đoàn viên
-  const filteredPayments = useMemo(() => {
-    return MOCK_DOAN_PHI.filter(p => {
-      const matchesSearch = p.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           p.idDV.includes(searchTerm);
-      const matchesStatus = statusFilter === 'all' || p.trangThai === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [searchTerm, statusFilter]);
+  useEffect(() => {
+    if (activeTab === 'payments') {
+      fetchDoanPhi({ search: searchTerm, trangThai: statusFilter });
+    } else {
+      fetchPhieuThu({ trangThai: statusFilter });
+    }
+  }, [activeTab, searchTerm, statusFilter]);
 
-  const stats = {
-    tongPhaiThu: (MOCK_DOAN_PHI.length * currentRate.soTien).toLocaleString(),
-    daThu: (MOCK_DOAN_PHI.filter(p => p.trangThai === 'Đã đóng').length * currentRate.soTien).toLocaleString(),
-    choDuyet: MOCK_PHIEU_THU.filter(r => r.trangThai === 'Chờ duyệt').length
+  const currentRate = mucDoanPhi.find(r => r.trangThai === 'Đang áp dụng') ?? mucDoanPhi[0];
+
+  const stats = useMemo(() => {
+    const daDong   = doanPhiList.filter(p => p.trangThai === 'Đã đóng').length;
+    const choDuyet = phieuThuList.filter(r => r.trangThai === 'Chờ duyệt').length;
+    const soTien   = currentRate?.soTien ?? 0;
+    return {
+      tongPhaiThu: fmtMoney(pagination.total * soTien),
+      daThu:       fmtMoney(daDong * soTien),
+      choDuyet,
+      tyLe: pagination.total ? `${Math.round((daDong / pagination.total) * 100)}%` : '0%',
+    };
+  }, [doanPhiList, phieuThuList, pagination, currentRate]);
+
+  const handleConfirmUpdate = async () => {
+    const res = await createMucDoanPhi({ namHoc: newFee.namHoc, soTien: Number(newFee.soTien) });
+    if (res?.success) {
+      alert(`Đã cập nhật mức phí mới: ${Number(newFee.soTien).toLocaleString()} ₫`);
+      setShowUpdateFee(false);
+      setNewFee({ namHoc: '', soTien: '' });
+    }
   };
 
-  const handleConfirmUpdate = () => {
-    alert(`Đã cập nhật mức phí mới: ${Number(newFee).toLocaleString()} VNĐ`);
-    setShowUpdateFee(false);
+  const handleDuyet = async (idPhieuThu, trangThai) => {
+    const label = trangThai === 'Đã duyệt' ? 'duyệt' : 'từ chối';
+    if (!window.confirm(`Xác nhận ${label} phiếu thu này?`)) return;
+    await duyetPhieuThu(idPhieuThu, trangThai);
   };
 
   const paymentFilterOptions = [
-    { value: 'all', label: 'Tất cả trạng thái' },
-    { value: 'Đã đóng', label: 'Đã đóng' },
-    { value: 'Chưa đóng', label: 'Chưa đóng' },
-    { value: 'Chờ duyệt', label: 'Chờ duyệt (Phiếu thu)' }
+    { value: 'all',           label: 'Tất cả trạng thái' },
+    { value: 'Đã đóng',       label: 'Đã đóng' },
+    { value: 'Chưa đóng',     label: 'Chưa đóng' },
+    { value: 'Đang chờ duyệt', label: 'Đang chờ duyệt' },
+  ];
+
+  const receiptFilterOptions = [
+    { value: 'all',       label: 'Tất cả trạng thái' },
+    { value: 'Chờ duyệt', label: 'Chờ duyệt' },
+    { value: 'Đã duyệt',  label: 'Đã duyệt' },
+    { value: 'Từ chối',   label: 'Từ chối' },
   ];
 
   return (
     <div className="doan-phi-container">
-      {/* ── Header ────────────────────────────────────────── */}
+      {/* ── Header ─────────────────────────────────────── */}
       <div className="dp-header">
         <h1 className="dp-title">Quản lý Đoàn Phí</h1>
         <div className="dp-actions">
           <button className="dp-update-btn" style={{ borderColor: '#004f9f', color: '#004f9f' }}>
-            <Download size={18} />
-            Xuất báo cáo
-          </button>
-          <button className="dp-update-btn" style={{ backgroundColor: '#004f9f', borderColor: '#004f9f', color: '#fff' }}>
-            <Settings size={18} />
-            Cấu hình đợt thu
+            <Download size={18} /> Xuất báo cáo
           </button>
         </div>
       </div>
 
-      {/* ── Current Fee Rate Bar ──────────────────────────── */}
+      {/* ── Current Fee Bar ────────────────────────────── */}
       <div className="dp-current-fee-bar">
         <div className="dp-current-fee-info">
-          <span className="dp-current-fee-label">Mức đoàn phí áp dụng toàn trường</span>
+          <span className="dp-current-fee-label">Mức đoàn phí đang áp dụng</span>
           <div className="dp-current-fee-value">
-            {currentRate.soTien.toLocaleString()} ₫
-            <span className="dp-current-fee-sub">/ năm học {currentRate.namHoc}</span>
+            {currentRate ? fmtMoney(currentRate.soTien) : '—'}
+            <span className="dp-current-fee-sub">/ năm học {currentRate?.namHoc ?? ''}</span>
           </div>
         </div>
         <button className="dp-update-btn" onClick={() => setShowUpdateFee(true)}>
-          <TrendingUp size={18} />
-          Cập nhật mức thu mới
+          <TrendingUp size={18} /> Cập nhật mức thu mới
         </button>
       </div>
 
-      {/* ── Status Cards ───────────────────────────────────────── */}
+      {/* ── Stats ──────────────────────────────────────── */}
       <div className="dp-stats">
         <div className="dp-stat-item">
           <span className="dp-stat-item__label">Tổng phải thu (Dự kiến)</span>
-          <span className="dp-stat-item__value">{stats.tongPhaiThu} ₫</span>
+          <span className="dp-stat-item__value">{stats.tongPhaiThu}</span>
           <CreditCard size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.05 }} />
         </div>
         <div className="dp-stat-item" style={{ borderLeft: '3px solid #15803d' }}>
           <span className="dp-stat-item__label">Đã thu thực tế</span>
-          <span className="dp-stat-item__value">{stats.daThu} ₫</span>
+          <span className="dp-stat-item__value">{stats.daThu}</span>
           <CheckCircle size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.1, color: '#15803d' }} />
         </div>
         <div className="dp-stat-item" style={{ borderLeft: '3px solid #b45309' }}>
@@ -103,125 +122,170 @@ const DoanPhi = () => {
         </div>
         <div className="dp-stat-item" style={{ borderLeft: '3px solid #004f9f' }}>
           <span className="dp-stat-item__label">Tỷ lệ hoàn thành</span>
-          <span className="dp-stat-item__value">74.5%</span>
+          <span className="dp-stat-item__value">{stats.tyLe}</span>
           <TrendingUp size={40} style={{ position: 'absolute', right: 20, bottom: 20, opacity: 0.1, color: '#004f9f' }} />
         </div>
       </div>
 
-      {/* ── Generic Toolbar ─────────────────────────────────── */}
+      {/* ── Toolbar ────────────────────────────────────── */}
       <DataTableToolbar
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        placeholder="Tìm kiếm đoàn viên, phiếu thu..."
+        placeholder="Tìm kiếm đoàn viên, mã SV..."
         filterValue={statusFilter}
         onFilterChange={setStatusFilter}
-        filterOptions={paymentFilterOptions}
+        filterOptions={activeTab === 'payments' ? paymentFilterOptions : receiptFilterOptions}
       />
 
-      {/* ── Tabs Navigation ─────────────────────────────── */}
+      {/* ── Tabs ───────────────────────────────────────── */}
       <div className="dp-tabs">
         <div style={{ display: 'flex', borderBottom: '1px solid #eef2f6' }}>
-          <button 
-            onClick={() => setActiveTab('payments')}
-            style={{ 
-              padding: '1rem 1.5rem', 
-              background: 'none', 
-              border: 'none', 
-              borderBottom: activeTab === 'payments' ? '3px solid #004f9f' : '3px solid transparent',
-              fontWeight: 700,
-              color: activeTab === 'payments' ? '#004f9f' : '#64748b',
-              cursor: 'pointer'
-            }}
-          >
-            Danh sách Đoàn viên
-          </button>
-          <button 
-            onClick={() => setActiveTab('receipts')}
-            style={{ 
-              padding: '1rem 1.5rem', 
-              background: 'none', 
-              border: 'none', 
-              borderBottom: activeTab === 'receipts' ? '3px solid #004f9f' : '3px solid transparent',
-              fontWeight: 700,
-              color: activeTab === 'receipts' ? '#004f9f' : '#64748b',
-              cursor: 'pointer'
-            }}
-          >
-            Phiếu thu cấp Lớp ({MOCK_PHIEU_THU.length})
-          </button>
+          {[
+            { key: 'payments', label: 'Danh sách Đoàn viên' },
+            { key: 'receipts', label: `Phiếu thu (${phieuThuList.length})` },
+            { key: 'rates',    label: 'Lịch sử mức phí' },
+          ].map(t => (
+            <button key={t.key} onClick={() => { setActiveTab(t.key); setStatusFilter('all'); setSearchTerm(''); }}
+              style={{
+                padding: '1rem 1.5rem', background: 'none', border: 'none',
+                borderBottom: activeTab === t.key ? '3px solid #004f9f' : '3px solid transparent',
+                fontWeight: 700, color: activeTab === t.key ? '#004f9f' : '#64748b', cursor: 'pointer',
+              }}>
+              {t.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* ── Table Area ────────────────────────────────────── */}
+      {/* ── Table ──────────────────────────────────────── */}
       <div className="dp-card">
-        {activeTab === 'payments' ? (
+        {loading && <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Đang tải...</div>}
+
+        {/* Tab: Danh sách đoàn viên */}
+        {!loading && activeTab === 'payments' && (
           <table className="dp-table">
             <thead>
               <tr>
                 <th>MSSV</th>
                 <th>Họ và Tên</th>
-                <th>Lớp / Khoa</th>
+                <th>Chi đoàn</th>
+                <th>Năm học</th>
                 <th>Số tiền</th>
                 <th>Ngày đóng</th>
                 <th>Trạng thái</th>
-                <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              {filteredPayments.map(p => (
+              {doanPhiList.map(p => (
                 <tr key={p.idDoanPhi}>
-                  <td className="dp-id-cell">{p.idDV}</td>
-                  <td style={{ fontWeight: 600 }}>{p.hoTen}</td>
-                  <td>{p.idChiDoan} / {p.khoa}</td>
-                  <td className="dp-amount-cell">{(p.soTien || 0).toLocaleString()} ₫</td>
-                  <td>{p.ngayDong ? new Date(p.ngayDong).toLocaleDateString('vi-VN') : '-'}</td>
+                  <td className="dp-id-cell">{p.doanVien?.idDV ?? p.idDV}</td>
+                  <td style={{ fontWeight: 600 }}>{p.doanVien?.hoTen ?? '—'}</td>
+                  <td>{p.doanVien?.idChiDoan ?? '—'}</td>
+                  <td>{p.mucDoanPhi?.namHoc ?? '—'}</td>
+                  <td className="dp-amount-cell">{fmtMoney(p.mucDoanPhi?.soTien)}</td>
+                  <td>{fmtDate(p.ngayDong)}</td>
                   <td>
-                    <span className={`dp-badge ${p.trangThai === 'Đã đóng' ? 'dp-badge--paid' : 'dp-badge--unpaid'}`}>
+                    <span className={`dp-badge ${
+                      p.trangThai === 'Đã đóng'       ? 'dp-badge--paid' :
+                      p.trangThai === 'Đang chờ duyệt' ? 'dp-badge--pending' :
+                      'dp-badge--unpaid'
+                    }`}>
                       {p.trangThai}
                     </span>
                   </td>
-                  <td>
-                    <button className="dp-update-btn" style={{ padding: '0.4rem 0.8rem', borderColor: '#e2e8f0', color: '#64748b' }}>
-                      Chi tiết
-                    </button>
-                  </td>
                 </tr>
               ))}
+              {doanPhiList.length === 0 && (
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Không có dữ liệu</td></tr>
+              )}
             </tbody>
           </table>
-        ) : (
+        )}
+
+        {/* Tab: Phiếu thu */}
+        {!loading && activeTab === 'receipts' && (
           <table className="dp-table">
             <thead>
               <tr>
                 <th>Mã Phiếu</th>
-                <th>Chi đoàn</th>
                 <th>Người nộp</th>
-                <th>Tổng tiền</th>
-                <th>Ngày nộp</th>
+                <th>File đính kèm</th>
                 <th>Trạng thái</th>
                 <th>Duyệt phiếu</th>
               </tr>
             </thead>
             <tbody>
-              {MOCK_PHIEU_THU.map(rt => (
-                <tr key={rt.idPhieuThu}>
-                  <td className="dp-id-cell">{rt.idPhieuThu}</td>
-                  <td style={{ fontWeight: 600 }}>{rt.tenChiDoan}</td>
-                  <td>{rt.nguoiNop}</td>
-                  <td className="dp-amount-cell">{rt.tongTien.toLocaleString()} ₫</td>
-                  <td>{new Date(rt.ngayNop).toLocaleDateString('vi-VN')}</td>
+              {phieuThuList.map(pt => (
+                <tr key={pt.idPhieuThu}>
+                  <td className="dp-id-cell">{pt.idPhieuThu}</td>
+                  <td style={{ fontWeight: 600 }}>
+                    {pt.nguoiNopTK?.doanVien?.hoTen ?? pt.nguoiNopTK?.tenNguoiDung ?? '—'}
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                      {pt.nguoiNopTK?.doanVien?.idChiDoan ?? ''}
+                    </div>
+                  </td>
+                  <td>
+                    {pt.fileDinhKem
+                      ? <a href={pt.fileDinhKem} target="_blank" rel="noreferrer" style={{ color: '#004f9f', fontSize: '0.8rem' }}>Xem file</a>
+                      : '—'}
+                  </td>
                   <td>
                     <span className={`dp-badge ${
-                      rt.trangThai === 'Đã duyệt' ? 'dp-badge--paid' : 
-                      rt.trangThai === 'Chờ duyệt' ? 'dp-badge--pending' : 'dp-badge--unpaid'
+                      pt.trangThai === 'Đã duyệt' ? 'dp-badge--paid' :
+                      pt.trangThai === 'Chờ duyệt' ? 'dp-badge--pending' :
+                      'dp-badge--unpaid'
                     }`}>
-                      {rt.trangThai}
+                      {pt.trangThai}
                     </span>
                   </td>
                   <td>
-                    <button className="dp-update-btn" style={{ padding: '0.4rem 0.8rem', backgroundColor: rt.trangThai === 'Chờ duyệt' ? '#004f9f' : '#f8fafc', color: rt.trangThai === 'Chờ duyệt' ? '#fff' : '#64748b', border: '1px solid #e2e8f0' }}>
-                      {rt.trangThai === 'Chờ duyệt' ? 'Duyệt ngay' : 'Xem lại'}
-                    </button>
+                    {pt.trangThai === 'Chờ duyệt' ? (
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button className="dp-update-btn"
+                          style={{ padding: '0.4rem 0.8rem', background: '#004f9f', color: '#fff', borderColor: '#004f9f' }}
+                          onClick={() => handleDuyet(pt.idPhieuThu, 'Đã duyệt')}>
+                          Duyệt
+                        </button>
+                        <button className="dp-update-btn"
+                          style={{ padding: '0.4rem 0.8rem', color: '#b91c1c', borderColor: '#fecaca' }}
+                          onClick={() => handleDuyet(pt.idPhieuThu, 'Từ chối')}>
+                          Từ chối
+                        </button>
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{pt.trangThai}</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {phieuThuList.length === 0 && (
+                <tr><td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Không có dữ liệu</td></tr>
+              )}
+            </tbody>
+          </table>
+        )}
+
+        {/* Tab: Lịch sử mức phí */}
+        {!loading && activeTab === 'rates' && (
+          <table className="dp-table">
+            <thead>
+              <tr>
+                <th>Mã</th>
+                <th>Năm học</th>
+                <th>Số tiền</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mucDoanPhi.map(m => (
+                <tr key={m.idMucDP}>
+                  <td className="dp-id-cell">{m.idMucDP}</td>
+                  <td style={{ fontWeight: 600 }}>{m.namHoc}</td>
+                  <td className="dp-amount-cell">{fmtMoney(m.soTien)}</td>
+                  <td>
+                    <span className={`dp-badge ${m.trangThai === 'Đang áp dụng' ? 'dp-badge--paid' : 'dp-badge--pending'}`}>
+                      {m.trangThai}
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -230,12 +294,15 @@ const DoanPhi = () => {
         )}
       </div>
 
+      {/* ── Modal cập nhật mức phí ─────────────────────── */}
       <UpdateFeeModal
-         show={showUpdateFee}
-         onClose={() => setShowUpdateFee(false)}
-         onConfirm={handleConfirmUpdate}
-         feeValue={newFee}
-         setFeeValue={setNewFee}
+        show={showUpdateFee}
+        onClose={() => setShowUpdateFee(false)}
+        onConfirm={handleConfirmUpdate}
+        feeValue={newFee.soTien}
+        setFeeValue={(v) => setNewFee(prev => ({ ...prev, soTien: v }))}
+        namHoc={newFee.namHoc}
+        setNamHoc={(v) => setNewFee(prev => ({ ...prev, namHoc: v }))}
       />
     </div>
   );
