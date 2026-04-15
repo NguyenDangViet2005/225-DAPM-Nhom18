@@ -6,6 +6,7 @@ const {
   getAllDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
+  getAllChiDoan,
 } = require("../services/doanphi.service");
 
 // ── MUC DOAN PHI ─────────────────────────────────────────
@@ -46,9 +47,18 @@ const putMucDoanPhi = async (req, res) => {
 
 const getDoanPhi = async (req, res) => {
   try {
-    const { search, trangThai, page, limit } = req.query;
-    const data = await getAllDoanPhi({ search, trangThai, page, limit });
+    const { search, trangThai, idChiDoan, page, limit } = req.query;
+    const data = await getAllDoanPhi({ search, trangThai, idChiDoan, page, limit });
     return res.status(200).json({ success: true, ...data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getChiDoan = async (req, res) => {
+  try {
+    const data = await getAllChiDoan();
+    return res.status(200).json({ success: true, data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -85,6 +95,7 @@ module.exports = {
   postMucDoanPhi,
   putMucDoanPhi,
   getDoanPhi,
+  getChiDoan,
   getPhieuThu,
   putDuyetPhieuThu,
 };

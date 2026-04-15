@@ -4,6 +4,7 @@ const {
   PhieuThuDoanPhi,
   DoanVien,
   TaiKhoan,
+  ChiDoan,
 } = require("../models");
 const { sequelize } = require("../models");
 
@@ -52,7 +53,7 @@ const updateMucDoanPhi = async (idMucDP, data) => {
 
 // ── DOAN PHI (tình trạng nộp) ────────────────────────────
 
-const getAllDoanPhi = async ({ search, trangThai, page = 1, limit = 20 }) => {
+const getAllDoanPhi = async ({ search, trangThai, idChiDoan, page = 1, limit = 20 }) => {
   const { Op } = require("sequelize");
   const offset = (page - 1) * limit;
 
@@ -66,6 +67,7 @@ const getAllDoanPhi = async ({ search, trangThai, page = 1, limit = 20 }) => {
       { idDV: { [Op.like]: `%${search}%` } },
     ];
   }
+  if (idChiDoan && idChiDoan !== "all") whereDV.idChiDoan = idChiDoan;
 
   const { count, rows } = await DoanPhi.findAndCountAll({
     where: whereDP,
@@ -115,8 +117,7 @@ const getAllPhieuThu = async ({ trangThai }) => {
   });
 };
 
-const duyetPhieuThu = async (idPhieuThu, trangThai) => {
-  const phieu = await PhieuThuDoanPhi.findByPk(idPhieuThu);
+const duyetPhieuThu = async (idPhieuThu, trangThai) => {  const phieu = await PhieuThuDoanPhi.findByPk(idPhieuThu);
   if (!phieu) throw new Error("Không tìm thấy phiếu thu");
 
   const t = await sequelize.transaction();
@@ -147,6 +148,13 @@ const duyetPhieuThu = async (idPhieuThu, trangThai) => {
   }
 };
 
+const getAllChiDoan = async () => {
+  return await ChiDoan.findAll({
+    attributes: ["idChiDoan", "tenChiDoan"],
+    order: [["idChiDoan", "ASC"]],
+  });
+};
+
 module.exports = {
   getAllMucDoanPhi,
   createMucDoanPhi,
@@ -154,4 +162,5 @@ module.exports = {
   getAllDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
+  getAllChiDoan,
 };

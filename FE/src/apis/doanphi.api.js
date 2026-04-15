@@ -19,9 +19,14 @@ export const updateMucDoanPhiAPI = async (idMucDP, data) => {
 
 // ── Tình trạng nộp đoàn phí ──────────────────────────────
 
-export const getDoanPhiAPI = async ({ search = "", trangThai = "all", page = 1, limit = 20 } = {}) => {
+export const getChiDoanAPI = async () => {
+  const res = await apiClient.get("/doan-phi/chi-doan");
+  return res.data;
+};
+
+export const getDoanPhiAPI = async ({ search = "", trangThai = "all", idChiDoan = "all", page = 1, limit = 20 } = {}) => {
   const res = await apiClient.get("/doan-phi", {
-    params: { search, trangThai, page, limit },
+    params: { search, trangThai, idChiDoan, page, limit },
   });
   return res.data;
 };

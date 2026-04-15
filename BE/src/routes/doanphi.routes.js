@@ -5,6 +5,7 @@ const {
   postMucDoanPhi,
   putMucDoanPhi,
   getDoanPhi,
+  getChiDoan,
   getPhieuThu,
   putDuyetPhieuThu,
 } = require("../controllers/doanphi.controller");
@@ -21,6 +22,7 @@ router.put("/muc-phi/:idMucDP", putMucDoanPhi);
 
 // ── Tình trạng nộp đoàn phí ──────────────────────────────
 router.get("/", getDoanPhi);
+router.get("/chi-doan", getChiDoan);
 
 // ── Phiếu thu ────────────────────────────────────────────
 router.get("/phieu-thu", getPhieuThu);

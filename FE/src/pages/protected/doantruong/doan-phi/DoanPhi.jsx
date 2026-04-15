@@ -10,29 +10,32 @@ const fmtDate  = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—';
 
 const DoanPhi = () => {
   const {
-    mucDoanPhi, doanPhiList, phieuThuList, pagination,
+    mucDoanPhi, doanPhiList, phieuThuList, chiDoanList, pagination,
     loading,
     fetchMucDoanPhi, createMucDoanPhi,
-    fetchDoanPhi,
+    fetchChiDoan, fetchDoanPhi,
     fetchPhieuThu, duyetPhieuThu,
   } = useDoanPhi();
 
-  const [searchTerm, setSearchTerm]   = useState('');
+  const [searchTerm, setSearchTerm]     = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [activeTab, setActiveTab]     = useState('payments');
+  const [chiDoanFilter, setChiDoanFilter] = useState('all');
+  const [activeTab, setActiveTab]       = useState('payments');
   const [showUpdateFee, setShowUpdateFee] = useState(false);
-  const [newFee, setNewFee]           = useState({ namHoc: '', soTien: '' });
+  const [newFee, setNewFee]             = useState({ namHoc: '', soTien: '' });
 
-  // Fetch data khi mount và khi tab thay đổi
-  useEffect(() => { fetchMucDoanPhi(); }, [fetchMucDoanPhi]);
+  useEffect(() => {
+    fetchMucDoanPhi();
+    fetchChiDoan();
+  }, [fetchMucDoanPhi, fetchChiDoan]);
 
   useEffect(() => {
     if (activeTab === 'payments') {
-      fetchDoanPhi({ search: searchTerm, trangThai: statusFilter });
+      fetchDoanPhi({ search: searchTerm, trangThai: statusFilter, idChiDoan: chiDoanFilter });
     } else {
       fetchPhieuThu({ trangThai: statusFilter });
     }
-  }, [activeTab, searchTerm, statusFilter]);
+  }, [activeTab, searchTerm, statusFilter, chiDoanFilter]);
 
   const currentRate = mucDoanPhi.find(r => r.trangThai === 'Đang áp dụng') ?? mucDoanPhi[0];
 
@@ -135,7 +138,20 @@ const DoanPhi = () => {
         filterValue={statusFilter}
         onFilterChange={setStatusFilter}
         filterOptions={activeTab === 'payments' ? paymentFilterOptions : receiptFilterOptions}
-      />
+      >
+        {activeTab === 'payments' && (
+          <select
+            value={chiDoanFilter}
+            onChange={e => setChiDoanFilter(e.target.value)}
+            style={{ padding: '0.65rem 1rem', border: '1.5px solid #e2e8f0', fontSize: '0.875rem', background: '#fff', minWidth: 180 }}
+          >
+            <option value="all">Tất cả chi đoàn</option>
+            {chiDoanList.map(cd => (
+              <option key={cd.idChiDoan} value={cd.idChiDoan}>{cd.tenChiDoan}</option>
+            ))}
+          </select>
+        )}
+      </DataTableToolbar>
 
       {/* ── Tabs ───────────────────────────────────────── */}
       <div className="dp-tabs">

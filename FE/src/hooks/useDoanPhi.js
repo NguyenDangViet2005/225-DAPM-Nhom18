@@ -3,17 +3,19 @@ import {
   getMucDoanPhiAPI,
   createMucDoanPhiAPI,
   getDoanPhiAPI,
+  getChiDoanAPI,
   getPhieuThuAPI,
   duyetPhieuThuAPI,
 } from "@/apis/doanphi.api";
 
 const useDoanPhi = () => {
-  const [mucDoanPhi, setMucDoanPhi]   = useState([]);
-  const [doanPhiList, setDoanPhiList] = useState([]);
+  const [mucDoanPhi, setMucDoanPhi]     = useState([]);
+  const [doanPhiList, setDoanPhiList]   = useState([]);
   const [phieuThuList, setPhieuThuList] = useState([]);
-  const [pagination, setPagination]   = useState({ page: 1, limit: 20, total: 0 });
-  const [loading, setLoading]         = useState(false);
-  const [error, setError]             = useState(null);
+  const [chiDoanList, setChiDoanList]   = useState([]);
+  const [pagination, setPagination]     = useState({ page: 1, limit: 20, total: 0 });
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState(null);
 
   // ── Mức đoàn phí ───────────────────────────────────────
   const fetchMucDoanPhi = useCallback(async () => {
@@ -40,6 +42,16 @@ const useDoanPhi = () => {
       setLoading(false);
     }
   }, [fetchMucDoanPhi]);
+
+  // ── Chi đoàn ───────────────────────────────────────────
+  const fetchChiDoan = useCallback(async () => {
+    try {
+      const res = await getChiDoanAPI();
+      if (res.success) setChiDoanList(res.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  }, []);
 
   // ── Tình trạng nộp ─────────────────────────────────────
   const fetchDoanPhi = useCallback(async (params = {}) => {
@@ -84,10 +96,10 @@ const useDoanPhi = () => {
   }, [fetchPhieuThu]);
 
   return {
-    mucDoanPhi, doanPhiList, phieuThuList, pagination,
+    mucDoanPhi, doanPhiList, phieuThuList, chiDoanList, pagination,
     loading, error,
     fetchMucDoanPhi, createMucDoanPhi,
-    fetchDoanPhi,
+    fetchChiDoan, fetchDoanPhi,
     fetchPhieuThu, duyetPhieuThu,
   };
 };
