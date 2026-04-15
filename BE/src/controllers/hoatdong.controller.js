@@ -139,128 +139,19 @@ const deleteActivity = async (req, res) => {
   }
 };
 
-// Get registrations for an activity
-const getActivityRegistrations = async (req, res) => {
-  try {
-    const { idHD } = req.params;
-
-    const result = await hoatdongService.getActivityRegistrations(idHD);
-
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Lấy danh sách đăng ký thành công",
-      data: result.data,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi hệ thống",
-      error: error.message,
-    });
-  }
-};
-
-// Lấy danh sách đăng ký của 1 hoạt động cụ thể
-const getDanhSachDangKy = async (req, res) => {
-  try {
-    const { idHD } = req.params;
-    const result = await hoatdongService.getDanhSachDangKy(idHD);
-
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Lấy danh sách đăng ký thành công",
-      data: result.data,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi hệ thống",
-      error: error.message,
-    });
-  }
-};
-
-// Duyệt hoặc từ chối đăng ký của 1 đoàn viên
-const duyetDangKy = async (req, res) => {
-  try {
-    const { idHD } = req.params;
-    const { maSV, trangThai, lyDo } = req.body;
-
-    const result = await hoatdongService.duyetDangKy(
-      idHD,
-      maSV,
-      trangThai,
-      lyDo,
-    );
-
-    if (!result.success) {
-      return res.status(404).json(result);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-      data: result.data,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi hệ thống",
-      error: error.message,
-    });
-  }
-};
-
 // Lấy tất cả đơn đăng ký (mọi trạng thái) từ tất cả hoạt động Đoàn Trường
 const xacNhanHoanThanh = async (req, res) => {
   try {
     const { idHD } = req.params;
     const result = await hoatdongService.xacNhanHoanThanh(idHD);
     if (!result.success) return res.status(400).json(result);
-    return res.status(200).json({ success: true, message: result.message, data: result.data });
+    return res
+      .status(200)
+      .json({ success: true, message: result.message, data: result.data });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
-  }
-};
-
-const getAllRegistrations = async (req, res) => {
-  try {
-    const result = await hoatdongService.getAllRegistrations();
-    if (!result.success) return res.status(400).json(result);
-    return res.status(200).json({ success: true, data: result.data });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
-  }
-};
-
-// Lấy tất cả đơn đăng ký chờ duyệt từ tất cả hoạt động Đoàn Trường
-const getAllPendingRegistrations = async (req, res) => {
-  try {
-    const result = await hoatdongService.getAllPendingRegistrations();
-
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Lấy danh sách đơn đăng ký chờ duyệt thành công",
-      data: result.data,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi hệ thống",
-      error: error.message,
-    });
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
   }
 };
 
@@ -332,10 +223,5 @@ module.exports = {
   createActivity,
   updateActivity,
   deleteActivity,
-  getActivityRegistrations,
-  getDanhSachDangKy,
-  duyetDangKy,
-  getAllPendingRegistrations,
-  getAllRegistrations,
   xacNhanHoanThanh,
 };

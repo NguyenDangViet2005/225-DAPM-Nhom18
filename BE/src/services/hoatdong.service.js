@@ -1,9 +1,4 @@
-const {
-  DoanVienDangKi,
-  DoanVien,
-  ChiDoan,
-  HoatDongDoan,
-} = require("../models");
+const { DoanVienDangKi, HoatDongDoan } = require("../models");
 
 const hoatdongService = {
   // Get ALL activities with pagination (school + khoa + chidoan)
@@ -20,9 +15,23 @@ const hoatdongService = {
         offset,
       });
 
+      // Calculate actual soLuongDaDK from DoanVienDangKi for each activity (only "Đã duyệt")
+      const activitiesWithCount = await Promise.all(
+        activities.map(async (hd) => {
+          const { count: registrationCount } =
+            await DoanVienDangKi.findAndCountAll({
+              where: { idHD: hd.idHD, trangThaiDuyet: "Đã duyệt" },
+            });
+          return {
+            ...hd.toJSON(),
+            soLuongDaDK: registrationCount,
+          };
+        }),
+      );
+
       return {
         success: true,
-        data: activities,
+        data: activitiesWithCount,
         pagination: {
           total: count,
           page,
@@ -49,9 +58,22 @@ const hoatdongService = {
           message: "Hoạt động không tồn tại",
         };
       }
+
+      // Calculate actual soLuongDaDK from DoanVienDangKi (only "Đã duyệt")
+      const { count: registrationCount } = await DoanVienDangKi.findAndCountAll(
+        {
+          where: { idHD, trangThaiDuyet: "Đã duyệt" },
+        },
+      );
+
+      const activityData = {
+        ...activity.toJSON(),
+        soLuongDaDK: registrationCount,
+      };
+
       return {
         success: true,
-        data: activity,
+        data: activityData,
       };
     } catch (error) {
       return {
@@ -186,147 +208,6 @@ const hoatdongService = {
     }
   },
 
-  // Lấy danh sách đăng ký của 1 hoạt động (chỉ hoạt động cấp Đoàn Trường)
-  async getDanhSachDangKy(idHD) {
-    try {
-      // Kiểm tra hoạt động có thuộc cấp Đoàn Trường không (idKhoa = null & idChiDoan = null)
-      const hoatDong = await HoatDongDoan.findOne({
-        where: { idHD, idKhoa: null, idChiDoan: null },
-      });
-
-      if (!hoatDong) {
-        return {
-          success: false,
-          message: "Hoạt động không thuộc cấp Đoàn Trường hoặc không tồn tại",
-        };
-      }
-
-      const registrations = await DoanVienDangKi.findAll({
-        where: { idHD },
-        attributes: [
-          "idDV",
-          "idHD",
-          "ngayDangKi",
-          "trangThaiDuyet",
-          "lyDoTuChoi",
-        ],
-        include: [
-          {
-            model: DoanVien,
-            as: "doanVien",
-            attributes: ["idDV", "hoTen"],
-            include: [
-              {
-                model: ChiDoan,
-                as: "chiDoan",
-                attributes: ["tenChiDoan"],
-              },
-            ],
-          },
-          {
-            model: HoatDongDoan,
-            as: "hoatDong",
-            attributes: ["idHD", "tenHD"],
-            where: { idKhoa: null, idChiDoan: null },
-            required: true,
-          },
-        ],
-        order: [["ngayDangKi", "DESC"]],
-      });
-
-      return {
-        success: true,
-        data: registrations,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: "Lỗi lấy danh sách đăng ký hoạt động",
-        error: error.message,
-      };
-    }
-  },
-
-  // Duyệt hoặc từ chối đăng ký của 1 đoàn viên
-  async duyetDangKy(idHD, idDV, trangThai, lyDo) {
-    try {
-      const { DoanVienDangKi } = require("../models");
-
-      const dangKy = await DoanVienDangKi.findOne({
-        where: { idHD, idDV },
-      });
-
-      if (!dangKy) {
-        return {
-          success: false,
-          message: "Không tìm thấy thông tin đăng ký này",
-        };
-      }
-
-      await dangKy.update({
-        trangThaiDuyet: trangThai,
-        lyDoTuChoi: lyDo || null,
-      });
-
-      return {
-        success: true,
-        message: `Đã cập nhật trạng thái thành: ${trangThai}`,
-        data: dangKy,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: "Lỗi cập nhật trạng thái đăng ký",
-        error: error.message,
-      };
-    }
-  },
-
-  // Get registrations for an activity
-  async getActivityRegistrations(idHD) {
-    try {
-      const { DoanVienDangKi, DoanVien } = require("../models");
-
-      const registrations = await DoanVienDangKi.findAll({
-        where: { idHD },
-        attributes: [
-          "idDV",
-          "idHD",
-          "ngayDangKi",
-          "trangThaiDuyet",
-          "lyDoTuChoi",
-        ],
-        include: [
-          {
-            model: DoanVien,
-            as: "doanVien",
-            attributes: [
-              "idDV",
-              "hoTen",
-              "ngaySinh",
-              "gioiTinh",
-              "SDT",
-              "email",
-              "diaChi",
-            ],
-          },
-        ],
-        order: [["ngayDangKi", "DESC"]],
-      });
-
-      return {
-        success: true,
-        data: registrations,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: "Lỗi lấy danh sách đăng ký hoạt động",
-        error: error.message,
-      };
-    }
-  },
-
   // Xác nhận hoàn thành hoạt động & cộng điểm cho đoàn viên đã duyệt
   async xacNhanHoanThanh(idHD) {
     try {
@@ -366,115 +247,9 @@ const hoatdongService = {
         data: { soLuongDuocCong: idDVList.length, diemCong: diemHD },
       };
     } catch (error) {
-      return { success: false, message: "Lỗi xác nhận hoàn thành", error: error.message };
-    }
-  },
-
-  // Lấy tất cả đơn đăng ký (mọi trạng thái) từ tất cả hoạt động Đoàn Trường
-  async getAllRegistrations() {
-    try {
-      const { DoanVienDangKi, DoanVien, ChiDoan, HoatDongDoan } = require("../models");
-      const registrations = await DoanVienDangKi.findAll({
-        attributes: ["idDV", "idHD", "ngayDangKi", "trangThaiDuyet", "lyDoTuChoi"],
-        include: [
-          {
-            model: DoanVien, as: "doanVien", attributes: ["idDV", "hoTen"],
-            include: [{ model: ChiDoan, as: "chiDoan", attributes: ["tenChiDoan"] }],
-          },
-          {
-            model: HoatDongDoan, as: "hoatDong", attributes: ["idHD", "tenHD"],
-            where: { idKhoa: null, idChiDoan: null },
-            required: true,
-          },
-        ],
-        order: [["ngayDangKi", "DESC"]],
-      });
-
-      const formattedData = registrations.map((reg) => ({
-        maSV: reg.idDV?.trim(),
-        idDV: reg.idDV?.trim(),
-        hoTen: reg.doanVien?.hoTen?.trim() || "",
-        tenChiDoan: reg.doanVien?.chiDoan?.tenChiDoan?.trim() || "—",
-        idHD: reg.idHD?.trim(),
-        tenHD: reg.hoatDong?.tenHD?.trim() || "",
-        ngayDangKi: reg.ngayDangKi,
-        trangThaiDuyet: reg.trangThaiDuyet?.trim(),
-        lyDoTuChoi: reg.lyDoTuChoi,
-      }));
-
-      return { success: true, data: formattedData };
-    } catch (error) {
-      return { success: false, message: "Lỗi lấy danh sách đăng ký", error: error.message };
-    }
-  },
-
-  // Lấy tất cả đơn đăng ký chờ duyệt từ tất cả hoạt động Đoàn Trường
-  async getAllPendingRegistrations() {
-    try {
-      const {
-        DoanVienDangKi,
-        DoanVien,
-        ChiDoan,
-        HoatDongDoan,
-      } = require("../models");
-
-      // Lấy tất cả hoạt động Đoàn Trường và các đơn đăng ký chờ duyệt
-      const registrations = await DoanVienDangKi.findAll({
-        where: {
-          trangThaiDuyet: "Chờ duyệt",
-        },
-        attributes: [
-          "idDV",
-          "idHD",
-          "ngayDangKi",
-          "trangThaiDuyet",
-          "lyDoTuChoi",
-        ],
-        include: [
-          {
-            model: DoanVien,
-            as: "doanVien",
-            attributes: ["idDV", "hoTen"],
-            include: [
-              {
-                model: ChiDoan,
-                as: "chiDoan",
-                attributes: ["tenChiDoan"],
-              },
-            ],
-          },
-          {
-            model: HoatDongDoan,
-            as: "hoatDong",
-            attributes: ["idHD", "tenHD"],
-            where: { idKhoa: null, idChiDoan: null }, // Chỉ Đoàn Trường
-            required: true,
-          },
-        ],
-        order: [["ngayDangKi", "DESC"]],
-      });
-
-      // Format lại dữ liệu để FE dễ sử dụng
-      const formattedData = registrations.map((reg) => ({
-        maSV: reg.idDV?.trim(),
-        idDV: reg.idDV?.trim(),
-        hoTen: reg.doanVien?.hoTen?.trim() || "",
-        tenChiDoan: reg.doanVien?.chiDoan?.tenChiDoan?.trim() || "—",
-        idHD: reg.idHD?.trim(),
-        tenHD: reg.hoatDong?.tenHD?.trim() || "",
-        ngayDangKi: reg.ngayDangKi,
-        trangThaiDuyet: reg.trangThaiDuyet?.trim(),
-        lyDoTuChoi: reg.lyDoTuChoi,
-      }));
-
-      return {
-        success: true,
-        data: formattedData,
-      };
-    } catch (error) {
       return {
         success: false,
-        message: "Lỗi lấy danh sách đăng ký chờ duyệt",
+        message: "Lỗi xác nhận hoàn thành",
         error: error.message,
       };
     }
@@ -496,9 +271,23 @@ const hoatdongService = {
         offset,
       });
 
+      // Calculate actual soLuongDaDK from DoanVienDangKi for each activity (only "Đã duyệt")
+      const activitiesWithCount = await Promise.all(
+        activities.map(async (hd) => {
+          const { count: registrationCount } =
+            await DoanVienDangKi.findAndCountAll({
+              where: { idHD: hd.idHD, trangThaiDuyet: "Đã duyệt" },
+            });
+          return {
+            ...hd.toJSON(),
+            soLuongDaDK: registrationCount,
+          };
+        }),
+      );
+
       return {
         success: true,
-        data: activities,
+        data: activitiesWithCount,
         pagination: {
           total: count,
           page,
@@ -533,9 +322,23 @@ const hoatdongService = {
         offset,
       });
 
+      // Calculate actual soLuongDaDK from DoanVienDangKi for each activity (only "Đã duyệt")
+      const activitiesWithCount = await Promise.all(
+        activities.map(async (hd) => {
+          const { count: registrationCount } =
+            await DoanVienDangKi.findAndCountAll({
+              where: { idHD: hd.idHD, trangThaiDuyet: "Đã duyệt" },
+            });
+          return {
+            ...hd.toJSON(),
+            soLuongDaDK: registrationCount,
+          };
+        }),
+      );
+
       return {
         success: true,
-        data: activities,
+        data: activitiesWithCount,
         pagination: {
           total: count,
           page,

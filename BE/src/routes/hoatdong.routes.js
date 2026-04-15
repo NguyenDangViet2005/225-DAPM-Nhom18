@@ -8,7 +8,6 @@ const {
   createActivity,
   updateActivity,
   deleteActivity,
-  getActivityRegistrations,
   xacNhanHoanThanh,
 } = require("../controllers/hoatdong.controller");
 const {
@@ -32,9 +31,6 @@ router.get("/khoa/", getAllKhoaActivities);
 
 // Get all chi doan-level activities
 router.get("/chidoan/", getAllChidoanActivities);
-
-// Get registrations for an activity
-router.get("/:idHD/registrations", getActivityRegistrations);
 
 // Get activity by ID (must be last - generic pattern)
 router.get("/:idHD", getActivityById);

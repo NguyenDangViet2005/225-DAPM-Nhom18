@@ -178,7 +178,7 @@ INSERT INTO MucDoanPhi (idMucDP, namHoc, soTien, trangThai) VALUES
 GO
 
 -- 6. Chèn Hoạt động đoàn (Hơn 20 hoạt động)
--- soLuongDaDK được tính từ số lượng bản ghi thực tế trong bảng DoanVienDangKi
+-- soLuongDaDK được tính từ số lượng bản ghi "Đã duyệt" trong bảng DoanVienDangKi
 INSERT INTO HoatDongDoan (idHD, tenHD, moTa, ngayToChuc, diaDiem, soLuongMax, soLuongDaDK, trangThai, trangThaiHD, donViToChuc, diemHD, idKhoa, idChiDoan) VALUES
 -- Đoàn trường
 ('HD001', N'Mùa hè xanh 2024', N'Tình nguyện tại Quảng Nam', '2024-07-15', N'Nam Trà My', 100, 3, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
@@ -190,20 +190,20 @@ INSERT INTO HoatDongDoan (idHD, tenHD, moTa, ngayToChuc, diaDiem, soLuongMax, so
 ('HD007', N'Giải chạy UTE Marthon', N'Rèn luyện thể chất', '2024-09-26', N'Đường ven biển', 500, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
 ('HD008', N'Tập huấn Đoàn vụ 2024', N'Kỹ năng quản lý sổ sách', '2024-08-25', N'Hội trường D', 50, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 4, NULL, NULL),
 -- Khoa Công nghệ Số
-('HD011', N'Hackathon CNS 2024', N'Thi lập trình 24h', '2024-08-10', N'Phòng Lab Tòa E', 50, 3, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 15, 'KHOA001', NULL),
+('HD011', N'Hackathon CNS 2024', N'Thi lập trình 24h', '2024-08-10', N'Phòng Lab Tòa E', 50, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 15, 'KHOA001', NULL),
 ('HD012', N'Workshop AI Tools', N'Ứng dụng AI vào học tập', '2024-09-15', N'Phòng 201-E', 100, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 8, 'KHOA001', NULL),
 ('HD013', N'Giải bóng đá CNS Cup', N'Giao lưu các chi đoàn', '2024-11-05', N'Sân bóng Hòa Xuân', 120, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 12, 'KHOA001', NULL),
 ('HD014', N'Tọa đàm Tuyển dụng IT', N'Phỏng vấn giả định', '2024-12-10', N'Hội trường B', 150, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 5, 'KHOA001', NULL),
 ('HD015', N'Workshop Photoshop & Canva', N'Kỹ năng thiết kế cơ bản', '2024-11-12', N'Phòng 403-E', 50, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 7, 'KHOA001', NULL),
 -- Khoa Điện - Điện tử
-('HD021', N'Robot Fighting 2024', N'Thi tài robot', '2024-09-20', N'Sảnh khu C', 40, 2, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 14, 'KHOA002', NULL),
+('HD021', N'Robot Fighting 2024', N'Thi tài robot', '2024-09-20', N'Sảnh khu C', 40, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 14, 'KHOA002', NULL),
 ('HD022', N'Triển lãm Đồ án xuất sắc', N'Trưng bày sản phẩm', '2024-10-05', N'Khu C', 60, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 6, 'KHOA002', NULL),
 ('HD023', N'Workshop IoT căn bản', N'Thực hành ESP32', '2024-11-25', N'Phòng Lab 402', 30, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 10, 'KHOA002', NULL),
 -- Khoa Sư phạm Công nghiệp
-('HD031', N'Giáo viên tương lai', N'Thi nghiệp vụ sư phạm', '2024-11-20', N'Phòng 505', 40, 2, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 9, 'KHOA003', NULL),
+('HD031', N'Giáo viên tương lai', N'Thi nghiệp vụ sư phạm', '2024-11-20', N'Phòng 505', 40, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 9, 'KHOA003', NULL),
 ('HD032', N'Tình nguyện đêm trung thu', N'Phát quà trẻ em nghèo', '2024-09-17', N'Quận Liên Chiểu', 60, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 8, 'KHOA003', NULL),
 -- Khoa Cơ khí
-('HD041', N'Đua xe mô hình tự chế', N'Ứng dụng khí động học', '2024-12-05', N'Sân vận động', 20, 2, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 13, 'KHOA004', NULL),
+('HD041', N'Đua xe mô hình tự chế', N'Ứng dụng khí động học', '2024-12-05', N'Sân vận động', 20, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 13, 'KHOA004', NULL),
 ('HD042', N'Workshop AutoCAD nâng cao', N'Kỹ năng thiết kế máy', '2024-10-15', N'Xưởng Cơ khí', 35, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 7, 'KHOA004', NULL),
 -- Chi đoàn
 ('HD051', N'Vệ sinh phòng học 23T1', N'Lao động tập thể', '2024-05-05', N'Phòng 301-E', 15, 0, N'Đã đóng', N'Đã duyệt', N'Chi đoàn', 3, 'KHOA001', 'CD001'),

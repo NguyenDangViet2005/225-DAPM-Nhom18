@@ -4,7 +4,9 @@ const {
   getAllPendingRegistrations,
   getAllRegistrations,
   duyetDangKy,
-} = require("../controllers/hoatdong.controller");
+  getActivityRegistrations,
+  getApprovedActivityRegistrations,
+} = require("../controllers/doanviendangki.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const { duyetDangKyValidator } = require("../validators/hoatdong.validator");
 
@@ -24,6 +26,12 @@ router.get(
   checkRole(["DOANTRUONG"]),
   getAllPendingRegistrations,
 );
+
+// Get all registrations for a specific activity (all statuses)
+router.get("/:idHD/registrations", getActivityRegistrations);
+
+// Get only approved registrations for a specific activity
+router.get("/:idHD/approved-registrations", getApprovedActivityRegistrations);
 
 // Duyệt hoặc từ chối đăng ký (Đoàn Trường only)
 router.put(
