@@ -49,6 +49,12 @@ export const hoatdongAPI = {
     return response.data;
   },
 
+  // Xác nhận hoàn thành hoạt động & cộng điểm
+  xacNhanHoanThanh: async (idHD) => {
+    const response = await apiClient.put(`/hoatdong/${idHD}/xac-nhan`);
+    return response.data;
+  },
+
   // Get registrations for an activity (full info)
   getActivityRegistrations: async (idHD) => {
     const response = await apiClient.get(`/hoatdong/${idHD}/registrations`);

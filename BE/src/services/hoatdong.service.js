@@ -327,6 +327,49 @@ const hoatdongService = {
     }
   },
 
+  // Xác nhận hoàn thành hoạt động & cộng điểm cho đoàn viên đã duyệt
+  async xacNhanHoanThanh(idHD) {
+    try {
+      const { HoatDongDoan, DoanVienDangKi, DoanVien } = require("../models");
+      const { Op } = require("sequelize");
+
+      // 1. Kiểm tra hoạt động tồn tại
+      const hoatDong = await HoatDongDoan.findByPk(idHD);
+      if (!hoatDong) {
+        return { success: false, message: "Hoạt động không tồn tại" };
+      }
+
+      const diemHD = hoatDong.diemHD || 0;
+
+      // 2. Lấy danh sách đoàn viên đã được duyệt
+      const danhSachDaDuyet = await DoanVienDangKi.findAll({
+        where: { idHD, trangThaiDuyet: "Đã duyệt" },
+        attributes: ["idDV"],
+      });
+
+      const idDVList = danhSachDaDuyet.map((dk) => dk.idDV);
+
+      // 3. Cộng điểm cho từng đoàn viên
+      if (idDVList.length > 0 && diemHD > 0) {
+        await DoanVien.increment("diemHD", {
+          by: diemHD,
+          where: { idDV: { [Op.in]: idDVList } },
+        });
+      }
+
+      // 4. Cập nhật trạng thái hoạt động thành 'Đã kết thúc'
+      await hoatDong.update({ trangThaiHD: "Đã kết thúc" });
+
+      return {
+        success: true,
+        message: `Đã xác nhận hoàn thành & cộng ${diemHD} điểm cho ${idDVList.length} đoàn viên`,
+        data: { soLuongDuocCong: idDVList.length, diemCong: diemHD },
+      };
+    } catch (error) {
+      return { success: false, message: "Lỗi xác nhận hoàn thành", error: error.message };
+    }
+  },
+
   // Lấy tất cả đơn đăng ký (mọi trạng thái) từ tất cả hoạt động Đoàn Trường
   async getAllRegistrations() {
     try {
