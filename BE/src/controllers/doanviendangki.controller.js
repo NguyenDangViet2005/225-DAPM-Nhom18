@@ -77,6 +77,29 @@ const getAllPendingRegistrations = async (req, res) => {
   }
 };
 
+// Get dashboard data cho Đoàn Trường
+const getDoanTruongDashboardData = async (req, res) => {
+  try {
+    const result = await doanviendangkiService.getDoanTruongDashboardData();
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Lấy dữ liệu dashboard Đoàn Trường thành công",
+      data: result.data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi hệ thống",
+      error: error.message,
+    });
+  }
+};
+
 // Get all registrations for a specific activity (all statuses)
 const getActivityRegistrations = async (req, res) => {
   try {
@@ -130,6 +153,7 @@ module.exports = {
   duyetDangKy,
   getAllRegistrations,
   getAllPendingRegistrations,
+  getDoanTruongDashboardData,
   getActivityRegistrations,
   getApprovedActivityRegistrations,
 };

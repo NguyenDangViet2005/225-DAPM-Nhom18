@@ -3,6 +3,7 @@ const {
   DoanVien,
   ChiDoan,
   HoatDongDoan,
+  Khoa,
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -135,6 +136,13 @@ const doanviendangkiService = {
                 model: ChiDoan,
                 as: "chiDoan",
                 attributes: ["tenChiDoan"],
+                include: [
+                  {
+                    model: Khoa,
+                    as: "khoa",
+                    attributes: ["tenKhoa"],
+                  },
+                ],
               },
             ],
           },
@@ -158,6 +166,7 @@ const doanviendangkiService = {
         idDV: reg.idDV?.trim(),
         hoTen: reg.doanVien?.hoTen?.trim() || "",
         tenChiDoan: reg.doanVien?.chiDoan?.tenChiDoan?.trim() || "—",
+        tenKhoa: reg.doanVien?.chiDoan?.khoa?.tenKhoa?.trim() || "—",
         idHD: reg.idHD?.trim(),
         tenHD: reg.hoatDong?.tenHD?.trim() || "",
         ngayDangKi: reg.ngayDangKi,
@@ -173,6 +182,101 @@ const doanviendangkiService = {
       return {
         success: false,
         message: "Lỗi lấy danh sách đăng ký chờ duyệt",
+        error: error.message,
+      };
+    }
+  },
+
+  // Dashboard data cho Đoàn Trường
+  async getDoanTruongDashboardData() {
+    try {
+      const pendingRegistrations = await DoanVienDangKi.findAll({
+        where: {
+          trangThaiDuyet: "Chờ duyệt",
+        },
+        attributes: [
+          "idDV",
+          "idHD",
+          "ngayDangKi",
+          "trangThaiDuyet",
+          "lyDoTuChoi",
+        ],
+        include: [
+          {
+            model: DoanVien,
+            as: "doanVien",
+            attributes: ["idDV", "hoTen"],
+            include: [
+              {
+                model: ChiDoan,
+                as: "chiDoan",
+                attributes: ["tenChiDoan"],
+                include: [
+                  {
+                    model: Khoa,
+                    as: "khoa",
+                    attributes: ["tenKhoa"],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            model: HoatDongDoan,
+            as: "hoatDong",
+            attributes: ["idHD", "tenHD", "trangThaiHD"],
+            where: {
+              idKhoa: null,
+              idChiDoan: null,
+              trangThaiHD: { [Op.ne]: "Đã kết thúc" },
+            },
+            required: true,
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const [tongDoanVien, tongKhoa, tongHoatDongCapTruongConHieuLuc] =
+        await Promise.all([
+          DoanVien.count(),
+          Khoa.count(),
+          HoatDongDoan.count({
+            where: {
+              idKhoa: null,
+              idChiDoan: null,
+              trangThaiHD: { [Op.ne]: "Đã kết thúc" },
+            },
+          }),
+        ]);
+
+      const recentMembers = pendingRegistrations.map((reg) => ({
+        maSV: reg.idDV?.trim(),
+        idDV: reg.idDV?.trim(),
+        hoTen: reg.doanVien?.hoTen?.trim() || "",
+        tenChiDoan: reg.doanVien?.chiDoan?.tenChiDoan?.trim() || "—",
+        tenKhoa: reg.doanVien?.chiDoan?.khoa?.tenKhoa?.trim() || "—",
+        idHD: reg.idHD?.trim(),
+        tenHD: reg.hoatDong?.tenHD?.trim() || "",
+        ngayDangKi: reg.ngayDangKi,
+        trangThaiDuyet: reg.trangThaiDuyet?.trim(),
+      }));
+
+      return {
+        success: true,
+        data: {
+          stats: {
+            tongDoanVien,
+            tongKhoa,
+            tongHoatDongCapTruongConHieuLuc,
+            tongHoSoChoDuyet: pendingRegistrations.length,
+          },
+          recentMembers,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Lỗi lấy dữ liệu dashboard Đoàn Trường",
         error: error.message,
       };
     }

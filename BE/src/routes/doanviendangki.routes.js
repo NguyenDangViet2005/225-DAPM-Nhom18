@@ -4,6 +4,7 @@ const {
   getAllPendingRegistrations,
   getAllRegistrations,
   duyetDangKy,
+  getDoanTruongDashboardData,
   getActivityRegistrations,
   getApprovedActivityRegistrations,
 } = require("../controllers/doanviendangki.controller");
@@ -25,6 +26,13 @@ router.get(
   "/doantruong/registrations/pending",
   checkRole(["DOANTRUONG"]),
   getAllPendingRegistrations,
+);
+
+// Get dashboard data cho Đoàn Trường
+router.get(
+  "/doantruong/dashboard",
+  checkRole(["DOANTRUONG"]),
+  getDoanTruongDashboardData,
 );
 
 // Get all registrations for a specific activity (all statuses)

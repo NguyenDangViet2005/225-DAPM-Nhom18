@@ -15,6 +15,13 @@ export const doanviendangkiAPI = {
     );
     return response.data;
   },
+  // Get dashboard aggregate data for DOANTRUONG
+  getDoanTruongDashboard: async () => {
+    const response = await apiClient.get(
+      "/doanviendangki/doantruong/dashboard",
+    );
+    return response.data;
+  },
   // Duyệt hoặc từ chối đăng ký (moved to doanviendangki routes)
   duyetDangKy: async (idHD, maSV, trangThai, lyDo = null) => {
     const response = await apiClient.put(
