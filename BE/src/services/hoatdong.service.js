@@ -354,6 +354,81 @@ const hoatdongService = {
       };
     }
   },
+
+  // ─────────────────────────────────────────────────────────
+  // PHÊ DUYỆT YÊU CẦU HOẠT ĐỘNG
+  // ─────────────────────────────────────────────────────────
+
+  // Lấy danh sách các hoạt động do Liên chi / Chi đoàn đề xuất (Yêu cầu duyệt)
+  async getYeuCauActivities({ page = 1, limit = 10, status = 'all' } = {}) {
+    try {
+      const { Op } = require("sequelize");
+      const offset = (page - 1) * limit;
+      
+      const whereCondition = {
+        [Op.or]: [
+          { idKhoa: { [Op.ne]: null } },
+          { idChiDoan: { [Op.ne]: null } }
+        ]
+      };
+
+      if (status !== 'all') {
+        whereCondition.trangThaiHD = status;
+      }
+
+      const { count, rows: activities } = await HoatDongDoan.findAndCountAll({
+        where: whereCondition,
+        order: [["ngayToChuc", "DESC"]],
+        limit,
+        offset,
+      });
+
+      return {
+        success: true,
+        data: activities,
+        pagination: {
+          total: count,
+          page,
+          limit,
+          totalPages: Math.ceil(count / limit),
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Lỗi lấy danh sách yêu cầu mở hoạt động",
+        error: error.message,
+      };
+    }
+  },
+
+  // Duyệt yêu cầu
+  async approveActivity(idHD) {
+    try {
+      const activity = await HoatDongDoan.findByPk(idHD);
+      if (!activity) return { success: false, message: "Hoạt động không tồn tại" };
+
+      await activity.update({ trangThaiHD: "Đã duyệt" });
+
+      return { success: true, message: "Đã duyệt hoạt động thành công" };
+    } catch (error) {
+      return { success: false, message: "Lỗi duyệt hoạt động", error: error.message };
+    }
+  },
+
+  // Từ chối yêu cầu
+  async rejectActivity(idHD) {
+    try {
+      const activity = await HoatDongDoan.findByPk(idHD);
+      if (!activity) return { success: false, message: "Hoạt động không tồn tại" };
+
+      await activity.update({ trangThaiHD: "Từ chối" });
+
+      return { success: true, message: "Đã từ chối hoạt động" };
+    } catch (error) {
+      return { success: false, message: "Lỗi từ chối hoạt động", error: error.message };
+    }
+  },
 };
 
 module.exports = hoatdongService;

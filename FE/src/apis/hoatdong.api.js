@@ -60,6 +60,26 @@ export const hoatdongAPI = {
     const response = await apiClient.get(`/hoatdong/${idHD}/registrations`);
     return response.data;
   },
+
+  // Get danh sách yêu cầu mở hoạt động (dành cho Đoàn Trường phê duyệt)
+  getYeuCauActivities: async ({ page = 1, limit = 10, status = 'all' } = {}) => {
+    const response = await apiClient.get('/hoatdong/yeu-cau', {
+      params: { page, limit, status }
+    });
+    return response.data;
+  },
+
+  // Phê duyệt yêu cầu mở hoạt động
+  approveYeuCau: async (idHD) => {
+    const response = await apiClient.put(`/hoatdong/${idHD}/duyet`);
+    return response.data;
+  },
+
+  // Từ chối yêu cầu mở hoạt động
+  rejectYeuCau: async (idHD) => {
+    const response = await apiClient.put(`/hoatdong/${idHD}/tu-choi`);
+    return response.data;
+  }
 };
 
 export default hoatdongAPI;
