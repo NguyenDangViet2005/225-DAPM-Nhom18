@@ -23,6 +23,7 @@ const YeuCau = () => {
 
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState('pending'); // 'pending' | 'history'
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -45,20 +46,28 @@ const YeuCau = () => {
   const filteredRequests = useMemo(() => {
     if (!requests) return [];
     return requests.filter(yc => {
-      const matchTen = yc.tenHD?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchDonVi = yc.donViToChuc?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesSearch = matchTen || matchDonVi;
-      const matchesFilter = statusFilter === 'all' || yc.trangThaiHD === statusFilter;
-      return matchesSearch && matchesFilter;
-    });
-  }, [searchTerm, statusFilter, requests]);
+      const matchViewMode = viewMode === 'pending' 
+        ? yc.trangThaiHD === 'Chưa duyệt' 
+        : yc.trangThaiHD !== 'Chưa duyệt'; // History: Đã duyệt, Từ chối
 
-  const filterOptions = [
-    { value: 'all', label: 'Tất cả trạng thái' },
-    { value: 'Chờ duyệt', label: 'Đang chờ duyệt' },
-    { value: 'Đã duyệt', label: 'Đã chấp thuận' },
-    { value: 'Từ chối', label: 'Đã từ chối' }
-  ];
+      const searchStr = (searchTerm || '').toLowerCase();
+      const matchTen = (yc.tenHD || '').toLowerCase().includes(searchStr);
+      const matchDonVi = (yc.donViToChuc || '').toLowerCase().includes(searchStr);
+      const matchesSearch = matchTen || matchDonVi;
+      
+      const matchesFilter = statusFilter === 'all' || yc.trangThaiHD === statusFilter;
+      
+      return matchViewMode && matchesSearch && matchesFilter;
+    });
+  }, [searchTerm, statusFilter, requests, viewMode]);
+
+  const filterOptions = viewMode === 'pending' 
+    ? [{ value: 'all', label: 'Đang chờ duyệt' }]
+    : [
+        { value: 'all', label: 'Tất cả trạng thái' },
+        { value: 'Đã duyệt', label: 'Đã chấp thuận' },
+        { value: 'Từ chối', label: 'Đã từ chối' }
+      ];
 
   const handleOpenDetail = (yc) => {
     setSelectedYC(yc);
@@ -96,10 +105,19 @@ const YeuCau = () => {
   return (
     <div className="yc-container">
       <div className="yc-header">
-        <h1 className="yc-title">Phê duyệt Yêu cầu mở Hoạt động</h1>
+        <h1 className="yc-title">
+          {viewMode === 'pending' ? 'Phê duyệt Yêu cầu mở Hoạt động' : 'Lịch sử phê duyệt'}
+        </h1>
         <div className="yc-actions">
-           <button className="yc-update-btn">
-            <FileText size={18} /> Lịch sử phê duyệt
+           <button 
+             className={`yc-update-btn ${viewMode === 'history' ? 'active-history' : ''}`}
+             style={{ backgroundColor: viewMode === 'history' ? '#475569' : '' }}
+             onClick={() => {
+               setViewMode(viewMode === 'pending' ? 'history' : 'pending');
+               setStatusFilter('all');
+             }}
+           >
+            <FileText size={18} /> {viewMode === 'pending' ? 'Lịch sử phê duyệt' : 'Quay lại DS Chờ duyệt'}
           </button>
         </div>
       </div>
@@ -143,6 +161,11 @@ const YeuCau = () => {
           </thead>
           <tbody>
             {loading && <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>Đang tải dữ liệu...</td></tr>}
+            {!loading && filteredRequests.length === 0 && (
+              <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>
+                Không có dữ liệu {viewMode === 'pending' ? 'yêu cầu chờ duyệt' : 'lịch sử'}.
+              </td></tr>
+            )}
             {!loading && filteredRequests.map(yc => (
               <tr key={yc.idHD}>
                 <td>
