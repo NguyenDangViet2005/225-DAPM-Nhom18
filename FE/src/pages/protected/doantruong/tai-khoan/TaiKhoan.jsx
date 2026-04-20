@@ -141,7 +141,7 @@ const TaiKhoan = () => {
         const payload = { tenNguoiDung: form.tenNguoiDung.trim(), idVaiTro: form.idVaiTro.trim() };
         if (roleType === 'DOANVIEN') payload.idDV = form.idDV.trim() || null;
         else payload.idDV = null;
-        if (roleType === 'DOANKHOA') payload.idKhoa = form.idKhoa.trim() || null;
+        if (roleType === 'DOANVIEN' || roleType === 'DOANKHOA') payload.idKhoa = form.idKhoa.trim() || null;
         else payload.idKhoa = null;
         await updateTaiKhoanAPI(editTarget.idUser, payload);
       } else {
@@ -151,7 +151,7 @@ const TaiKhoan = () => {
           idVaiTro: form.idVaiTro.trim(),
         };
         if (roleType === 'DOANVIEN') payload.idDV = form.idDV.trim() || null;
-        if (roleType === 'DOANKHOA') payload.idKhoa = form.idKhoa.trim() || null;
+        if (roleType === 'DOANVIEN' || roleType === 'DOANKHOA') payload.idKhoa = form.idKhoa.trim() || null;
         await createTaiKhoanAPI(payload);
       }
       setShowModal(false); fetchAccounts(pagination.page); fetchStats();
@@ -200,72 +200,94 @@ const TaiKhoan = () => {
     // DOANTRUONG → không cần thêm gì
     if (!roleType || roleType === 'DOANTRUONG') return null;
 
-    // DOANKHOA → chọn Khoa
-    if (roleType === 'DOANKHOA') return (
-      <div className="tk-form-group">
-        <label className="tk-form-label">
-          Khoa phụ trách <span className="req">*</span>
-          {isDropdownLoading && <Loader size={12} className="tk-spin" style={{ marginLeft: 6 }} />}
-        </label>
-        <select
-          id="select-id-khoa"
-          className="tk-form-input"
-          value={form.idKhoa}
-          onChange={e => setForm(f => ({ ...f, idKhoa: e.target.value }))}
-          disabled={isDropdownLoading}
-        >
-          <option value="">-- Chọn Khoa --</option>
-          {khoaList.map(k => (
-            <option key={k.idKhoa} value={k.idKhoa}>{k.tenKhoa}</option>
-          ))}
-        </select>
-      </div>
-    );
-
-    // DOANVIEN / BITHU → nhập idDV (tuỳ chọn — chỉ cần nếu sinh viên đã có trong DS Đoàn viên)
     return (
-      <div className="tk-form-group">
-        <label className="tk-form-label">
-          Liên kết Đoàn viên{' '}
-          <span style={{ color: '#64748b', fontWeight: 400, textTransform: 'none', fontSize: '0.72rem' }}>(tuỳ chọn — bỏ trống nếu chưa trong danh sách)</span>
-          {isDropdownLoading && <Loader size={12} className="tk-spin" style={{ marginLeft: 6 }} />}
-        </label>
-        <div className="tk-dv-input-row">
-          {/* Ô trái: gõ tay mã ID đoàn viên (nếu có) */}
-          <input
-            id="input-id-dv"
-            className="tk-form-input tk-dv-manual"
-            type="text"
-            placeholder="Nhập ID đoàn viên (nếu có)..."
-            value={form.idDV}
-            onChange={e => setForm(f => ({ ...f, idDV: e.target.value }))}
-          />
-          {/* Ô phải: tìm theo tên trong DS đoàn viên hiện có */}
-          <div className="tk-dv-search">
-            <SearchableSelect
-              id="searchable-id-dv"
-              value={form.idDV}
-              onChange={val => setForm(f => ({ ...f, idDV: val }))}
-              disabled={isDropdownLoading}
-              placeholder="Tìm trong DS Đoàn viên..."
-              emptyText="Không tìm thấy đoàn viên chưa có tài khoản"
-              options={[
-                ...(editTarget?.idDV && !doanVienList.find(dv => dv.idDV === editTarget.idDV)
-                  ? [{ value: editTarget.idDV, label: editTarget.doanVien?.hoTen || editTarget.idDV, sub: '(Đoàn viên hiện tại)' }]
-                  : []),
-                ...doanVienList.map(dv => ({
-                  value: dv.idDV,
-                  label: dv.hoTen,
-                  sub: [dv.chiDoan?.tenChiDoan, dv.chucVu, dv.idDV].filter(Boolean).join(' • '),
-                }))
-              ]}
-            />
+      <>
+        {/* Cả DOANVIEN, BITHU, và DOANKHOA đều được phép nhập Khoa */}
+        {(roleType === 'DOANVIEN' || roleType === 'DOANKHOA') && (
+          <div className="tk-form-group">
+            <label className="tk-form-label">
+              Mã Khoa (Khoa phụ trách / Trực thuộc) <span className="req">*</span>
+              {isDropdownLoading && <Loader size={12} className="tk-spin" style={{ marginLeft: 6 }} />}
+            </label>
+            <div className="tk-dv-input-row" style={{ gridTemplateColumns: 'minmax(120px, 1fr) 2fr' }}>
+              {/* Ô trái: gõ tay mã Khoa */}
+              <input
+                id="input-id-khoa"
+                className="tk-form-input tk-dv-manual"
+                type="text"
+                placeholder="Mã (VD: CNTT)"
+                value={form.idKhoa}
+                onChange={e => setForm(f => ({ ...f, idKhoa: e.target.value }))}
+                disabled={isDropdownLoading}
+              />
+              {/* Ô phải: chọn Khoa có sẵn để tự động điền */}
+              <div className="tk-dv-search">
+                <select
+                  id="select-id-khoa"
+                  className="tk-form-input"
+                  value={form.idKhoa}
+                  onChange={e => setForm(f => ({ ...f, idKhoa: e.target.value }))}
+                  disabled={isDropdownLoading}
+                  style={{ width: '100%' }}
+                >
+                  <option value="">-- Hoặc chọn DS có sẵn --</option>
+                  {khoaList.map(k => (
+                    <option key={k.idKhoa} value={k.idKhoa}>
+                      [{k.idKhoa}] {k.tenKhoa}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
-        <span className="tk-dv-hint">
-          💡 Bỏ trống nếu sinh viên chưa có trong danh sách Đoàn viên. Chỉ điền khi muốn liên kết với hồ sơ Đoàn viên đã có.
-        </span>
-      </div>
+        )}
+
+        {/* CHỈ DOANVIEN / BITHU (Không bao gồm DOANKHOA) mới được nhập idDV */}
+        {roleType === 'DOANVIEN' && (
+          <div className="tk-form-group" style={{ marginTop: '1rem' }}>
+            <label className="tk-form-label">
+              Liên kết Đoàn viên{' '}
+              <span style={{ color: '#64748b', fontWeight: 400, textTransform: 'none', fontSize: '0.72rem' }}>(tuỳ chọn — bỏ trống nếu chưa trong danh sách)</span>
+              {isDropdownLoading && <Loader size={12} className="tk-spin" style={{ marginLeft: 6 }} />}
+            </label>
+            <div className="tk-dv-input-row">
+              {/* Ô trái: gõ tay mã ID đoàn viên (nếu có) */}
+              <input
+                id="input-id-dv"
+                className="tk-form-input tk-dv-manual"
+                type="text"
+                placeholder="Nhập ID đoàn viên (nếu có)..."
+                value={form.idDV}
+                onChange={e => setForm(f => ({ ...f, idDV: e.target.value }))}
+              />
+              {/* Ô phải: tìm theo tên trong DS đoàn viên hiện có */}
+              <div className="tk-dv-search">
+                <SearchableSelect
+                  id="searchable-id-dv"
+                  value={form.idDV}
+                  onChange={val => setForm(f => ({ ...f, idDV: val }))}
+                  disabled={isDropdownLoading}
+                  placeholder="Tìm trong DS Đoàn viên..."
+                  emptyText="Không tìm thấy đoàn viên chưa có tài khoản"
+                  options={[
+                    ...(editTarget?.idDV && !doanVienList.find(dv => dv.idDV === editTarget.idDV)
+                      ? [{ value: editTarget.idDV, label: editTarget.doanVien?.hoTen || editTarget.idDV, sub: '(Đoàn viên hiện tại)' }]
+                      : []),
+                    ...doanVienList.map(dv => ({
+                      value: dv.idDV,
+                      label: dv.hoTen,
+                      sub: [dv.chiDoan?.tenChiDoan, dv.chucVu, dv.idDV].filter(Boolean).join(' • '),
+                    }))
+                  ]}
+                />
+              </div>
+            </div>
+            <span className="tk-dv-hint">
+              💡 Bỏ trống nếu sinh viên chưa có trong danh sách Đoàn viên. Chỉ điền khi muốn liên kết với hồ sơ Đoàn viên đã có.
+            </span>
+          </div>
+        )}
+      </>
     );
   };
 

@@ -139,10 +139,12 @@ const createTaiKhoan = async (data) => {
     });
   }
 
-  // 4. Nếu có idKhoa → kiểm tra khoa tồn tại
+  // 4. Nếu có idKhoa → tự động tạo Khoa tạm nếu chưa tồn tại
   if (idKhoa) {
-    const khoa = await Khoa.findByPk(idKhoa);
-    if (!khoa) throw new Error("Khoa không tồn tại");
+    const [khoa, created] = await Khoa.findOrCreate({
+      where: { idKhoa },
+      defaults: { tenKhoa: "Khoa mới (Tự động tạo)" }
+    });
   }
 
   // 5. Hash mật khẩu
