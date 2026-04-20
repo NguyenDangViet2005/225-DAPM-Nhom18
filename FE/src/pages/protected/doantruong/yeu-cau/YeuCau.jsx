@@ -23,7 +23,9 @@ const YeuCau = () => {
 
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState('pending'); // 'pending' | 'history'
+  
+  // History Modal State
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -46,28 +48,23 @@ const YeuCau = () => {
   const filteredRequests = useMemo(() => {
     if (!requests) return [];
     return requests.filter(yc => {
-      const matchViewMode = viewMode === 'pending' 
-        ? yc.trangThaiHD === 'Chưa duyệt' 
-        : yc.trangThaiHD !== 'Chưa duyệt'; // History: Đã duyệt, Từ chối
+      // Main table ONLY shows pending requests
+      if (yc.trangThaiHD !== 'Chưa duyệt') return false;
 
       const searchStr = (searchTerm || '').toLowerCase();
       const matchTen = (yc.tenHD || '').toLowerCase().includes(searchStr);
       const matchDonVi = (yc.donViToChuc || '').toLowerCase().includes(searchStr);
       const matchesSearch = matchTen || matchDonVi;
       
-      const matchesFilter = statusFilter === 'all' || yc.trangThaiHD === statusFilter;
-      
-      return matchViewMode && matchesSearch && matchesFilter;
+      return matchesSearch;
     });
-  }, [searchTerm, statusFilter, requests, viewMode]);
+  }, [searchTerm, requests]);
 
-  const filterOptions = viewMode === 'pending' 
-    ? [{ value: 'all', label: 'Đang chờ duyệt' }]
-    : [
-        { value: 'all', label: 'Tất cả trạng thái' },
-        { value: 'Đã duyệt', label: 'Đã chấp thuận' },
-        { value: 'Từ chối', label: 'Đã từ chối' }
-      ];
+  // Lấy ra danh sách lịch sử (Đã duyệt / Từ chối) để hiển thị trong Modal
+  const historyRequests = useMemo(() => {
+    if (!requests) return [];
+    return requests.filter(yc => yc.trangThaiHD === 'Đã duyệt' || yc.trangThaiHD === 'Từ chối');
+  }, [requests]);
 
   const handleOpenDetail = (yc) => {
     setSelectedYC(yc);
@@ -105,19 +102,13 @@ const YeuCau = () => {
   return (
     <div className="yc-container">
       <div className="yc-header">
-        <h1 className="yc-title">
-          {viewMode === 'pending' ? 'Phê duyệt Yêu cầu mở Hoạt động' : 'Lịch sử phê duyệt'}
-        </h1>
+        <h1 className="yc-title">Phê duyệt Yêu cầu mở Hoạt động</h1>
         <div className="yc-actions">
            <button 
-             className={`yc-update-btn ${viewMode === 'history' ? 'active-history' : ''}`}
-             style={{ backgroundColor: viewMode === 'history' ? '#475569' : '' }}
-             onClick={() => {
-               setViewMode(viewMode === 'pending' ? 'history' : 'pending');
-               setStatusFilter('all');
-             }}
+             className="yc-update-btn"
+             onClick={() => setShowHistoryModal(true)}
            >
-            <FileText size={18} /> {viewMode === 'pending' ? 'Lịch sử phê duyệt' : 'Quay lại DS Chờ duyệt'}
+            <FileText size={18} /> Lịch sử phê duyệt
           </button>
         </div>
       </div>
@@ -143,9 +134,6 @@ const YeuCau = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         placeholder="Tìm theo tên hoạt động, đơn vị yêu cầu..."
-        filterValue={statusFilter}
-        onFilterChange={setStatusFilter}
-        filterOptions={filterOptions}
       />
 
       <div className="yc-card">
@@ -163,7 +151,7 @@ const YeuCau = () => {
             {loading && <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>Đang tải dữ liệu...</td></tr>}
             {!loading && filteredRequests.length === 0 && (
               <tr><td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>
-                Không có dữ liệu {viewMode === 'pending' ? 'yêu cầu chờ duyệt' : 'lịch sử'}.
+                Không có dữ liệu yêu cầu chờ duyệt.
               </td></tr>
             )}
             {!loading && filteredRequests.map(yc => (
@@ -187,22 +175,13 @@ const YeuCau = () => {
                   </div>
                 </td>
                 <td>
-                  <span className={`yc-badge ${
-                    yc.trangThaiHD === 'Chưa duyệt' ? 'yc-badge--pending' :
-                    yc.trangThaiHD === 'Đã duyệt' ? 'yc-badge--approved' : 'yc-badge--rejected'
-                  }`}>
-                    {yc.trangThaiHD}
-                  </span>
+                  <span className="yc-badge yc-badge--pending">Chưa duyệt</span>
                 </td>
                 <td>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button className="yc-btn-icon" onClick={() => handleOpenDetail(yc)}><Eye size={18} /></button>
-                    {yc.trangThaiHD === 'Chưa duyệt' && (
-                      <>
-                        <button className="yc-btn-icon yc-btn-icon--approve" onClick={() => handleApprove(yc)}><CheckCircle size={18} /></button>
-                        <button className="yc-btn-icon yc-btn-icon--reject" onClick={() => handleReject(yc)}><XCircle size={18} /></button>
-                      </>
-                    )}
+                    <button className="yc-btn-icon yc-btn-icon--approve" onClick={() => handleApprove(yc)}><CheckCircle size={18} /></button>
+                    <button className="yc-btn-icon yc-btn-icon--reject" onClick={() => handleReject(yc)}><XCircle size={18} /></button>
                   </div>
                 </td>
               </tr>
@@ -210,6 +189,48 @@ const YeuCau = () => {
           </tbody>
         </table>
       </div>
+
+      {/* ── Modal Lịch Sử Phê Duyệt (Basic View) ────────────────────────── */}
+      {showHistoryModal && (
+        <div className="modal-overlay" onClick={() => setShowHistoryModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '900px', width: '90%' }}>
+            <div className="modal-header">
+              <h2>Lịch sử phê duyệt</h2>
+              <button className="modal-close" onClick={() => setShowHistoryModal(false)}><XCircle size={24} /></button>
+            </div>
+            <div className="modal-body" style={{ maxHeight: '600px', overflowY: 'auto', padding: '20px' }}>
+              {historyRequests.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Chưa có lịch sử phê duyệt nào.</div>
+              ) : (
+                <table className="yc-table">
+                  <thead>
+                    <tr>
+                      <th>Tên HĐ</th>
+                      <th>Đơn vị đề xuất</th>
+                      <th>Ngày TC</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {historyRequests.map(yc => (
+                      <tr key={yc.idHD}>
+                        <td><strong>{yc.tenHD}</strong></td>
+                        <td>{yc.donViToChuc || "Không có tên ĐV"}</td>
+                        <td>{new Date(yc.ngayToChuc).toLocaleDateString('vi-VN')}</td>
+                        <td>
+                          <span className={`yc-badge ${yc.trangThaiHD === 'Đã duyệt' ? 'yc-badge--approved' : 'yc-badge--rejected'}`}>
+                            {yc.trangThaiHD}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Modal Chi tiết ────────────────────────── */}
       <ActivityRequestDetailModal
