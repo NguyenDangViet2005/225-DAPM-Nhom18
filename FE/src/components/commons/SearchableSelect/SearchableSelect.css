@@ -1,0 +1,207 @@
+/* ────────────────────────────────────────────────────────── (CSS)
+   SearchableSelect – Searchable Dropdown Component
+────────────────────────────────────────────────────────── */
+
+.ss-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.ss-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ── Trigger button ─────────────────────────────────────── */
+.ss-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  font-size: 0.875rem;
+  color: #0d1f3c;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 40px;
+  gap: 8px;
+}
+
+.ss-trigger:hover {
+  border-color: #94a3b8;
+}
+
+.ss-trigger--open,
+.ss-trigger:focus {
+  outline: none;
+  border-color: #004f9f;
+  box-shadow: 0 0 0 3px rgba(0, 79, 159, 0.08);
+}
+
+.ss-trigger__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-trigger__placeholder {
+  color: #94a3b8;
+}
+
+.ss-trigger__icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ss-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.ss-clear:hover {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.ss-chevron {
+  color: #94a3b8;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.ss-chevron--up {
+  transform: rotate(180deg);
+}
+
+/* ── Dropdown panel ─────────────────────────────────────── */
+.ss-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 9999;
+  animation: ss-fade-in 0.12s ease;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes ss-fade-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Search input ───────────────────────────────────────── */
+.ss-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.ss-search-icon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.ss-search {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.8rem;
+  color: #0d1f3c;
+  padding: 0;
+}
+
+.ss-search::placeholder {
+  color: #94a3b8;
+}
+
+/* ── Options list ───────────────────────────────────────── */
+.ss-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  flex: 1;
+  max-height: 240px;
+}
+
+.ss-option {
+  padding: 0.5rem 0.875rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: background 0.1s;
+}
+
+.ss-option--none {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.ss-option--highlighted {
+  background: #f0f7ff;
+}
+
+.ss-option--selected {
+  background: #e8f0fe;
+}
+
+.ss-option--selected .ss-option__label {
+  color: #004f9f;
+  font-weight: 700;
+}
+
+.ss-option__label {
+  font-size: 0.85rem;
+  color: #0d1f3c;
+  font-weight: 500;
+}
+
+.ss-option__sub {
+  font-size: 0.74rem;
+  color: #64748b;
+}
+
+/* ── Empty state ────────────────────────────────────────── */
+.ss-empty {
+  padding: 1rem 0.875rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── Footer counter ─────────────────────────────────────── */
+.ss-footer {
+  padding: 0.35rem 0.875rem;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  background: #f8fafc;
+  flex-shrink: 0;
+  text-align: right;
+}

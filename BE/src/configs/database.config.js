@@ -27,10 +27,12 @@ const sequelize = new Sequelize(
 
 const connectDB = async () => {
   try {
+    await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
     // Sync models (development only)
     if (process.env.NODE_ENV === "development") {
+      await sequelize.sync({ alter: false });
       console.log("✅ Models synchronized");
     }
   } catch (error) {

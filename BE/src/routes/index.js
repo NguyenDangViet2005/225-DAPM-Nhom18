@@ -7,6 +7,7 @@ const hoatdongRoutes = require("./hoatdong.routes");
 const doanphiRoutes = require("./doanphi.routes");
 const doanviendangkiRoutes = require("./doanviendangki.routes");
 const sodoanRoutes = require("./sodoan.routes");
+const quanLyTaiKhoanRoutes = require("./taikhoan.routes");
 
 // Health check route
 router.get("/health", (req, res) => {
@@ -30,5 +31,8 @@ router.use("/doanviendangki", doanviendangkiRoutes);
 router.use("/sodoan", sodoanRoutes);
 // Đoàn phí routes
 router.use("/doan-phi", doanphiRoutes);
+
+// Quản lý tài khoản routes (Đoàn Trường)
+router.use("/tai-khoan", quanLyTaiKhoanRoutes);
 
 module.exports = router;
