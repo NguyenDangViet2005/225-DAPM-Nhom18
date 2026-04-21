@@ -9,11 +9,16 @@ const {
   getDoanPhiStats,
   getPhieuThu,
   putDuyetPhieuThu,
+  getMyDoanPhiController,
 } = require("../controllers/doanphi.controller");
 const { createMucDoanPhiValidator } = require("../validators/doanphi.validator");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 
 router.use(verifyToken);
+
+// ── Đoàn viên xem lịch sử đoàn phí của mình (không cần role DOANTRUONG)
+router.get("/me", getMyDoanPhiController);
+
 router.use(checkRole(["DOANTRUONG"]));
 
 // ── Mức đoàn phí ─────────────────────────────────────────
