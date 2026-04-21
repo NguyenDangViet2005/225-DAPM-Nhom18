@@ -1,6 +1,35 @@
 const sodoanService = require("../services/sodoan.service");
 
 const sodoanController = {
+  /**
+   * GET /api/sodoan/me
+   * Đoàn viên xem tình trạng sổ đoàn của chính mình
+   */
+  getMySoDoan: async (req, res) => {
+    try {
+      const idDV = req.user?.idDV;
+      if (!idDV) {
+        return res.status(403).json({
+          success: false,
+          message: "Tài khoản này không liên kết với đoàn viên nào",
+        });
+      }
+
+      const data = await sodoanService.getMySoDoan(idDV);
+
+      if (!data) {
+        return res.status(404).json({
+          success: false,
+          message: "Chưa có thông tin sổ đoàn",
+        });
+      }
+
+      return res.status(200).json({ success: true, data });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
   getLopSoDoan: async (req, res) => {
     try {
       const idDV = req.user.idDV; // Lấy từ token
