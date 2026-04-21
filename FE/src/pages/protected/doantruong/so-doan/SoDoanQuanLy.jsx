@@ -5,6 +5,7 @@ import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToo
 import SoDoanTable from "@/components/commons/tables/SoDoanTable";
 import SoDoanStatusModal from "./SoDoanStatusModal";
 import SoDoanViewModal from "./SoDoanViewModal";
+import SoDoanCreateModal from "./SoDoanCreateModal";
 import "./SoDoan.css";
 
 const SoDoanQuanLy = () => {
@@ -26,6 +27,8 @@ const SoDoanQuanLy = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [viewSoDoan, setViewSoDoan] = useState(null);
   const [loadingView, setLoadingView] = useState(false);
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleViewDetails = async (id) => {
     setViewSoDoan(null);
@@ -125,7 +128,11 @@ const SoDoanQuanLy = () => {
             <Download size={18} />
             Xuất báo cáo
           </button>
-          <button className="btn-primary" title="Tiếp nhận sổ mới">
+          <button 
+            className="btn-primary" 
+            title="Tiếp nhận sổ mới"
+            onClick={() => setShowCreateModal(true)}
+          >
             <Plus size={18} />
             Tiếp nhận Sổ
           </button>
@@ -220,6 +227,26 @@ const SoDoanQuanLy = () => {
         onClose={() => setShowViewModal(false)}
         viewSoDoan={viewSoDoan}
         loadingView={loadingView}
+      />
+
+      <SoDoanCreateModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreate={async (data) => {
+          try {
+            const res = await sodoanAPI.createSoDoan(data);
+            if (res && res.data && res.data.success) {
+              alert("Tạo sổ thành công!");
+              setShowCreateModal(false);
+              fetchSoDoan();
+            } else {
+              alert("Không tạo được: " + (res?.data?.message || "Lỗi không xác định"));
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Lỗi khi tạo sổ đoàn:\n" + (err.response?.data?.message || err.message));
+          }
+        }}
       />
     </div>
   );

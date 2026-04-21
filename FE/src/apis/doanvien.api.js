@@ -12,6 +12,11 @@ export const doanvienAPI = {
     const response = await apiClient.patch("/doan-vien/me", data);
     return response.data;
   },
+
+  getById: async (id) => {
+    const response = await apiClient.get(`/doan-vien/${id}`);
+    return response;
+  }
 };
 
 export default doanvienAPI;

@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import sodoanAPI from "@/apis/sodoan.api";
-import { CheckSquare, Square, UserCheck, BookOpen, AlertCircle, CheckCircle, Search } from "lucide-react";
+import {
+  CheckSquare,
+  Square,
+  UserCheck,
+  BookOpen,
+  AlertCircle,
+  CheckCircle,
+  Search,
+} from "lucide-react";
 import "./NopSoDoanLop.css";
 
 const NopSoDoanLop = () => {
@@ -38,7 +46,7 @@ const NopSoDoanLop = () => {
     setSelectedIds((prev) =>
       prev.includes(idToToggle)
         ? prev.filter((id) => id !== idToToggle)
-        : [...prev, idToToggle]
+        : [...prev, idToToggle],
     );
   };
 
@@ -56,9 +64,13 @@ const NopSoDoanLop = () => {
 
   const handleSubmit = async () => {
     if (selectedIds.length === 0) return;
-    
+
     // confirm
-    if (!window.confirm(`Bạn có chắc chắn gửi ${selectedIds.length} sổ đoàn này đi để chờ duyệt?`)) {
+    if (
+      !window.confirm(
+        `Bạn có chắc chắn gửi ${selectedIds.length} sổ đoàn này đi để chờ duyệt?`,
+      )
+    ) {
       return;
     }
 
@@ -67,7 +79,9 @@ const NopSoDoanLop = () => {
       const response = await sodoanAPI.submitLopSoDoan(selectedIds);
       const res = response.data;
       if (res.success) {
-        setSuccessMsg("Gửi danh sách nộp sổ thành công, đang chờ đoàn trường duyệt.");
+        setSuccessMsg(
+          "Gửi danh sách nộp sổ thành công, đang chờ đoàn trường duyệt.",
+        );
         setSelectedIds([]);
         fetchDanhSach();
         setTimeout(() => setSuccessMsg(""), 4000);
@@ -79,19 +93,27 @@ const NopSoDoanLop = () => {
     }
   };
 
-  const currentList = danhSach.filter((item) =>
-    item.doanVien?.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    item.doanVien?.idDV.toLowerCase().includes(searchTerm.toLowerCase())
+  const currentList = danhSach.filter(
+    (item) =>
+      item.doanVien?.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.doanVien?.idDV.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const filterChuaNop = currentList.filter(s => s.trangThai === "Chưa nộp sổ");
-  const isAllSelected = selectedIds.length > 0 && selectedIds.length === filterChuaNop.length;
+  const filterChuaNop = currentList.filter(
+    (s) => s.trangThai === "Chưa nộp sổ",
+  );
+  const isAllSelected =
+    selectedIds.length > 0 && selectedIds.length === filterChuaNop.length;
 
   return (
     <div className="nop-so-doan-lop-container">
       <div className="nsd-header">
-        <h1 className="nsd-title"><BookOpen size={24} /> Nộp sổ đoàn lớp</h1>
-        <p className="nsd-subtitle">Quản lý và cập nhật danh sách nộp sổ đoàn của chi đoàn</p>
+        <h1 className="nsd-title">
+          <BookOpen size={24} /> Nộp sổ đoàn lớp
+        </h1>
+        <p className="nsd-subtitle">
+          Quản lý và cập nhật danh sách nộp sổ đoàn của chi đoàn
+        </p>
       </div>
 
       {error && (
@@ -117,8 +139,8 @@ const NopSoDoanLop = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
-          <button 
+
+          <button
             className="nsd-btn-submit"
             onClick={handleSubmit}
             disabled={selectedIds.length === 0 || loading}
@@ -133,8 +155,8 @@ const NopSoDoanLop = () => {
             <thead>
               <tr>
                 <th width="50" style={{ textAlign: "center" }}>
-                  <button 
-                    className="nsd-check-btn" 
+                  <button
+                    className="nsd-check-btn"
                     onClick={() => handleSelectAll(currentList)}
                     disabled={filterChuaNop.length === 0}
                   >
@@ -154,29 +176,39 @@ const NopSoDoanLop = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="nsd-text-center">Đang tải danh sách...</td>
+                  <td colSpan="5" className="nsd-text-center">
+                    Đang tải danh sách...
+                  </td>
                 </tr>
               ) : currentList.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="nsd-text-center">Không tìm thấy sinh viên nào.</td>
+                  <td colSpan="5" className="nsd-text-center">
+                    Không tìm thấy sinh viên nào.
+                  </td>
                 </tr>
               ) : (
                 currentList.map((item) => {
                   const checkId = item.idSoDoan || item.idDV;
                   const isChecked = selectedIds.includes(checkId);
-                  
+
                   // Chỉ hiện các trạng thái khác "Chưa nộp sổ" dưới dạng text, không thể chọn
                   const isOtherStatus = item.trangThai !== "Chưa nộp sổ";
 
                   return (
-                    <tr key={checkId} className={isChecked ? "nsd-row-selected" : ""}>
+                    <tr
+                      key={checkId}
+                      className={isChecked ? "nsd-row-selected" : ""}
+                    >
                       <td style={{ textAlign: "center" }}>
                         {isOtherStatus ? (
-                          <div className="nsd-check-disabled" title={item.trangThai}>
+                          <div
+                            className="nsd-check-disabled"
+                            title={item.trangThai}
+                          >
                             <CheckSquare size={18} color="#aaa" />
                           </div>
                         ) : (
-                          <button 
+                          <button
                             className="nsd-check-btn"
                             onClick={() => handleToggleSelect(item)}
                           >
@@ -189,14 +221,20 @@ const NopSoDoanLop = () => {
                         )}
                       </td>
                       <td>{item.doanVien?.idDV || item.idDV || "-"}</td>
-                      <td className="nsd-fw-bold">{item.doanVien?.hoTen || "-"}</td>
+                      <td className="nsd-fw-bold">
+                        {item.doanVien?.hoTen || "-"}
+                      </td>
                       <td>
-                        {item.doanVien?.ngaySinh 
-                          ? new Date(item.doanVien?.ngaySinh).toLocaleDateString("vi-VN") 
+                        {item.doanVien?.ngaySinh
+                          ? new Date(
+                              item.doanVien?.ngaySinh,
+                            ).toLocaleDateString("vi-VN")
                           : "-"}
                       </td>
                       <td>
-                        <span className={`nsd-badge nsd-badge--${item.trangThai === "Chưa nộp sổ" ? "pending" : "success"}`}>
+                        <span
+                          className={`nsd-badge nsd-badge--${item.trangThai === "Chưa nộp sổ" ? "pending" : "success"}`}
+                        >
                           {item.trangThai || "Chưa nộp sổ"}
                         </span>
                       </td>

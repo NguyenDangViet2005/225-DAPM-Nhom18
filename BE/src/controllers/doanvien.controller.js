@@ -64,6 +64,19 @@ const doanvienController = {
       return res.status(400).json({ success: false, message: error.message });
     }
   },
+
+  getById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const doanvien = await doanvienService.getProfile(id);
+      if (!doanvien) {
+        return res.status(404).json({ success: false, message: "Không tìm thấy đoàn viên" });
+      }
+      return res.status(200).json({ success: true, data: doanvien });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
 };
 
 module.exports = doanvienController;

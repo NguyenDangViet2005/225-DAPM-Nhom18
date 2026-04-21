@@ -12,4 +12,6 @@ router.get("/me", doanvienController.getMyProfile);
 // PATCH /api/doan-vien/me — Cập nhật thông tin cá nhân
 router.patch("/me", doanvienController.updateMyProfile);
 
+router.get("/:id", doanvienController.getById);
+
 module.exports = router;
