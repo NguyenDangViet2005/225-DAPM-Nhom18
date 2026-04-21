@@ -13,6 +13,12 @@ export const doanvienAPI = {
     return response.data;
   },
 
+  // GET /api/sodoan/me — Lấy tình trạng sổ đoàn
+  getMySoDoan: async () => {
+    const response = await apiClient.get("/sodoan/me");
+    return response.data;
+  },
+
   getById: async (id) => {
     const response = await apiClient.get(`/doan-vien/${id}`);
     return response;
