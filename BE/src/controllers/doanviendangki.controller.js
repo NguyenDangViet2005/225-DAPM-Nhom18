@@ -1,5 +1,17 @@
 const doanviendangkiService = require("../services/doanviendangki.service");
 
+// Lịch sử đăng ký của đoàn viên
+const getLichSuDangKy = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    if (!idDV) return res.status(400).json({ success: false, message: "Không xác định được đoàn viên" });
+    const result = await doanviendangkiService.getLichSuDangKy(idDV);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
 // Lấy danh sách hoạt động đang mở cho đoàn viên
 const getAvailableActivities = async (req, res) => {
   try {
@@ -196,4 +208,5 @@ module.exports = {
   getAvailableActivities,
   dangKyHoatDong,
   huyDangKy,
+  getLichSuDangKy,
 };

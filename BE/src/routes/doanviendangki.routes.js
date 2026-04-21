@@ -10,6 +10,7 @@ const {
   getAvailableActivities,
   dangKyHoatDong,
   huyDangKy,
+  getLichSuDangKy,
 } = require("../controllers/doanviendangki.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const { duyetDangKyValidator } = require("../validators/hoatdong.validator");
@@ -40,6 +41,7 @@ router.get(
 
 // ── Đoàn viên tự đăng ký / hủy ──────────────────────────
 router.get("/available", getAvailableActivities);
+router.get("/lich-su", getLichSuDangKy);
 router.post("/:idHD/dang-ky", dangKyHoatDong);
 router.delete("/:idHD/huy", huyDangKy);
 

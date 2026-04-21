@@ -9,6 +9,41 @@ const {
 const { Op } = require("sequelize");
 
 const doanviendangkiService = {
+  // Lịch sử đăng ký hoạt động của đoàn viên
+  async getLichSuDangKy(idDV) {
+    try {
+      const registrations = await DoanVienDangKi.findAll({
+        where: { idDV },
+        attributes: ["idHD", "ngayDangKi", "trangThaiDuyet", "lyDoTuChoi"],
+        include: [
+          {
+            model: HoatDongDoan,
+            as: "hoatDong",
+            attributes: ["idHD", "tenHD", "ngayToChuc", "diaDiem", "donViToChuc", "diemHD", "trangThai"],
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const data = registrations.map(r => ({
+        idHD: r.idHD?.trim(),
+        tenHD: r.hoatDong?.tenHD ?? "—",
+        ngayToChuc: r.hoatDong?.ngayToChuc,
+        diaDiem: r.hoatDong?.diaDiem ?? "—",
+        donViToChuc: r.hoatDong?.donViToChuc ?? "—",
+        diemHD: r.hoatDong?.diemHD ?? 0,
+        trangThaiHoatDong: r.hoatDong?.trangThai?.trim() ?? "—",
+        ngayDangKi: r.ngayDangKi,
+        trangThaiDuyet: r.trangThaiDuyet?.trim(),
+        lyDoTuChoi: r.lyDoTuChoi,
+      }));
+
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: "Lỗi lấy lịch sử đăng ký", error: error.message };
+    }
+  },
+
   // Lấy danh sách hoạt động đang mở cho đoàn viên đăng ký
   async getAvailableActivities({ idDV } = {}) {
     try {
