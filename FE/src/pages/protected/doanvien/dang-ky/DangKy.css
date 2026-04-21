@@ -26,6 +26,7 @@
 .dk-card {
   background: #fff;
   border: 1px solid #eef2f6;
+  border-radius: 12px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -33,7 +34,7 @@
   transition: box-shadow 0.2s;
 }
 
-.dk-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.dk-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: #eff6ff; border-color: #bfdbfe; }
 
 .dk-card__title {
   font-size: 0.95rem;
