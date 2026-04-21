@@ -9,6 +9,9 @@ const {
   updateActivity,
   deleteActivity,
   xacNhanHoanThanh,
+  getYeuCauActivities,
+  approveActivity,
+  rejectActivity,
 } = require("../controllers/hoatdong.controller");
 const {
   createActivityValidator,
@@ -32,6 +35,9 @@ router.get("/khoa/", getAllKhoaActivities);
 // Get all chi doan-level activities
 router.get("/chidoan/", getAllChidoanActivities);
 
+// Get activity requests (must be before /:idHD)
+router.get("/yeu-cau", getYeuCauActivities);
+
 // Get activity by ID (must be last - generic pattern)
 router.get("/:idHD", getActivityById);
 
@@ -45,6 +51,10 @@ router.get("/:idHD", getActivityById);
 
 // Xác nhận hoàn thành & cộng điểm
 router.put("/:idHD/xac-nhan", xacNhanHoanThanh);
+
+// Phê duyệt và từ chối yêu cầu hoạt động
+router.put("/:idHD/duyet", approveActivity);
+router.put("/:idHD/tu-choi", rejectActivity);
 
 // Create new activity
 router.post("/", createActivityValidator, createActivity);

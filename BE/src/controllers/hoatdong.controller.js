@@ -215,6 +215,52 @@ const getAllChidoanActivities = async (req, res) => {
   }
 };
 
+// ==============================================
+// PHÊ DUYỆT YÊU CẦU HOẠT ĐỘNG
+// ==============================================
+
+const getYeuCauActivities = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const status = req.query.status || 'all';
+
+    const result = await hoatdongService.getYeuCauActivities({ page, limit, status });
+    if (!result.success) return res.status(400).json(result);
+
+    return res.status(200).json({
+      success: true,
+      message: "Lấy danh sách yêu cầu thành công",
+      data: result.data,
+      pagination: result.pagination,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+const approveActivity = async (req, res) => {
+  try {
+    const { idHD } = req.params;
+    const result = await hoatdongService.approveActivity(idHD);
+    if (!result.success) return res.status(400).json(result);
+    return res.status(200).json({ success: true, message: result.message });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+const rejectActivity = async (req, res) => {
+  try {
+    const { idHD } = req.params;
+    const result = await hoatdongService.rejectActivity(idHD);
+    if (!result.success) return res.status(400).json(result);
+    return res.status(200).json({ success: true, message: result.message });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
 module.exports = {
   getAllSchoolActivities,
   getAllKhoaActivities,
@@ -224,4 +270,7 @@ module.exports = {
   updateActivity,
   deleteActivity,
   xacNhanHoanThanh,
+  getYeuCauActivities,
+  approveActivity,
+  rejectActivity,
 };
