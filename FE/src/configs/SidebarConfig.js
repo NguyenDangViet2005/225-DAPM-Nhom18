@@ -193,6 +193,12 @@ const SIDEBAR_CONFIG = {
     },
     // ── Quyền riêng của Bí thư chi đoàn ──────────────────
     {
+      key: "nop-so-doan-lop",
+      label: "Nộp sổ đoàn lớp",
+      icon: "BookOpen", // Biểu tượng tương thích hoặc dùng "FileText"
+      path: "/bi-thu/nop-so-doan",
+    },
+    {
       key: "doan-phi-lop",
       label: "Đoàn phí lớp",
       icon: "Wallet",

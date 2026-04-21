@@ -9,6 +9,7 @@ import DoanPhiLop from "@/pages/protected/bithu/doan-phi-lop/DoanPhiLop";
 import HoatDongChiDoanXacNhan from "@/pages/protected/bithu/hoat-dong-chi-doan/HoatDongChiDoanXacNhan";
 import HoatDongChiDoanDanhSach from "@/pages/protected/bithu/hoat-dong-chi-doan/HoatDongChiDoanDanhSach";
 import GuiYeuCauHoatDong from "@/pages/protected/bithu/gui-yeu-cau-hoat-dong/GuiYeuCauHoatDong";
+import NopSoDoanLop from "@/pages/protected/bithu/nop-so-doan/NopSoDoanLop";
 
 // Bí thư — Kế thừa từ Đoàn viên
 import ThongTinCaNhan from "@/pages/protected/doanvien/thong-tin-ca-nhan/ThongTinCaNhan";
@@ -27,6 +28,7 @@ const BiThuRoutes = (
       <Route path="dashboard" element={<BiThuDashboard />} />
 
       {/* ── Quyền riêng Bí thư ── */}
+      <Route path="nop-so-doan" element={<NopSoDoanLop />} />
       <Route path="doan-phi-lop/lap-danh-sach" element={<DoanPhiLop />} />
       <Route path="doan-phi-lop/gui" element={<DoanPhiLop />} />
       <Route
