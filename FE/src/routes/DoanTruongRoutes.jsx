@@ -15,6 +15,7 @@ import HoatDongXacNhan from "@/pages/protected/doantruong/hoat-dong/HoatDongXacN
 
 import YeuCau from "@/pages/protected/doantruong/yeu-cau/YeuCau";
 import TaiKhoan from "@/pages/protected/doantruong/tai-khoan/TaiKhoan";
+import QuanLyDoanVien from "@/pages/protected/doantruong/doan-vien/QuanLyDoanVien";
 
 /**
  * DoanTruongRoutes – chỉ cho phép role DOANTRUONG
@@ -37,6 +38,7 @@ const DoanTruongRoutes = (
 
       <Route path="yeu-cau" element={<YeuCau />} />
       <Route path="tai-khoan" element={<TaiKhoan />} />
+      <Route path="doan-vien" element={<QuanLyDoanVien />} />
     </Route>
   </Route>
 );

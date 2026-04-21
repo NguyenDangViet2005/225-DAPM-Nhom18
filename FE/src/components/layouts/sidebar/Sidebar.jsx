@@ -135,6 +135,8 @@ const ICON_PATHS = {
   BarChart2: "M18 20V10M12 20V4M6 20v-6",
   UserCircle:
     "M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zM12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM6.32 18.5A9.97 9.97 0 0 1 12 16c2.3 0 4.4.78 6.08 2.08",
+  GraduationCap:
+    "M22 10v6M2 10l10-5 10 5-10 5zM6 12v5c3 3 9 3 12 0v-5",
   ChevronLeft: "M15 18l-6-6 6-6",
   ChevronRight: "M9 18l6-6-6-6",
   LogOut: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9",

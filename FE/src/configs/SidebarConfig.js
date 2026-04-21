@@ -112,6 +112,13 @@ const SIDEBAR_CONFIG = {
       permission: PERMISSIONS.ACTIVITY_REQUEST_VIEW,
     },
     {
+      key: "doan-vien",
+      label: "Quản lý đoàn viên",
+      icon: "GraduationCap",
+      path: "/doan-truong/doan-vien",
+      permission: PERMISSIONS.ACCOUNT_MANAGE,
+    },
+    {
       key: "tai-khoan",
       label: "Quản lý tài khoản",
       icon: "Users",

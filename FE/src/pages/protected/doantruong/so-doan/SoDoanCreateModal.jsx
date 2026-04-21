@@ -132,8 +132,10 @@ const SoDoanCreateModal = ({ isOpen, onClose, onCreate }) => {
           {student && (
             <div style={{ padding: '15px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', marginBottom: '20px' }}>
               <p style={{ margin: '0 0 5px 0', color: '#0f172a' }}><strong>Họ tên:</strong> {student.hoTen}</p>
-              <p style={{ margin: '0 0 5px 0', color: '#0f172a' }}><strong>Chi đoàn:</strong> {student.chiDoan?.tenCD || "Chưa có"}</p>
-              <p style={{ margin: '0', color: '#0f172a' }}><strong>Ngày sinh:</strong> {new Date(student.ngaySinh).toLocaleDateString("vi-VN")}</p>
+              <p style={{ margin: '0 0 5px 0', color: '#0f172a' }}>
+                <strong>Chi đoàn:</strong> {student.tenChiDoan || student.chiDoan?.tenChiDoan || "Chưa có"}
+              </p>
+              <p style={{ margin: '0', color: '#0f172a' }}><strong>Ngày sinh:</strong> {student.ngaySinh ? new Date(student.ngaySinh).toLocaleDateString("vi-VN") : "—"}</p>
             </div>
           )}
 
