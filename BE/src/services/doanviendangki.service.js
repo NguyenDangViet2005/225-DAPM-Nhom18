@@ -4,6 +4,7 @@ const {
   ChiDoan,
   HoatDongDoan,
   Khoa,
+  sequelize,
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -12,7 +13,11 @@ const doanviendangkiService = {
   async getAvailableActivities({ idDV } = {}) {
     try {
       const activities = await HoatDongDoan.findAll({
-        where: { trangThaiHD: "Đang mở" },
+        where: {
+          trangThai: "Đang mở",
+          trangThaiHD: "Đã duyệt",
+          ngayToChuc: { [Op.gt]: new Date() },
+        },
         attributes: ["idHD", "tenHD", "moTa", "ngayToChuc", "diaDiem",
           "soLuongMax", "soLuongDaDK", "diemHD", "trangThaiHD", "donViToChuc"],
         order: [["ngayToChuc", "ASC"]],
@@ -55,13 +60,13 @@ const doanviendangkiService = {
 
       const hoatDong = await HoatDongDoan.findByPk(idHD);
       if (!hoatDong) return { success: false, message: "Hoạt động không tồn tại" };
-      if (hoatDong.trangThaiHD !== "Đang mở") return { success: false, message: "Hoạt động không còn mở đăng ký" };
+      if (hoatDong.trangThai !== "Đang mở") return { success: false, message: "Hoạt động không còn mở đăng ký" };
       if (hoatDong.soLuongDaDK >= hoatDong.soLuongMax) return { success: false, message: "Hoạt động đã đủ số lượng" };
 
       await DoanVienDangKi.create({
         idDV,
         idHD,
-        ngayDangKi: new Date(),
+        ngayDangKi: sequelize.fn('GETDATE'),
         trangThaiDuyet: "Chờ duyệt",
         lyDoTuChoi: null,
       });
