@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { MOCK_MY_DANG_KY } from '@/data/mockDoanVien';
+import { useState, useEffect, useMemo } from 'react';
+import { doanviendangkiAPI } from '@/apis/doanviendangki.api';
 import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
 import './LichSuDK.css';
 
@@ -13,17 +13,35 @@ const filterOptions = [
 ];
 
 const LichSuDK = () => {
+  const [data, setData]             = useState([]);
+  const [loading, setLoading]       = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter]         = useState('all');
 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        setLoading(true);
+        const res = await doanviendangkiAPI.getLichSuDangKy();
+        if (res.success) setData(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
+  }, []);
+
   const filtered = useMemo(() => {
-    return MOCK_MY_DANG_KY.filter(dk => {
-      const matchSearch = dk.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return data.filter(dk => {
+      const matchSearch =
+        dk.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
         dk.donViToChuc.toLowerCase().includes(searchTerm.toLowerCase());
       const matchFilter = filter === 'all' || dk.trangThaiDuyet === filter;
       return matchSearch && matchFilter;
     });
-  }, [searchTerm, filter]);
+  }, [data, searchTerm, filter]);
 
   return (
     <div className="lsdk-container">
@@ -39,6 +57,9 @@ const LichSuDK = () => {
       />
 
       <div className="lsdk-card">
+        {loading && (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Đang tải...</div>
+        )}
         <table className="lsdk-table">
           <thead>
             <tr>
@@ -47,7 +68,7 @@ const LichSuDK = () => {
               <th>Ngày tổ chức</th>
               <th>Ngày đăng ký</th>
               <th>Trạng thái duyệt</th>
-              <th>Kết quả</th>
+              <th>Ghi chú</th>
             </tr>
           </thead>
           <tbody>
@@ -67,22 +88,17 @@ const LichSuDK = () => {
                   </span>
                 </td>
                 <td>
-                  {dk.trangThaiHoanThanh ? (
-                    <span className="lsdk-badge lsdk-badge--green">{dk.trangThaiHoanThanh}</span>
-                  ) : dk.liDoTuChoi ? (
-                    <span
-                      title={dk.liDoTuChoi}
-                      style={{ color: '#b91c1c', fontSize: '0.8rem', cursor: 'help' }}
-                    >
+                  {dk.lyDoTuChoi ? (
+                    <span title={dk.lyDoTuChoi} style={{ color: '#b91c1c', fontSize: '0.8rem', cursor: 'help' }}>
                       Từ chối ⓘ
                     </span>
                   ) : (
-                    <span className="lsdk-badge lsdk-badge--gray">Chờ kết quả</span>
+                    <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>—</span>
                   )}
                 </td>
               </tr>
             ))}
-            {filtered.length === 0 && (
+            {!loading && filtered.length === 0 && (
               <tr>
                 <td colSpan={6} className="lsdk-empty">Không có dữ liệu phù hợp</td>
               </tr>
@@ -95,4 +111,3 @@ const LichSuDK = () => {
 };
 
 export default LichSuDK;
-

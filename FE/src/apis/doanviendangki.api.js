@@ -1,6 +1,11 @@
 import apiClient from "@/configs/axiosClient";
 
 export const doanviendangkiAPI = {
+  getLichSuDangKy: async () => {
+    const response = await apiClient.get("/doanviendangki/lich-su");
+    return response.data;
+  },
+
   // ── Đoàn viên ────────────────────────────────────────────
   getAvailableActivities: async () => {
     const response = await apiClient.get("/doanviendangki/available");

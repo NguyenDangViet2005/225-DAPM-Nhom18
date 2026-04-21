@@ -28,15 +28,15 @@
 }
 
 .lsdk-table th {
-  background: #f8fafc;
+  background: #004f9f;
   padding: 1rem;
   text-align: left;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #64748b;
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  border-bottom: 2px solid #eef2f6;
+  border-bottom: 2px solid #003a75;
 }
 
 .lsdk-table td {
