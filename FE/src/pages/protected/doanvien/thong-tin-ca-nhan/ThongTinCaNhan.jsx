@@ -1,52 +1,91 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Upload, Save, X } from "lucide-react";
-import { MOCK_PROFILE } from "@/data/mockDoanVien";
+import doanvienAPI from "@/apis/doanvien.api";
 import "./ThongTinCaNhan.css";
 
 const EDITABLE_FIELDS = ["hoTen", "ngaySinh", "SDT", "email", "diaChi"];
 
 const FIELDS = [
-  { label: "Họ và tên", field: "hoTen", type: "text", required: true },
-  { label: "Mã sinh viên", field: "idDV", type: "text", required: false },
-  { label: "Email", field: "email", type: "email", required: true },
-  { label: "Ngày sinh", field: "ngaySinh", type: "date", required: true },
-  { label: "Số điện thoại", field: "SDT", type: "text", required: true },
-  { label: "Giới tính", field: "gioiTinh", type: "text", required: false },
-  {
-    label: "Địa chỉ thường trú",
-    field: "diaChi",
-    type: "text",
-    required: true,
-  },
-  { label: "Chi đoàn", field: "tenChiDoan", type: "text", required: false },
-  { label: "Khoa", field: "khoa", type: "text", required: false },
-  {
-    label: "Ngày vào đoàn",
-    field: "ngayVaoDoan",
-    type: "date",
-    required: false,
-  },
-  { label: "Chức vụ", field: "chucVu", type: "text", required: false },
-  {
-    label: "Trạng thái sinh hoạt",
-    field: "trangThaiSH",
-    type: "text",
-    required: false,
-  },
+  { label: "Họ và tên",          field: "hoTen",      type: "text",  required: true  },
+  { label: "Mã sinh viên",       field: "idDV",       type: "text",  required: false },
+  { label: "Email",              field: "email",      type: "email", required: true  },
+  { label: "Ngày sinh",          field: "ngaySinh",   type: "date",  required: true  },
+  { label: "Số điện thoại",      field: "SDT",        type: "text",  required: true  },
+  { label: "Giới tính",          field: "gioiTinh",   type: "text",  required: false },
+  { label: "Địa chỉ thường trú", field: "diaChi",     type: "text",  required: true  },
+  { label: "Chi đoàn",           field: "tenChiDoan", type: "text",  required: false },
+  { label: "Khoa",               field: "tenKhoa",    type: "text",  required: false },
+  { label: "Ngày vào đoàn",      field: "ngayVaoDoan",type: "date",  required: false },
+  { label: "Chức vụ",            field: "chucVu",     type: "text",  required: false },
+  { label: "Trạng thái sinh hoạt",field: "trangThaiSH",type: "text", required: false },
 ];
 
 const ThongTinCaNhan = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ ...MOCK_PROFILE });
+  const [isEditing, setIsEditing]   = useState(false);
+  const [formData, setFormData]     = useState({});
+  const [original, setOriginal]     = useState({});
+  const [loading, setLoading]       = useState(true);
+  const [saving, setSaving]         = useState(false);
+  const [error, setError]           = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
 
-  const handleSave = () => {
-    alert("Đã lưu thông tin cá nhân!");
-    setIsEditing(false);
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await doanvienAPI.getMyProfile();
+      if (result.success) {
+        setFormData(result.data);
+        setOriginal(result.data);
+      } else {
+        setError(result.message || "Không thể tải thông tin");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Lỗi kết nối server");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    setError(null);
+    setSuccessMsg(null);
+    try {
+      const payload = {};
+      for (const field of EDITABLE_FIELDS) {
+        if (formData[field] !== original[field]) {
+          payload[field] = formData[field];
+        }
+      }
+
+      if (Object.keys(payload).length === 0) {
+        setIsEditing(false);
+        return;
+      }
+
+      const result = await doanvienAPI.updateMyProfile(payload);
+      if (result.success) {
+        setOriginal(result.data);
+        setFormData(result.data);
+        setSuccessMsg("Cập nhật thông tin thành công!");
+        setIsEditing(false);
+      } else {
+        setError(result.message || "Cập nhật thất bại");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Lỗi kết nối server");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCancel = () => {
-    setFormData({ ...MOCK_PROFILE });
+    setFormData({ ...original });
     setIsEditing(false);
+    setError(null);
   };
 
   const initials = formData.hoTen
@@ -54,7 +93,17 @@ const ThongTinCaNhan = () => {
     .slice(-2)
     .map((w) => w[0])
     .join("")
-    .toUpperCase();
+    .toUpperCase() || "?";
+
+  if (loading) {
+    return (
+      <div className="ttcn-container">
+        <div style={{ textAlign: "center", padding: "3rem", color: "#94a3b8" }}>
+          Đang tải thông tin...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ttcn-container">
@@ -62,7 +111,18 @@ const ThongTinCaNhan = () => {
         <h1 className="ttcn-title">Thông tin cá nhân</h1>
       </div>
 
-      {/* ── Main content: 2 column layout ──────────────── */}
+      {/* Thông báo */}
+      {successMsg && (
+        <div style={{ padding: "10px 16px", backgroundColor: "#dcfce7", color: "#15803d", borderRadius: "8px", marginBottom: "1rem", fontSize: "0.9rem" }}>
+          {successMsg}
+        </div>
+      )}
+      {error && (
+        <div style={{ padding: "10px 16px", backgroundColor: "#fee2e2", color: "#b91c1c", borderRadius: "8px", marginBottom: "1rem", fontSize: "0.9rem" }}>
+          {error}
+        </div>
+      )}
+
       <div className="ttcn-main">
         {/* Left: ID Card */}
         <div className="ttcn-left">
@@ -75,23 +135,22 @@ const ThongTinCaNhan = () => {
             </button>
           </div>
 
-          {/* Info box */}
           <div className="ttcn-info-box">
             <div className="ttcn-info-item">
               <label className="ttcn-info-label">Họ và tên:</label>
-              <p className="ttcn-info-value">{formData.hoTen}</p>
+              <p className="ttcn-info-value">{formData.hoTen || "—"}</p>
             </div>
             <div className="ttcn-info-item">
               <label className="ttcn-info-label">MSSV:</label>
-              <p className="ttcn-info-value">{formData.idDV}</p>
+              <p className="ttcn-info-value">{formData.idDV || "—"}</p>
             </div>
             <div className="ttcn-info-item">
               <label className="ttcn-info-label">Chi đoàn:</label>
-              <p className="ttcn-info-value">{formData.tenChiDoan}</p>
+              <p className="ttcn-info-value">{formData.tenChiDoan || "—"}</p>
             </div>
             <div className="ttcn-info-item">
               <label className="ttcn-info-label">Khoa:</label>
-              <p className="ttcn-info-value">{formData.khoa}</p>
+              <p className="ttcn-info-value">{formData.tenKhoa || "—"}</p>
             </div>
           </div>
         </div>
@@ -104,7 +163,7 @@ const ThongTinCaNhan = () => {
               {!isEditing && (
                 <button
                   className="ttcn-btn ttcn-btn--outline ttcn-edit-btn"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => { setIsEditing(true); setSuccessMsg(null); }}
                 >
                   Chỉnh sửa
                 </button>
@@ -124,10 +183,7 @@ const ThongTinCaNhan = () => {
                     value={formData[field] || ""}
                     disabled={!isEditing || !EDITABLE_FIELDS.includes(field)}
                     onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        [field]: e.target.value,
-                      }))
+                      setFormData((prev) => ({ ...prev, [field]: e.target.value }))
                     }
                   />
                 </div>
@@ -136,17 +192,11 @@ const ThongTinCaNhan = () => {
 
             {isEditing && (
               <div className="ttcn-form-actions">
-                <button
-                  className="ttcn-btn ttcn-btn--ghost"
-                  onClick={handleCancel}
-                >
+                <button className="ttcn-btn ttcn-btn--ghost" onClick={handleCancel} disabled={saving}>
                   <X size={15} /> Hủy
                 </button>
-                <button
-                  className="ttcn-btn ttcn-btn--primary"
-                  onClick={handleSave}
-                >
-                  <Save size={15} /> Lưu thay đổi
+                <button className="ttcn-btn ttcn-btn--primary" onClick={handleSave} disabled={saving}>
+                  <Save size={15} /> {saving ? "Đang lưu..." : "Lưu thay đổi"}
                 </button>
               </div>
             )}
