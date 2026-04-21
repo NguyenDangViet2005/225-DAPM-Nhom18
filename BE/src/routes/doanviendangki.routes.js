@@ -7,6 +7,9 @@ const {
   getDoanTruongDashboardData,
   getActivityRegistrations,
   getApprovedActivityRegistrations,
+  getAvailableActivities,
+  dangKyHoatDong,
+  huyDangKy,
 } = require("../controllers/doanviendangki.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const { duyetDangKyValidator } = require("../validators/hoatdong.validator");
@@ -34,6 +37,11 @@ router.get(
   checkRole(["DOANTRUONG"]),
   getDoanTruongDashboardData,
 );
+
+// ── Đoàn viên tự đăng ký / hủy ──────────────────────────
+router.get("/available", getAvailableActivities);
+router.post("/:idHD/dang-ky", dangKyHoatDong);
+router.delete("/:idHD/huy", huyDangKy);
 
 // Get all registrations for a specific activity (all statuses)
 router.get("/:idHD/registrations", getActivityRegistrations);
