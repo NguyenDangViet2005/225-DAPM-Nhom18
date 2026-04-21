@@ -6,6 +6,11 @@ export const doanviendangkiAPI = {
     return response.data;
   },
 
+  getXemDiem: async () => {
+    const response = await apiClient.get("/doanviendangki/xem-diem");
+    return response.data;
+  },
+
   // ── Đoàn viên ────────────────────────────────────────────
   getAvailableActivities: async () => {
     const response = await apiClient.get("/doanviendangki/available");

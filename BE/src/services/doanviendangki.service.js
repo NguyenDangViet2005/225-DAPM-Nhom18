@@ -9,6 +9,52 @@ const {
 const { Op } = require("sequelize");
 
 const doanviendangkiService = {
+  // Xem điểm hoạt động của đoàn viên
+  async getXemDiem(idDV) {
+    try {
+      // Lấy tổng điểm từ DoanVien.diemHD (được cộng khi xác nhận hoàn thành)
+      const doanVien = await DoanVien.findByPk(idDV, {
+        attributes: ["idDV", "hoTen", "diemHD"],
+      });
+
+      const registrations = await DoanVienDangKi.findAll({
+        where: { idDV },
+        attributes: ["idHD", "ngayDangKi", "trangThaiDuyet", "lyDoTuChoi"],
+        include: [
+          {
+            model: HoatDongDoan,
+            as: "hoatDong",
+            attributes: ["idHD", "tenHD", "ngayToChuc", "diemHD", "trangThai", "trangThaiHD"],
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const data = registrations.map(r => {
+        const daHoanThanh = r.hoatDong?.trangThaiHD?.trim() === "Đã kết thúc"
+          && r.trangThaiDuyet?.trim() === "Đã duyệt";
+
+        return {
+          idHD: r.idHD?.trim(),
+          tenHD: r.hoatDong?.tenHD ?? "—",
+          ngayToChuc: r.hoatDong?.ngayToChuc,
+          diemHD: r.hoatDong?.diemHD ?? 0,
+          trangThaiDuyet: r.trangThaiDuyet?.trim(),
+          trangThaiHoanThanh: daHoanThanh ? "Đã hoàn thành" : null,
+          diemDat: daHoanThanh ? (r.hoatDong?.diemHD ?? 0) : null,
+        };
+      });
+
+      return {
+        success: true,
+        data,
+        tongDiem: doanVien?.diemHD ?? 0,
+      };
+    } catch (error) {
+      return { success: false, message: "Lỗi lấy điểm hoạt động", error: error.message };
+    }
+  },
+
   // Lịch sử đăng ký hoạt động của đoàn viên
   async getLichSuDangKy(idDV) {
     try {

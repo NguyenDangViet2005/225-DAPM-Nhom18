@@ -1,17 +1,44 @@
-import { MOCK_MY_DANG_KY } from '@/data/mockDoanVien';
+import { useState, useEffect } from 'react';
+import { doanviendangkiAPI } from '@/apis/doanviendangki.api';
 import './XemDiem.css';
 
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—';
 
 const XemDiem = () => {
-  const hoanThanh = MOCK_MY_DANG_KY.filter(dk => dk.trangThaiHoanThanh === 'Đã hoàn thành');
-  const choDuyet  = MOCK_MY_DANG_KY.filter(dk => dk.trangThaiDuyet === 'Chờ duyệt');
-  const tuChoi    = MOCK_MY_DANG_KY.filter(dk => dk.trangThaiDuyet === 'Từ chối');
-  const tongDiem  = hoanThanh.reduce((s, dk) => s + (dk.diemDat || 0), 0);
+  const [data, setData]         = useState([]);
+  const [tongDiem, setTongDiem] = useState(0);
+  const [loading, setLoading]   = useState(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        setLoading(true);
+        const res = await doanviendangkiAPI.getXemDiem();
+        if (res.success) {
+          setData(res.data);
+          setTongDiem(res.tongDiem ?? 0);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
+  }, []);
+
+  const hoanThanh = data.filter(dk => dk.trangThaiHoanThanh === 'Đã hoàn thành');
+  const daDuyet   = data.filter(dk => dk.trangThaiDuyet === 'Đã duyệt');
+  const choDuyet  = data.filter(dk => dk.trangThaiDuyet === 'Chờ duyệt');
+  const tuChoi    = data.filter(dk => dk.trangThaiDuyet === 'Từ chối');
 
   return (
     <div className="xd-container">
-      <h1 className="xd-title">Điểm hoạt động</h1>
+      <h1 style={{ color: '#004f9f' }} className="xd-title">ĐIỂM HOẠT ĐỘNG</h1>
+
+      {loading && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Đang tải...</div>
+      )}
 
       {/* ── Score Hero ─────────────────────────────────── */}
       <div className="xd-hero">
@@ -21,8 +48,8 @@ const XemDiem = () => {
         </div>
         <div className="xd-hero__breakdown">
           <div className="xd-hero__item">
-            <span className="xd-hero__item-val">{hoanThanh.length}</span>
-            <span className="xd-hero__item-lbl">Hoạt động hoàn thành</span>
+            <span className="xd-hero__item-val">{daDuyet.length}</span>
+            <span className="xd-hero__item-lbl">Đã được duyệt</span>
           </div>
           <div className="xd-hero__item">
             <span className="xd-hero__item-val">{choDuyet.length}</span>
@@ -48,7 +75,7 @@ const XemDiem = () => {
             </tr>
           </thead>
           <tbody>
-            {MOCK_MY_DANG_KY.map((dk, i) => (
+            {data.map((dk, i) => (
               <tr key={`${dk.idHD}-${i}`}>
                 <td style={{ fontWeight: 600 }}>{dk.tenHD}</td>
                 <td>{fmtDate(dk.ngayToChuc)}</td>
@@ -68,6 +95,13 @@ const XemDiem = () => {
                 </td>
               </tr>
             ))}
+            {!loading && data.length === 0 && (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                  Chưa có dữ liệu
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -76,5 +110,3 @@ const XemDiem = () => {
 };
 
 export default XemDiem;
-
-
