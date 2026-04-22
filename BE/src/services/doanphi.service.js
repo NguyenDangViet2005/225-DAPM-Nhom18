@@ -238,7 +238,7 @@ const createPhieuThu = async ({ listIdDoanPhi, fileDinhKem }, user) => {
         ngayLap: new Date(),
         nguoiNop: user.idUser,
         tongTien: 0,
-        trangThai: "Đang chờ duyệt",
+        trangThai: "Chờ duyệt",
         fileDinhKem,
       },
       { transaction },
