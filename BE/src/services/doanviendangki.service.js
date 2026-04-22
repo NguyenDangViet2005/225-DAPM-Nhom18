@@ -367,6 +367,67 @@ const doanviendangkiService = {
       };
     }
   },
+
+  // Get all registrations for all activities of a Chi Doan
+  async getChiDoanRegistrations(idUser) {
+    try {
+      // 1. Get idChiDoan from the Bí thư (idUser)
+      const doanVien = await DoanVien.findOne({ where: { idDV: idUser } });
+      if (!doanVien || !doanVien.idChiDoan) {
+        return { success: false, message: "Không tìm thấy chi đoàn của Bí thư" };
+      }
+
+      const idChiDoan = doanVien.idChiDoan;
+
+      // 2. Lấy tất cả registrations của các hoạt động thuộc chi đoàn
+      const registrations = await DoanVienDangKi.findAll({
+        attributes: [
+          "idDV",
+          "idHD",
+          "ngayDangKi",
+          "trangThaiDuyet",
+          "lyDoTuChoi",
+        ],
+        include: [
+          {
+            model: DoanVien,
+            as: "doanVien",
+            attributes: ["idDV", "hoTen"],
+          },
+          {
+            model: HoatDongDoan,
+            as: "hoatDong",
+            attributes: ["idHD", "tenHD", "trangThaiHD"],
+            where: { idChiDoan }, // Chỉ các hoạt động của chi đoàn này
+            required: true,
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const formattedData = registrations.map((reg) => ({
+        maSV: reg.idDV?.trim(),
+        idDV: reg.idDV?.trim(),
+        hoTen: reg.doanVien?.hoTen?.trim() || "",
+        idHD: reg.idHD?.trim(),
+        tenHD: reg.hoatDong?.tenHD?.trim() || "",
+        ngayDangKi: reg.ngayDangKi,
+        trangThaiDuyet: reg.trangThaiDuyet?.trim(),
+        lyDoTuChoi: reg.lyDoTuChoi,
+      }));
+
+      return {
+        success: true,
+        data: formattedData,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Lỗi lấy danh sách đăng ký chi đoàn",
+        error: error.message,
+      };
+    }
+  },
 };
 
 module.exports = doanviendangkiService;

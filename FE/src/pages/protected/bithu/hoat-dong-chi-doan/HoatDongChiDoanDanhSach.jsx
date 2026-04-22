@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Users, Clock, CheckCircle, XCircle } from "lucide-react";
-import { MOCK_HOAT_DONG, MOCK_DANG_KY_HOAT_DONG } from "@/data/mockHoatDong";
+import { hoatdongAPI } from "@/apis/hoatdong.api";
+import doanviendangkiAPI from "@/apis/doanviendangki.api";
 import "./HoatDongChiDoan.css";
 
 const STATUS_CFG = {
@@ -14,23 +15,41 @@ const HoatDongChiDoanDanhSach = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedHD, setSelectedHD]     = useState("all");
 
-  const chiDoanActivities = useMemo(
-    () => MOCK_HOAT_DONG.filter((hd) => hd.donViToChuc !== "Đoàn Trường"),
-    []
-  );
+  const [chiDoanActivities, setChiDoanActivities] = useState([]);
+  const [allRegistrations, setAllRegistrations]   = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [resHD, resReg] = await Promise.all([
+          hoatdongAPI.getAllChidoanActivities({ limit: 100 }), // Lấy tối đa để hiển thị filter
+          doanviendangkiAPI.getChiDoanRegistrations()
+        ]);
+        
+        if (resHD.success) setChiDoanActivities(resHD.data || []);
+        if (resReg.success) setAllRegistrations(resReg.data || []);
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const registrations = useMemo(() => {
-    const ids = chiDoanActivities.map((hd) => hd.idHD);
-    return MOCK_DANG_KY_HOAT_DONG.filter((reg) => {
+    return allRegistrations.filter((reg) => {
       const matchHD     = selectedHD === "all" || reg.idHD === selectedHD;
       const matchStatus = statusFilter === "all" || reg.trangThaiDuyet === statusFilter;
       const matchSearch =
-        reg.hoTen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        reg.idDV.includes(searchTerm) ||
-        reg.tenHD.toLowerCase().includes(searchTerm.toLowerCase());
-      return ids.includes(reg.idHD) && matchHD && matchStatus && matchSearch;
+        reg.hoTen?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reg.idDV?.includes(searchTerm) ||
+        reg.tenHD?.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchHD && matchStatus && matchSearch;
     });
-  }, [chiDoanActivities, selectedHD, statusFilter, searchTerm]);
+  }, [allRegistrations, selectedHD, statusFilter, searchTerm]);
 
   const total    = registrations.length;
   const pending  = registrations.filter((r) => r.trangThaiDuyet === "Chờ duyệt").length;
@@ -131,7 +150,8 @@ const HoatDongChiDoanDanhSach = () => {
                   </tr>
                 );
               })}
-              {registrations.length === 0 && (
+              {loading && <tr><td colSpan="6" className="hcd-empty">Đang tải dữ liệu...</td></tr>}
+              {!loading && registrations.length === 0 && (
                 <tr><td colSpan="6" className="hcd-empty">Không có đăng ký nào phù hợp</td></tr>
               )}
             </tbody>

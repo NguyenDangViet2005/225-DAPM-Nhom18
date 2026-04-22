@@ -7,6 +7,7 @@ const {
   getDoanTruongDashboardData,
   getActivityRegistrations,
   getApprovedActivityRegistrations,
+  getChiDoanRegistrations,
 } = require("../controllers/doanviendangki.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const { duyetDangKyValidator } = require("../validators/hoatdong.validator");
@@ -40,6 +41,9 @@ router.get("/:idHD/registrations", getActivityRegistrations);
 
 // Get only approved registrations for a specific activity
 router.get("/:idHD/approved-registrations", getApprovedActivityRegistrations);
+
+// Get all registrations for a Chi Doan
+router.get("/chidoan/registrations/all", checkRole(["BITHU"]), getChiDoanRegistrations);
 
 // Duyệt hoặc từ chối đăng ký (Đoàn Trường only)
 router.put(

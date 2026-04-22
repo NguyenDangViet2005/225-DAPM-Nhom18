@@ -149,6 +149,30 @@ const getApprovedActivityRegistrations = async (req, res) => {
   }
 };
 
+// Get all registrations for a Chi Doan
+const getChiDoanRegistrations = async (req, res) => {
+  try {
+    // req.user from verifyToken has idUser (which is tenNguoiDung / idDV)
+    const result = await doanviendangkiService.getChiDoanRegistrations(req.user.tenNguoiDung);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Lấy danh sách đăng ký chi đoàn thành công",
+      data: result.data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi hệ thống",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   duyetDangKy,
   getAllRegistrations,
@@ -156,4 +180,5 @@ module.exports = {
   getDoanTruongDashboardData,
   getActivityRegistrations,
   getApprovedActivityRegistrations,
+  getChiDoanRegistrations,
 };

@@ -50,6 +50,14 @@ export const doanviendangkiAPI = {
     );
     return response.data;
   },
+
+  // Get all registrations for all activities of a Chi Doan (for BITHU)
+  getChiDoanRegistrations: async () => {
+    const response = await apiClient.get(
+      "/doanviendangki/chidoan/registrations/all",
+    );
+    return response.data;
+  },
 };
 
 export default doanviendangkiAPI;
