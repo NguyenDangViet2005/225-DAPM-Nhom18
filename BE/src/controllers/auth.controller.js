@@ -24,6 +24,9 @@ const login = async (req, res) => {
       tenNguoiDung: result.data.tenNguoiDung,
       type: result.data.type,
       idVaiTro: result.data.idVaiTro,
+      idDV: result.data.idDV,
+      idChiDoan: result.data.idChiDoan,
+      idKhoa: result.data.idKhoa,
     });
 
     const refreshToken = generateRefreshToken({
@@ -102,6 +105,9 @@ const refreshTokenHandler = async (req, res) => {
       tenNguoiDung: account.tenNguoiDung,
       type: userType,
       idVaiTro: account.idVaiTro,
+      idDV: account.idDV,
+      idChiDoan: account.doanVien?.idChiDoan,
+      idKhoa: account.idKhoa,
     });
 
     res.cookie("accessToken", newAccessToken, {

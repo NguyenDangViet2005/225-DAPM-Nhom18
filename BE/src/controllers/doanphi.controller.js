@@ -6,6 +6,7 @@ const {
   getAllDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
+  createPhieuThu,
   getAllChiDoan,
   getStats,
 } = require("../services/doanphi.service");
@@ -87,6 +88,17 @@ const getPhieuThu = async (req, res) => {
   }
 };
 
+const postPhieuThu = async (req, res) => {
+  try {
+    const idUser = req.user.idUser;
+    const { listIdDoanPhi, fileDinhKem } = req.body;
+    const data = await createPhieuThu({ idUser, listIdDoanPhi, fileDinhKem });
+    return res.status(201).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const putDuyetPhieuThu = async (req, res) => {
   try {
     const { trangThai } = req.body;
@@ -109,5 +121,6 @@ module.exports = {
   getChiDoan,
   getDoanPhiStats,
   getPhieuThu,
+  postPhieuThu,
   putDuyetPhieuThu,
 };

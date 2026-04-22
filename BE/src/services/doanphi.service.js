@@ -182,6 +182,46 @@ const duyetPhieuThu = async (idPhieuThu, trangThai) => {
   }
 };
 
+const createPhieuThu = async (data) => {
+  const { idUser, fileDinhKem, listIdDoanPhi } = data;
+  if (!listIdDoanPhi || listIdDoanPhi.length === 0) {
+    throw new Error("Không có đoàn phí nào được chọn");
+  }
+
+  const t = await sequelize.transaction();
+  try {
+    const count = await PhieuThuDoanPhi.count();
+    const idPhieuThu = `PT${String(count + 1).padStart(4, "0")}`;
+
+    const phieu = await PhieuThuDoanPhi.create(
+      {
+        idPhieuThu,
+        nguoiNop: idUser,
+        fileDinhKem: fileDinhKem || null,
+        trangThai: "Đang chờ duyệt",
+      },
+      { transaction: t }
+    );
+
+    await DoanPhi.update(
+      {
+        idPhieuThu,
+        trangThai: "Đang chờ duyệt",
+      },
+      {
+        where: { idDoanPhi: listIdDoanPhi },
+        transaction: t,
+      }
+    );
+
+    await t.commit();
+    return phieu;
+  } catch (err) {
+    await t.rollback();
+    throw err;
+  }
+};
+
 const getAllChiDoan = async () => {
   return await ChiDoan.findAll({
     attributes: ["idChiDoan", "tenChiDoan"],
@@ -233,6 +273,7 @@ module.exports = {
   getAllDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
+  createPhieuThu,
   getAllChiDoan,
   getStats,
 };
