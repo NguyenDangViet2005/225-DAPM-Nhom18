@@ -25,6 +25,7 @@ const login = async (req, res) => {
       type: result.data.type,
       idVaiTro: result.data.idVaiTro,
       idDV: result.data.idDV || null,
+      idChiDoan: result.data.idChiDoan || null,
       idKhoa: result.data.idKhoa || null,
     });
 
@@ -105,6 +106,7 @@ const refreshTokenHandler = async (req, res) => {
       type: userType,
       idVaiTro: account.idVaiTro,
       idDV: account.idDV || null,
+      idChiDoan: account.doanVien?.idChiDoan || account.idChiDoan || null,
       idKhoa: account.idKhoa || null,
     });
 

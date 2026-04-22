@@ -8,26 +8,27 @@ const {
   getChiDoan,
   getDoanPhiStats,
   getPhieuThu,
+  postPhieuThu,
   putDuyetPhieuThu,
 } = require("../controllers/doanphi.controller");
 const { createMucDoanPhiValidator } = require("../validators/doanphi.validator");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 
 router.use(verifyToken);
-router.use(checkRole(["DOANTRUONG"]));
 
 // ── Mức đoàn phí ─────────────────────────────────────────
-router.get("/muc-phi", getMucDoanPhi);
-router.post("/muc-phi", createMucDoanPhiValidator, postMucDoanPhi);
-router.put("/muc-phi/:idMucDP", putMucDoanPhi);
+router.get("/muc-phi", checkRole(["DOANTRUONG", "DOANKHOA"]), getMucDoanPhi);
+router.post("/muc-phi", checkRole(["DOANTRUONG"]), createMucDoanPhiValidator, postMucDoanPhi);
+router.put("/muc-phi/:idMucDP", checkRole(["DOANTRUONG"]), putMucDoanPhi);
 
 // ── Tình trạng nộp đoàn phí ──────────────────────────────
-router.get("/stats", getDoanPhiStats);
-router.get("/chi-doan", getChiDoan);
-router.get("/", getDoanPhi);
+router.get("/stats", checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]), getDoanPhiStats);
+router.get("/chi-doan", checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]), getChiDoan);
+router.get("/", checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]), getDoanPhi);
 
 // ── Phiếu thu ────────────────────────────────────────────
-router.get("/phieu-thu", getPhieuThu);
-router.put("/phieu-thu/:idPhieuThu", putDuyetPhieuThu);
+router.get("/phieu-thu", checkRole(["DOANTRUONG", "DOANKHOA"]), getPhieuThu);
+router.post("/phieu-thu", checkRole(["BITHU"]), postPhieuThu);
+router.put("/phieu-thu/:idPhieuThu", checkRole(["DOANTRUONG"]), putDuyetPhieuThu);
 
 module.exports = router;

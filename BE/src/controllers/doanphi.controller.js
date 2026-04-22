@@ -87,6 +87,18 @@ const getPhieuThu = async (req, res) => {
   }
 };
 
+const postPhieuThu = async (req, res) => {
+  try {
+    const data = await require("../services/doanphi.service").createPhieuThu(
+      req.body,
+      req.user,
+    );
+    return res.status(201).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const putDuyetPhieuThu = async (req, res) => {
   try {
     const { trangThai } = req.body;
@@ -109,5 +121,6 @@ module.exports = {
   getChiDoan,
   getDoanPhiStats,
   getPhieuThu,
+  postPhieuThu,
   putDuyetPhieuThu,
 };

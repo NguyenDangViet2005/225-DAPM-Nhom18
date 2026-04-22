@@ -226,6 +226,56 @@ const getStats = async ({ idChiDoan, namHoc } = {}) => {
   };
 };
 
+const createPhieuThu = async ({ listIdDoanPhi, fileDinhKem }, user) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const count = await PhieuThuDoanPhi.count();
+    const idPhieuThu = `PT${String(count + 1).padStart(3, "0")}`;
+
+    const phieuThu = await PhieuThuDoanPhi.create(
+      {
+        idPhieuThu,
+        ngayLap: new Date(),
+        nguoiNop: user.idUser,
+        tongTien: 0,
+        trangThai: "Đang chờ duyệt",
+        fileDinhKem,
+      },
+      { transaction },
+    );
+
+    let tongTien = 0;
+    for (const idDP of listIdDoanPhi) {
+      const doanPhi = await DoanPhi.findByPk(idDP, {
+        include: [{ model: MucDoanPhi, as: "mucDoanPhi" }],
+        transaction,
+      });
+
+      if (!doanPhi) {
+        throw new Error(`Không tìm thấy đoàn phí ${idDP}`);
+      }
+
+      tongTien += doanPhi.mucDoanPhi.soTien;
+
+      await doanPhi.update(
+        {
+          idPhieuThu: phieuThu.idPhieuThu,
+          trangThai: "Đang chờ duyệt",
+          ngayDong: new Date(),
+        },
+        { transaction },
+      );
+    }
+
+    await phieuThu.update({ tongTien }, { transaction });
+    await transaction.commit();
+    return phieuThu;
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
 module.exports = {
   getAllMucDoanPhi,
   createMucDoanPhi,
@@ -235,4 +285,5 @@ module.exports = {
   duyetPhieuThu,
   getAllChiDoan,
   getStats,
+  createPhieuThu,
 };
