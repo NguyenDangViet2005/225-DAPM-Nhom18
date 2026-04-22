@@ -123,9 +123,13 @@ const getAllDoanPhi = async ({
 
 // ── PHIEU THU ────────────────────────────────────────────
 
-const getAllPhieuThu = async ({ trangThai }) => {
+const getAllPhieuThu = async ({ trangThai }, user) => {
   const where = {};
   if (trangThai && trangThai !== "all") where.trangThai = trangThai;
+  
+  if (user && user.type === "BITHU") {
+    where.nguoiNop = user.idUser;
+  }
 
   return await PhieuThuDoanPhi.findAll({
     where,
@@ -226,7 +230,10 @@ const getStats = async ({ idChiDoan, namHoc } = {}) => {
   };
 };
 
-const createPhieuThu = async ({ listIdDoanPhi, fileDinhKem }, user) => {
+const fs = require("fs");
+const path = require("path");
+
+const createPhieuThu = async ({ listIdDoanPhi }, user) => {
   const transaction = await sequelize.transaction();
   try {
     const count = await PhieuThuDoanPhi.count();
@@ -239,12 +246,14 @@ const createPhieuThu = async ({ listIdDoanPhi, fileDinhKem }, user) => {
         nguoiNop: user.idUser,
         tongTien: 0,
         trangThai: "Chờ duyệt",
-        fileDinhKem,
+        fileDinhKem: null, // Sẽ cập nhật sau khi tạo HTML
       },
       { transaction },
     );
 
     let tongTien = 0;
+    const dsDoanVien = [];
+
     for (const idDP of listIdDoanPhi) {
       const doanPhi = await DoanPhi.findByPk(idDP, {
         include: [{ model: MucDoanPhi, as: "mucDoanPhi" }],
@@ -254,6 +263,10 @@ const createPhieuThu = async ({ listIdDoanPhi, fileDinhKem }, user) => {
       if (!doanPhi) {
         throw new Error(`Không tìm thấy đoàn phí ${idDP}`);
       }
+
+      // Nạp thêm thông tin đoàn viên để hiển thị
+      const dv = await DoanVien.findByPk(doanPhi.idDV, { transaction });
+      if (dv) dsDoanVien.push({ ...doanPhi.toJSON(), doanVien: dv.toJSON() });
 
       tongTien += doanPhi.mucDoanPhi.soTien;
 
@@ -267,7 +280,44 @@ const createPhieuThu = async ({ listIdDoanPhi, fileDinhKem }, user) => {
       );
     }
 
-    await phieuThu.update({ tongTien }, { transaction });
+    // Tự động sinh file HTML danh sách nộp
+    const uploadDir = path.join(__dirname, "../../uploads/phieuthu");
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    
+    const fileName = `${idPhieuThu}_${Date.now()}.html`;
+    const filePath = path.join(uploadDir, fileName);
+    
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Danh sách nộp phí - ${idPhieuThu}</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+th { background-color: #004f9f; color: white; }
+</style>
+</head>
+<body>
+  <h2 style="color: #004f9f; text-align: center; text-transform: uppercase;">Danh sách Đoàn viên nộp phí</h2>
+  <p><strong>Mã phiếu:</strong> ${idPhieuThu}</p>
+  <p><strong>Người nộp (Bí thư):</strong> ${user.tenNguoiDung}</p>
+  <p><strong>Ngày nộp:</strong> ${new Date().toLocaleDateString('vi-VN')}</p>
+  <p><strong>Tổng tiền:</strong> ${tongTien.toLocaleString()} VNĐ</p>
+  <table>
+    <thead><tr><th>STT</th><th>Mã Đoàn viên</th><th>Họ và tên</th><th>Số tiền nộp</th></tr></thead>
+    <tbody>
+      ${dsDoanVien.map((dp, i) => `<tr><td>${i+1}</td><td>${dp.idDV}</td><td>${dp.doanVien?.hoTen}</td><td>${dp.mucDoanPhi.soTien.toLocaleString()} ₫</td></tr>`).join('')}
+    </tbody>
+  </table>
+</body>
+</html>`;
+    fs.writeFileSync(filePath, htmlContent);
+    const generatedUrl = `http://localhost:8000/uploads/phieuthu/${fileName}`;
+
+    await phieuThu.update({ tongTien, fileDinhKem: generatedUrl }, { transaction });
     await transaction.commit();
     return phieuThu;
   } catch (error) {

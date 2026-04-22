@@ -426,14 +426,18 @@ const DoanPhi = () => {
                   </td>
                   <td>
                     {pt.fileDinhKem ? (
-                      <a
-                        href={pt.fileDinhKem}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: "#004f9f", fontSize: "0.8rem" }}
-                      >
-                        Xem file
-                      </a>
+                      pt.fileDinhKem.startsWith("http") ? (
+                        <a
+                          href={pt.fileDinhKem}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ color: "#004f9f", fontWeight: 500 }}
+                        >
+                          Xem file
+                        </a>
+                      ) : (
+                        <span style={{ color: "#94a3b8", fontSize: "0.85em" }}>File thử nghiệm cũ</span>
+                      )
                     ) : (
                       "—"
                     )}

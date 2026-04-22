@@ -13,6 +13,7 @@ const {
 } = require("../controllers/doanphi.controller");
 const { createMucDoanPhiValidator } = require("../validators/doanphi.validator");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
+const upload = require("../middlewares/upload.middleware");
 
 router.use(verifyToken);
 
@@ -27,7 +28,7 @@ router.get("/chi-doan", checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]), getChiDo
 router.get("/", checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]), getDoanPhi);
 
 // ── Phiếu thu ────────────────────────────────────────────
-router.get("/phieu-thu", checkRole(["DOANTRUONG", "DOANKHOA"]), getPhieuThu);
+router.get("/phieu-thu", checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]), getPhieuThu);
 router.post("/phieu-thu", checkRole(["BITHU"]), postPhieuThu);
 router.put("/phieu-thu/:idPhieuThu", checkRole(["DOANTRUONG"]), putDuyetPhieuThu);
 

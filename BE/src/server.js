@@ -8,8 +8,14 @@ require("dotenv").config();
 
 const app = express();
 
+const path = require("path");
+
 app.use(cors(corsOptions));
 setupMiddleware(app);
+
+// Phục vụ thư mục uploads
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 app.use("/api", require("./routes"));
 app.use(errorHandler);
 

@@ -56,11 +56,8 @@ export const getPhieuThuAPI = async ({ trangThai = "all" } = {}) => {
   return res.data;
 };
 
-export const createPhieuThuAPI = async ({ listIdDoanPhi, fileDinhKem }) => {
-  const res = await apiClient.post("/doan-phi/phieu-thu", {
-    listIdDoanPhi,
-    fileDinhKem,
-  });
+export const createPhieuThuAPI = async ({ listIdDoanPhi }) => {
+  const res = await apiClient.post("/doan-phi/phieu-thu", { listIdDoanPhi });
   return res.data;
 };
 

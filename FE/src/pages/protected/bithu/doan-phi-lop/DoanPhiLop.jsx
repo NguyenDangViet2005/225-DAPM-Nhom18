@@ -5,7 +5,7 @@ import {
   ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Upload,
 } from "lucide-react";
 import AuthContext from "@/contexts/AuthContext";
-import { getDoanPhiStatsAPI, getDoanPhiAPI, createPhieuThuAPI } from "@/apis/doanphi.api";
+import { getDoanPhiStatsAPI, getDoanPhiAPI, createPhieuThuAPI, getPhieuThuAPI } from "@/apis/doanphi.api";
 import "./DoanPhiLop.css";
 
 const PAGE_SIZE = 20;
@@ -34,9 +34,12 @@ const DoanPhiLop = () => {
   const { user } = useContext(AuthContext);
   const myChiDoan = user?.idChiDoan || "Unknown";
 
-  const activeTab = location.pathname.endsWith("/gui") ? "gui" : "danh-sach";
-  const handleTabChange = (tab) =>
-    navigate(tab === "gui" ? "/bi-thu/doan-phi-lop/gui" : "/bi-thu/doan-phi-lop/lap-danh-sach");
+  const activeTab = location.pathname.endsWith("/gui") ? "gui" : location.pathname.endsWith("/lich-su") ? "lich-su" : "danh-sach";
+  const handleTabChange = (tab) => {
+    if (tab === "gui") navigate("/bi-thu/doan-phi-lop/gui");
+    else if (tab === "lich-su") navigate("/bi-thu/doan-phi-lop/lich-su");
+    else navigate("/bi-thu/doan-phi-lop/lap-danh-sach");
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -48,6 +51,7 @@ const DoanPhiLop = () => {
     tongDaThu: 0, tongPhaiThu: 0, namHoc: "", soTien: 0, tyLe: 0
   });
   const [doanPhiList, setDoanPhiList] = useState([]);
+  const [phieuThuList, setPhieuThuList] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -83,13 +87,29 @@ const DoanPhiLop = () => {
     }
   };
 
+  const fetchPhieuThu = async () => {
+    setLoading(true);
+    try {
+      const res = await getPhieuThuAPI();
+      if (res.success) setPhieuThuList(res.data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchStats();
   }, [myChiDoan]);
 
   useEffect(() => {
-    fetchList();
-  }, [searchTerm, statusFilter, page, myChiDoan]);
+    if (activeTab === "danh-sach") {
+      fetchList();
+    } else if (activeTab === "lich-su") {
+      fetchPhieuThu();
+    }
+  }, [searchTerm, statusFilter, page, myChiDoan, activeTab]);
 
   const toggleCheck = (idDoanPhi) => setChecked((prev) => ({ ...prev, [idDoanPhi]: !prev[idDoanPhi] }));
   const handleSearch = (v) => { setSearchTerm(v); setPage(1); };
@@ -114,12 +134,9 @@ const DoanPhiLop = () => {
   const moneyToSubmit = selectedCount * stats.soTien;
 
   const handleSubmit = async () => {
-    if (selectedCount === 0) return alert("Vui lòng chọn ít nhất 1 đoàn viên đã nộp phí!");
+    if (selectedCount === 0) return alert("Vui lòng chọn ít nhất 1 đoàn viên!");
     try {
-      const res = await createPhieuThuAPI({
-        listIdDoanPhi: selectedList,
-        fileDinhKem: "minh_chung_nop_tien.pdf" // Dummy file
-      });
+      const res = await createPhieuThuAPI({ listIdDoanPhi: selectedList });
       if (res.success) {
         alert("Gửi danh sách nộp thành công! Vui lòng chờ Đoàn trường duyệt.");
         setChecked({});
@@ -203,6 +220,12 @@ const DoanPhiLop = () => {
           onClick={() => handleTabChange("gui")}
         >
           Gửi danh sách nộp {selectedCount > 0 && `(${selectedCount})`}
+        </button>
+        <button
+          className={`dpl-tab${activeTab === "lich-su" ? " dpl-tab--active" : ""}`}
+          onClick={() => handleTabChange("lich-su")}
+        >
+          Lịch sử nộp
         </button>
       </div>
 
@@ -318,12 +341,6 @@ const DoanPhiLop = () => {
             ))}
           </div>
 
-          <div className="dpl-gui__upload-area">
-            <Upload size={28} className="dpl-gui__upload-icon" />
-            <p className="dpl-gui__upload-text">Kéo thả file hoặc <label className="dpl-gui__upload-link">chọn file<input type="file" accept=".pdf,image/*" hidden /></label></p>
-            <p className="dpl-gui__upload-hint">Hỗ trợ PDF, JPG, PNG — tối đa 10MB</p>
-          </div>
-
           <div className="dpl-gui__actions">
             <button className="dpl-btn dpl-btn--outline" onClick={() => handleTabChange("danh-sach")}>
               Quay lại danh sách
@@ -331,6 +348,57 @@ const DoanPhiLop = () => {
             <button className="dpl-btn dpl-btn--primary" onClick={handleSubmit} disabled={selectedCount === 0}>
               <Send size={15} /> Xác nhận gửi phiếu
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ══ TAB: LỊCH SỬ NỘP ══ */}
+      {activeTab === "lich-su" && (
+        <div className="dpl-card">
+          <div className="dpl-table-wrap">
+            <table className="dpl-table">
+              <thead>
+                <tr>
+                  <th>Mã Phiếu</th>
+                  <th>Ngày lập</th>
+                  <th>Tổng tiền</th>
+                  <th>File đính kèm</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={5} className="dpl-empty">Đang tải dữ liệu...</td></tr>
+                ) : phieuThuList.map((pt, idx) => (
+                  <tr key={pt.idPhieuThu} className={idx % 2 === 1 ? "dpl-tr--alt" : ""}>
+                    <td className="dpl-td-mssv">{pt.idPhieuThu}</td>
+                    <td className="dpl-td-muted">
+                      {pt.ngayLap ? new Date(pt.ngayLap).toLocaleDateString("vi-VN") : "—"}
+                    </td>
+                    <td>{pt.tongTien?.toLocaleString()} ₫</td>
+                    <td>
+                      {pt.fileDinhKem ? (
+                        pt.fileDinhKem.startsWith("http") ? (
+                          <a href={pt.fileDinhKem} target="_blank" rel="noreferrer" style={{ color: "#004f9f", fontWeight: 500 }}>
+                            Xem file
+                          </a>
+                        ) : (
+                          <span style={{ color: "#94a3b8", fontSize: "0.85em" }}>File thử nghiệm cũ</span>
+                        )
+                      ) : "—"}
+                    </td>
+                    <td>
+                      <span className={`dpl-badge ${pt.trangThai === "Đã duyệt" ? "dpl-badge--green" : pt.trangThai === "Chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}>
+                        {pt.trangThai}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {!loading && phieuThuList.length === 0 && (
+                  <tr><td colSpan={5} className="dpl-empty">Bạn chưa gửi danh sách nộp nào</td></tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

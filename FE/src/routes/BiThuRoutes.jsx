@@ -31,6 +31,7 @@ const BiThuRoutes = (
       <Route path="nop-so-doan" element={<NopSoDoanLop />} />
       <Route path="doan-phi-lop/lap-danh-sach" element={<DoanPhiLop />} />
       <Route path="doan-phi-lop/gui" element={<DoanPhiLop />} />
+      <Route path="doan-phi-lop/lich-su" element={<DoanPhiLop />} />
       <Route
         path="hoat-dong-chi-doan/danh-sach"
         element={<HoatDongChiDoanDanhSach />}

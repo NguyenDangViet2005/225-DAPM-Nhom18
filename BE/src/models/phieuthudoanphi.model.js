@@ -25,6 +25,14 @@ const PhieuThuDoanPhi = sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: true,
     },
+    ngayLap: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    tongTien: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "PhieuThuDoanPhi",

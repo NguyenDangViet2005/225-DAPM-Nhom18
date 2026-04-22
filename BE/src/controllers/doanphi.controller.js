@@ -80,7 +80,7 @@ const getDoanPhiStats = async (req, res) => {
 const getPhieuThu = async (req, res) => {
   try {
     const { trangThai } = req.query;
-    const data = await getAllPhieuThu({ trangThai });
+    const data = await getAllPhieuThu({ trangThai }, req.user);
     return res.status(200).json({ success: true, data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
