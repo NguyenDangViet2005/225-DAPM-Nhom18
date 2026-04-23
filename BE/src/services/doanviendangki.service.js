@@ -4,11 +4,173 @@ const {
   ChiDoan,
   HoatDongDoan,
   Khoa,
+  sequelize,
 } = require("../models");
 const { Op } = require("sequelize");
 
 const doanviendangkiService = {
-  // Duyệt hoặc từ chối đơn đăng ký (và tự động cập nhật soLuongDaDK)
+  // Xem điểm hoạt động của đoàn viên
+  async getXemDiem(idDV) {
+    try {
+      // Lấy tổng điểm từ DoanVien.diemHD (được cộng khi xác nhận hoàn thành)
+      const doanVien = await DoanVien.findByPk(idDV, {
+        attributes: ["idDV", "hoTen", "diemHD"],
+      });
+
+      const registrations = await DoanVienDangKi.findAll({
+        where: { idDV },
+        attributes: ["idHD", "ngayDangKi", "trangThaiDuyet", "lyDoTuChoi"],
+        include: [
+          {
+            model: HoatDongDoan,
+            as: "hoatDong",
+            attributes: ["idHD", "tenHD", "ngayToChuc", "diemHD", "trangThai", "trangThaiHD"],
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const data = registrations.map(r => {
+        const daHoanThanh = r.hoatDong?.trangThaiHD?.trim() === "Đã kết thúc"
+          && r.trangThaiDuyet?.trim() === "Đã duyệt";
+
+        return {
+          idHD: r.idHD?.trim(),
+          tenHD: r.hoatDong?.tenHD ?? "—",
+          ngayToChuc: r.hoatDong?.ngayToChuc,
+          diemHD: r.hoatDong?.diemHD ?? 0,
+          trangThaiDuyet: r.trangThaiDuyet?.trim(),
+          trangThaiHoanThanh: daHoanThanh ? "Đã hoàn thành" : null,
+          diemDat: daHoanThanh ? (r.hoatDong?.diemHD ?? 0) : null,
+        };
+      });
+
+      return {
+        success: true,
+        data,
+        tongDiem: doanVien?.diemHD ?? 0,
+      };
+    } catch (error) {
+      return { success: false, message: "Lỗi lấy điểm hoạt động", error: error.message };
+    }
+  },
+
+  // Lịch sử đăng ký hoạt động của đoàn viên
+  async getLichSuDangKy(idDV) {
+    try {
+      const registrations = await DoanVienDangKi.findAll({
+        where: { idDV },
+        attributes: ["idHD", "ngayDangKi", "trangThaiDuyet", "lyDoTuChoi"],
+        include: [
+          {
+            model: HoatDongDoan,
+            as: "hoatDong",
+            attributes: ["idHD", "tenHD", "ngayToChuc", "diaDiem", "donViToChuc", "diemHD", "trangThai"],
+          },
+        ],
+        order: [["ngayDangKi", "DESC"]],
+      });
+
+      const data = registrations.map(r => ({
+        idHD: r.idHD?.trim(),
+        tenHD: r.hoatDong?.tenHD ?? "—",
+        ngayToChuc: r.hoatDong?.ngayToChuc,
+        diaDiem: r.hoatDong?.diaDiem ?? "—",
+        donViToChuc: r.hoatDong?.donViToChuc ?? "—",
+        diemHD: r.hoatDong?.diemHD ?? 0,
+        trangThaiHoatDong: r.hoatDong?.trangThai?.trim() ?? "—",
+        ngayDangKi: r.ngayDangKi,
+        trangThaiDuyet: r.trangThaiDuyet?.trim(),
+        lyDoTuChoi: r.lyDoTuChoi,
+      }));
+
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: "Lỗi lấy lịch sử đăng ký", error: error.message };
+    }
+  },
+
+  // Lấy danh sách hoạt động đang mở cho đoàn viên đăng ký
+  async getAvailableActivities({ idDV } = {}) {
+    try {
+      const activities = await HoatDongDoan.findAll({
+        where: {
+          trangThai: "Đang mở",
+          trangThaiHD: "Đã duyệt",
+          ngayToChuc: { [Op.gt]: new Date() },
+        },
+        attributes: ["idHD", "tenHD", "moTa", "ngayToChuc", "diaDiem",
+          "soLuongMax", "soLuongDaDK", "diemHD", "trangThaiHD", "donViToChuc"],
+        order: [["ngayToChuc", "ASC"]],
+      });
+
+      // Nếu có idDV → đánh dấu hoạt động đã đăng ký
+      let registeredIds = [];
+      if (idDV) {
+        const myRegs = await DoanVienDangKi.findAll({
+          where: { idDV },
+          attributes: ["idHD", "trangThaiDuyet"],
+        });
+        registeredIds = myRegs.map(r => ({
+          idHD: r.idHD?.trim(),
+          trangThaiDuyet: r.trangThaiDuyet?.trim(),
+        }));
+      }
+
+      const data = activities.map(hd => {
+        const reg = registeredIds.find(r => r.idHD === hd.idHD?.trim());
+        return {
+          ...hd.toJSON(),
+          idHD: hd.idHD?.trim(),
+          daDangKy: !!reg,
+          trangThaiDangKy: reg?.trangThaiDuyet ?? null,
+        };
+      });
+
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: "Lỗi lấy danh sách hoạt động", error: error.message };
+    }
+  },
+
+  // Đoàn viên đăng ký hoạt động
+  async dangKyHoatDong(idDV, idHD) {
+    try {
+      const existing = await DoanVienDangKi.findOne({ where: { idDV, idHD } });
+      if (existing) return { success: false, message: "Bạn đã đăng ký hoạt động này rồi" };
+
+      const hoatDong = await HoatDongDoan.findByPk(idHD);
+      if (!hoatDong) return { success: false, message: "Hoạt động không tồn tại" };
+      if (hoatDong.trangThai !== "Đang mở") return { success: false, message: "Hoạt động không còn mở đăng ký" };
+      if (hoatDong.soLuongDaDK >= hoatDong.soLuongMax) return { success: false, message: "Hoạt động đã đủ số lượng" };
+
+      await DoanVienDangKi.create({
+        idDV,
+        idHD,
+        ngayDangKi: sequelize.fn('GETDATE'),
+        trangThaiDuyet: "Chờ duyệt",
+        lyDoTuChoi: null,
+      });
+
+      return { success: true, message: "Đăng ký thành công! Vui lòng chờ duyệt." };
+    } catch (error) {
+      return { success: false, message: "Lỗi đăng ký hoạt động", error: error.message };
+    }
+  },
+
+  // Đoàn viên hủy đăng ký hoạt động
+  async huyDangKy(idDV, idHD) {
+    try {
+      const existing = await DoanVienDangKi.findOne({ where: { idDV, idHD } });
+      if (!existing) return { success: false, message: "Không tìm thấy đăng ký" };
+      if (existing.trangThaiDuyet === "Đã duyệt") return { success: false, message: "Không thể hủy đăng ký đã được duyệt" };
+
+      await existing.destroy();
+      return { success: true, message: "Hủy đăng ký thành công" };
+    } catch (error) {
+      return { success: false, message: "Lỗi hủy đăng ký", error: error.message };
+    }
+  },
   async duyetDangKy(idHD, idDV, trangThai, lyDo) {
     try {
       const dangKy = await DoanVienDangKi.findOne({

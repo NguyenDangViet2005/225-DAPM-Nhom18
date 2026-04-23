@@ -18,7 +18,7 @@
 
 /* ── Score hero ─────────────────────────────────────────── */
 .xd-hero {
-  background: linear-gradient(135deg, #004f9f 0%, #0369a1 100%);
+  background: linear-gradient(135deg, #70b2f4 0%, #3fa7e3 100%);
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -73,15 +73,15 @@
 }
 
 .xd-table th {
-  background: #f8fafc;
+  background: #004f9f;
   padding: 1rem;
   text-align: left;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #64748b;
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  border-bottom: 2px solid #eef2f6;
+  border-bottom: 2px solid #003a75;
 }
 
 .xd-table td {

@@ -1,5 +1,88 @@
 const doanviendangkiService = require("../services/doanviendangki.service");
 
+// Xem điểm hoạt động
+const getXemDiem = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    if (!idDV)
+      return res
+        .status(400)
+        .json({ success: false, message: "Không xác định được đoàn viên" });
+    const result = await doanviendangkiService.getXemDiem(idDV);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+// Lịch sử đăng ký của đoàn viên
+const getLichSuDangKy = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    if (!idDV)
+      return res
+        .status(400)
+        .json({ success: false, message: "Không xác định được đoàn viên" });
+    const result = await doanviendangkiService.getLichSuDangKy(idDV);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+// Lấy danh sách hoạt động đang mở cho đoàn viên
+const getAvailableActivities = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    const result = await doanviendangkiService.getAvailableActivities({ idDV });
+    return res.status(200).json(result);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+// Đoàn viên đăng ký hoạt động
+const dangKyHoatDong = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    const { idHD } = req.params;
+    if (!idDV)
+      return res
+        .status(400)
+        .json({ success: false, message: "Không xác định được đoàn viên" });
+    const result = await doanviendangkiService.dangKyHoatDong(idDV, idHD);
+    return res.status(result.success ? 201 : 400).json(result);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+// Đoàn viên hủy đăng ký
+const huyDangKy = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    const { idHD } = req.params;
+    if (!idDV)
+      return res
+        .status(400)
+        .json({ success: false, message: "Không xác định được đoàn viên" });
+    const result = await doanviendangkiService.huyDangKy(idDV, idHD);
+    return res.status(result.success ? 200 : 400).json(result);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
 // Duyệt hoặc từ chối đơn đăng ký
 const duyetDangKy = async (req, res) => {
   try {
@@ -153,7 +236,9 @@ const getApprovedActivityRegistrations = async (req, res) => {
 const getChiDoanRegistrations = async (req, res) => {
   try {
     // req.user from verifyToken has idUser (which is tenNguoiDung / idDV)
-    const result = await doanviendangkiService.getChiDoanRegistrations(req.user.tenNguoiDung);
+    const result = await doanviendangkiService.getChiDoanRegistrations(
+      req.user.tenNguoiDung,
+    );
 
     if (!result.success) {
       return res.status(400).json(result);
@@ -181,4 +266,9 @@ module.exports = {
   getActivityRegistrations,
   getApprovedActivityRegistrations,
   getChiDoanRegistrations,
+  getAvailableActivities,
+  dangKyHoatDong,
+  huyDangKy,
+  getLichSuDangKy,
+  getXemDiem,
 };

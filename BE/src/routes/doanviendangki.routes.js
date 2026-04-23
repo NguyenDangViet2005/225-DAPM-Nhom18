@@ -8,6 +8,11 @@ const {
   getActivityRegistrations,
   getApprovedActivityRegistrations,
   getChiDoanRegistrations,
+  getAvailableActivities,
+  dangKyHoatDong,
+  huyDangKy,
+  getLichSuDangKy,
+  getXemDiem,
 } = require("../controllers/doanviendangki.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const { duyetDangKyValidator } = require("../validators/hoatdong.validator");
@@ -36,6 +41,13 @@ router.get(
   getDoanTruongDashboardData,
 );
 
+// ── Đoàn viên tự đăng ký / hủy ──────────────────────────
+router.get("/available", getAvailableActivities);
+router.get("/lich-su", getLichSuDangKy);
+router.get("/xem-diem", getXemDiem);
+router.post("/:idHD/dang-ky", dangKyHoatDong);
+router.delete("/:idHD/huy", huyDangKy);
+
 // Get all registrations for a specific activity (all statuses)
 router.get("/:idHD/registrations", getActivityRegistrations);
 
@@ -43,7 +55,11 @@ router.get("/:idHD/registrations", getActivityRegistrations);
 router.get("/:idHD/approved-registrations", getApprovedActivityRegistrations);
 
 // Get all registrations for a Chi Doan
-router.get("/chidoan/registrations/all", checkRole(["BITHU"]), getChiDoanRegistrations);
+router.get(
+  "/chidoan/registrations/all",
+  checkRole(["BITHU"]),
+  getChiDoanRegistrations,
+);
 
 // Duyệt hoặc từ chối đăng ký (Đoàn Trường only)
 router.put(

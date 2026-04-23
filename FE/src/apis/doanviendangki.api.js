@@ -1,6 +1,32 @@
 import apiClient from "@/configs/axiosClient";
 
 export const doanviendangkiAPI = {
+  getLichSuDangKy: async () => {
+    const response = await apiClient.get("/doanviendangki/lich-su");
+    return response.data;
+  },
+
+  getXemDiem: async () => {
+    const response = await apiClient.get("/doanviendangki/xem-diem");
+    return response.data;
+  },
+
+  // ── Đoàn viên ────────────────────────────────────────────
+  getAvailableActivities: async () => {
+    const response = await apiClient.get("/doanviendangki/available");
+    return response.data;
+  },
+
+  dangKyHoatDong: async (idHD) => {
+    const response = await apiClient.post(`/doanviendangki/${idHD}/dang-ky`);
+    return response.data;
+  },
+
+  huyDangKy: async (idHD) => {
+    const response = await apiClient.delete(`/doanviendangki/${idHD}/huy`);
+    return response.data;
+  },
+
   // Get tất cả đơn đăng ký (mọi trạng thái) hoạt động Đoàn Trường
   getAllRegistrationsDoantruong: async () => {
     const response = await apiClient.get(
