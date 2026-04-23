@@ -16,17 +16,12 @@ const getAllMucDoanPhi = async () => {
 
 const createMucDoanPhi = async (data) => {
   const { namHoc, soTien } = data;
-
-  // Tạo ID tự động
   const count = await MucDoanPhi.count();
   const idMucDP = `MDP${String(count + 1).padStart(3, "0")}`;
-
-  // Đổi tất cả mức hiện tại sang "Đã áp dụng"
   await MucDoanPhi.update(
     { trangThai: "Đã áp dụng" },
     { where: { trangThai: "Đang áp dụng" } },
   );
-
   return await MucDoanPhi.create({
     idMucDP,
     namHoc,
@@ -38,15 +33,12 @@ const createMucDoanPhi = async (data) => {
 const updateMucDoanPhi = async (idMucDP, data) => {
   const muc = await MucDoanPhi.findByPk(idMucDP);
   if (!muc) throw new Error("Không tìm thấy mức đoàn phí");
-
-  // Nếu set Đang áp dụng → đổi cái cũ sang Đã áp dụng
   if (data.trangThai === "Đang áp dụng") {
     await MucDoanPhi.update(
       { trangThai: "Đã áp dụng" },
       { where: { trangThai: "Đang áp dụng" } },
     );
   }
-
   await muc.update(data);
   return muc;
 };
@@ -70,7 +62,6 @@ const getAllDoanPhi = async ({
   const whereDP = {};
   if (trangThai && trangThai !== "all") whereDP.trangThai = trangThai;
 
-  // Search theo hoTen hoặc idDV: lấy idDV match trước rồi dùng IN
   if (search) {
     const matchDV = await DoanVien.findAll({
       where: {
@@ -108,17 +99,47 @@ const getAllDoanPhi = async ({
     order: [["ngayDong", "DESC"]],
   });
 
-  const totalPages = Math.max(1, Math.ceil(count / safeLimit));
-
   return {
     data: rows,
     pagination: {
       page: safePage,
       limit: safeLimit,
       total: count,
-      totalPages,
+      totalPages: Math.max(1, Math.ceil(count / safeLimit)),
     },
   };
+};
+
+/**
+ * Lấy lịch sử đóng đoàn phí của đoàn viên đang đăng nhập
+ */
+const getMyDoanPhi = async (idDV) => {
+  const rows = await DoanPhi.findAll({
+    where: { idDV },
+    include: [
+      {
+        model: MucDoanPhi,
+        as: "mucDoanPhi",
+        attributes: ["namHoc", "soTien"],
+      },
+    ],
+    order: [["idMucDP", "DESC"]],
+  });
+
+  return rows.map((dp) => {
+    const data = dp.toJSON();
+    for (const key in data) {
+      if (typeof data[key] === "string") data[key] = data[key].trim();
+    }
+    return {
+      idDoanPhi: data.idDoanPhi,
+      trangThai: data.trangThai,
+      ngayDong: data.ngayDong,
+      idPhieuThu: data.idPhieuThu,
+      namHoc: data.mucDoanPhi?.namHoc || null,
+      soTien: data.mucDoanPhi?.soTien || null,
+    };
+  });
 };
 
 // ── PHIEU THU ────────────────────────────────────────────
@@ -126,7 +147,7 @@ const getAllDoanPhi = async ({
 const getAllPhieuThu = async ({ trangThai }, user) => {
   const where = {};
   if (trangThai && trangThai !== "all") where.trangThai = trangThai;
-  
+
   if (user && user.type === "BITHU") {
     where.nguoiNop = user.idUser;
   }
@@ -157,27 +178,21 @@ const getAllPhieuThu = async ({ trangThai }, user) => {
 const duyetPhieuThu = async (idPhieuThu, trangThai) => {
   const phieu = await PhieuThuDoanPhi.findByPk(idPhieuThu);
   if (!phieu) throw new Error("Không tìm thấy phiếu thu");
-
   const t = await sequelize.transaction();
   try {
     await phieu.update({ trangThai }, { transaction: t });
-
-    // Nếu duyệt → cập nhật tất cả DoanPhi liên quan sang "Đã đóng"
     if (trangThai === "Đã duyệt") {
       await DoanPhi.update(
         { trangThai: "Đã đóng", ngayDong: new Date() },
         { where: { idPhieuThu }, transaction: t },
       );
     }
-
-    // Nếu từ chối → đổi DoanPhi về "Chưa đóng"
     if (trangThai === "Từ chối") {
       await DoanPhi.update(
         { trangThai: "Chưa đóng", idPhieuThu: null },
         { where: { idPhieuThu }, transaction: t },
       );
     }
-
     await t.commit();
     return phieu;
   } catch (err) {
@@ -204,7 +219,7 @@ const createPhieuThu = async (data) => {
         fileDinhKem: fileDinhKem || null,
         trangThai: "Đang chờ duyệt",
       },
-      { transaction: t }
+      { transaction: t },
     );
 
     await DoanPhi.update(
@@ -215,7 +230,7 @@ const createPhieuThu = async (data) => {
       {
         where: { idDoanPhi: listIdDoanPhi },
         transaction: t,
-      }
+      },
     );
 
     await t.commit();
@@ -234,14 +249,11 @@ const getAllChiDoan = async () => {
 };
 
 const getStats = async ({ idChiDoan, namHoc } = {}) => {
-  // Lấy mức phí đang áp dụng để lấy soTien hiển thị
   const mucPhi = namHoc
     ? await MucDoanPhi.findOne({ where: { namHoc } })
     : await MucDoanPhi.findOne({ where: { trangThai: "Đang áp dụng" } });
-
   const soTien = Number(mucPhi?.soTien ?? 0);
 
-  // Lấy idDV thuộc chi đoàn nếu có filter
   let whereDP = {};
   if (idChiDoan && idChiDoan !== "all") {
     const dvList = await DoanVien.findAll({
@@ -323,10 +335,10 @@ const createPhieuThu = async ({ listIdDoanPhi }, user) => {
     // Tự động sinh file HTML danh sách nộp
     const uploadDir = path.join(__dirname, "../../uploads/phieuthu");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-    
+
     const fileName = `${idPhieuThu}_${Date.now()}.html`;
     const filePath = path.join(uploadDir, fileName);
-    
+
     const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -344,12 +356,12 @@ th { background-color: #004f9f; color: white; }
   <h2 style="color: #004f9f; text-align: center; text-transform: uppercase;">Danh sách Đoàn viên nộp phí</h2>
   <p><strong>Mã phiếu:</strong> ${idPhieuThu}</p>
   <p><strong>Người nộp (Bí thư):</strong> ${user.tenNguoiDung}</p>
-  <p><strong>Ngày nộp:</strong> ${new Date().toLocaleDateString('vi-VN')}</p>
+  <p><strong>Ngày nộp:</strong> ${new Date().toLocaleDateString("vi-VN")}</p>
   <p><strong>Tổng tiền:</strong> ${tongTien.toLocaleString()} VNĐ</p>
   <table>
     <thead><tr><th>STT</th><th>Mã Đoàn viên</th><th>Họ và tên</th><th>Số tiền nộp</th></tr></thead>
     <tbody>
-      ${dsDoanVien.map((dp, i) => `<tr><td>${i+1}</td><td>${dp.idDV}</td><td>${dp.doanVien?.hoTen}</td><td>${dp.mucDoanPhi.soTien.toLocaleString()} ₫</td></tr>`).join('')}
+      ${dsDoanVien.map((dp, i) => `<tr><td>${i + 1}</td><td>${dp.idDV}</td><td>${dp.doanVien?.hoTen}</td><td>${dp.mucDoanPhi.soTien.toLocaleString()} ₫</td></tr>`).join("")}
     </tbody>
   </table>
 </body>
@@ -357,7 +369,10 @@ th { background-color: #004f9f; color: white; }
     fs.writeFileSync(filePath, htmlContent);
     const generatedUrl = `http://localhost:8000/uploads/phieuthu/${fileName}`;
 
-    await phieuThu.update({ tongTien, fileDinhKem: generatedUrl }, { transaction });
+    await phieuThu.update(
+      { tongTien, fileDinhKem: generatedUrl },
+      { transaction },
+    );
     await transaction.commit();
     return phieuThu;
   } catch (error) {
@@ -371,6 +386,7 @@ module.exports = {
   createMucDoanPhi,
   updateMucDoanPhi,
   getAllDoanPhi,
+  getMyDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
   createPhieuThu,

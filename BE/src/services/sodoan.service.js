@@ -1,6 +1,24 @@
 const { SoDoan, DoanVien, ChiDoan, Khoa } = require("../models");
 
 const sodoanService = {
+  /**
+   * Lấy thông tin sổ đoàn của đoàn viên theo idDV
+   */
+  getMySoDoan: async (idDV) => {
+    const soDoan = await SoDoan.findOne({
+      where: { idDV },
+    });
+
+    if (!soDoan) return null;
+
+    // Trim CHAR fields
+    const data = soDoan.toJSON();
+    for (const key in data) {
+      if (typeof data[key] === "string") data[key] = data[key].trim();
+    }
+    return data;
+  },
+
   getLopSoDoan: async (idDV) => {
     // Lấy chi đoàn của bí thư
     const biThu = await DoanVien.findByPk(idDV);

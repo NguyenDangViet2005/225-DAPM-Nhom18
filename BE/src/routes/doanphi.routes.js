@@ -10,6 +10,7 @@ const {
   getPhieuThu,
   postPhieuThu,
   putDuyetPhieuThu,
+  getMyDoanPhiController,
 } = require("../controllers/doanphi.controller");
 const {
   createMucDoanPhiValidator,
@@ -18,6 +19,11 @@ const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const upload = require("../middlewares/upload.middleware");
 
 router.use(verifyToken);
+
+// ── Đoàn viên xem lịch sử đoàn phí của mình (không cần role DOANTRUONG)
+router.get("/me", getMyDoanPhiController);
+
+router.use(checkRole(["DOANTRUONG"]));
 
 // ── Mức đoàn phí ─────────────────────────────────────────
 router.get("/muc-phi", checkRole(["DOANTRUONG"]), getMucDoanPhi);

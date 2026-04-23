@@ -4,6 +4,7 @@ const {
   createMucDoanPhi,
   updateMucDoanPhi,
   getAllDoanPhi,
+  getMyDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
   createPhieuThu,
@@ -47,8 +48,27 @@ const putMucDoanPhi = async (req, res) => {
 
 // ── DOAN PHI ─────────────────────────────────────────────
 
-const getDoanPhi = async (req, res) => {
+/**
+ * GET /api/doan-phi/me
+ * Đoàn viên xem lịch sử đóng đoàn phí của chính mình
+ */
+const getMyDoanPhiController = async (req, res) => {
   try {
+    const idDV = req.user?.idDV;
+    if (!idDV) {
+      return res.status(403).json({
+        success: false,
+        message: "Tài khoản này không liên kết với đoàn viên nào",
+      });
+    }
+    const data = await getMyDoanPhi(idDV);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const getDoanPhi = async (req, res) => {  try {
     const { search, trangThai, idChiDoan, page, limit } = req.query;
     const data = await getAllDoanPhi({
       search,
@@ -129,6 +149,7 @@ module.exports = {
   getMucDoanPhi,
   postMucDoanPhi,
   putMucDoanPhi,
+  getMyDoanPhiController,
   getDoanPhi,
   getChiDoan,
   getDoanPhiStats,
