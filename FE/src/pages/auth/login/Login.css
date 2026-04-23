@@ -336,6 +336,30 @@
   line-height: 1.6;
 }
 
+/* ── Error Message ────────────────────────────────────────── */
+.login-error-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  padding: 0.875rem 1rem;
+  background-color: #fef2f2;
+  border-left: 3px solid #dc2626;
+  color: #991b1b;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  animation: fadeInDown 0.3s ease-out;
+}
+
+.login-error-message svg {
+  flex-shrink: 0;
+  color: #dc2626;
+}
+
+.login-error-message span {
+  flex: 1;
+}
+
 /* ── Forgot Link – button reset (dùng chung với <a>) ─────── */
 button.login-forgot-link {
   background: none;

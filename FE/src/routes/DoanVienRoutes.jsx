@@ -1,5 +1,5 @@
 import { Route } from "react-router-dom";
-import { ROLES } from "@/constants/roles";
+import { ROLES } from "@/constants";
 import ProtectedRoute from "./ProtectedRoute";
 import DashboardLayout from "@/components/layouts/dashboardLayout/DashboardLayout";
 

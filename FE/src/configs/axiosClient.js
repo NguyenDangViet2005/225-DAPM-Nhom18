@@ -33,11 +33,13 @@ apiClient.interceptors.response.use(
 
     // Only handle 401 and skip the refresh endpoint itself to avoid infinite loop
     // Also skip /auth/me on initial load when not authenticated
+    // Also skip /auth/login to show proper login error messages
     if (
       error.response?.status !== 401 ||
       originalRequest._retry ||
       originalRequest.url?.includes("/auth/refresh-token") ||
-      originalRequest.url?.includes("/auth/me")
+      originalRequest.url?.includes("/auth/me") ||
+      originalRequest.url?.includes("/auth/login")
     ) {
       return Promise.reject(error);
     }

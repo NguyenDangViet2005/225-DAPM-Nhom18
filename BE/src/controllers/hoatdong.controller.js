@@ -223,9 +223,13 @@ const getYeuCauActivities = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const status = req.query.status || 'all';
+    const status = req.query.status || "all";
 
-    const result = await hoatdongService.getYeuCauActivities({ page, limit, status });
+    const result = await hoatdongService.getYeuCauActivities({
+      page,
+      limit,
+      status,
+    });
     if (!result.success) return res.status(400).json(result);
 
     return res.status(200).json({
@@ -235,7 +239,9 @@ const getYeuCauActivities = async (req, res) => {
       pagination: result.pagination,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
   }
 };
 
@@ -246,7 +252,9 @@ const approveActivity = async (req, res) => {
     if (!result.success) return res.status(400).json(result);
     return res.status(200).json({ success: true, message: result.message });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
   }
 };
 
@@ -257,7 +265,28 @@ const rejectActivity = async (req, res) => {
     if (!result.success) return res.status(400).json(result);
     return res.status(200).json({ success: true, message: result.message });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Lỗi hệ thống", error: error.message });
+    return res
+      .status(500)
+      .json({ success: false, message: "Lỗi hệ thống", error: error.message });
+  }
+};
+
+const getAvailableActivities = async (req, res) => {
+  try {
+    const idDV = req.user?.idDV?.trim();
+    const result = await hoatdongService.getAvailableActivities({ idDV });
+    if (!result.success) return res.status(400).json(result);
+    return res.status(200).json({
+      success: true,
+      message: "Lấy danh sách hoạt động đang mở thành công",
+      data: result.data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi hệ thống",
+      error: error.message,
+    });
   }
 };
 
@@ -273,4 +302,5 @@ module.exports = {
   getYeuCauActivities,
   approveActivity,
   rejectActivity,
+  getAvailableActivities,
 };

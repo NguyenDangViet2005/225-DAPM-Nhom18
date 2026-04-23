@@ -1,33 +1,26 @@
-import { useState, useMemo } from 'react';
-import {
-  Calendar,
-  MapPin,
-  Users,
-  Plus,
-  Edit,
-  Trash2,
-} from 'lucide-react';
+import { useState, useMemo } from "react";
+import { Calendar, MapPin, Users, Plus, Edit, Trash2 } from "lucide-react";
 import {
   MOCK_HOAT_DONG_KHOA,
   MOCK_DANG_KY_HOAT_DONG_KHOA,
   ACTIVITY_STATS_KHOA,
-} from '@/data/mockHoatDongKhoa';
-import DataTableToolbar from '@/components/commons/DataTableToolbar/DataTableToolbar';
-import RegistrationListModal from '@/components/commons/modals/DanhSachDoanVienDangKiModal';
-import './HoatDongKhoa.css';
+} from "@/data/mockHoatDongKhoa";
+import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
+import RegistrationListModal from "@/pages/protected/doantruong/hoat-dong/DanhSachDoanVienDangKiModal";
+import "./HoatDongKhoa.css";
 
 const HoatDongKhoaQuanLy = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [showRegModal, setShowRegModal] = useState(false);
   const [selectedHD, setSelectedHD] = useState(null);
 
   const filterOptions = [
-    { value: 'all', label: 'Tất cả trạng thái' },
-    { value: 'Đang mở đăng ký', label: 'Đang mở đăng ký' },
-    { value: 'Đang diễn ra', label: 'Đang diễn ra' },
-    { value: 'Đã kết thúc', label: 'Đã kết thúc' },
-    { value: 'Đã đóng đăng ký', label: 'Đã đóng đăng ký' },
+    { value: "all", label: "Tất cả trạng thái" },
+    { value: "Đang mở đăng ký", label: "Đang mở đăng ký" },
+    { value: "Đang diễn ra", label: "Đang diễn ra" },
+    { value: "Đã kết thúc", label: "Đã kết thúc" },
+    { value: "Đã đóng đăng ký", label: "Đã đóng đăng ký" },
   ];
 
   const filteredActivities = useMemo(() => {
@@ -36,7 +29,7 @@ const HoatDongKhoaQuanLy = () => {
         hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
         hd.diaDiem.toLowerCase().includes(searchTerm.toLowerCase());
       const matchFilter =
-        statusFilter === 'all' || hd.trangThaiHD === statusFilter;
+        statusFilter === "all" || hd.trangThaiHD === statusFilter;
       return matchSearch && matchFilter;
     });
   }, [searchTerm, statusFilter]);
@@ -45,16 +38,20 @@ const HoatDongKhoaQuanLy = () => {
   const approvedRegs = useMemo(() => {
     if (!selectedHD) return [];
     return MOCK_DANG_KY_HOAT_DONG_KHOA.filter(
-      (r) => r.idHD === selectedHD.idHD && r.trangThaiDuyet === 'Đã duyệt'
+      (r) => r.idHD === selectedHD.idHD && r.trangThaiDuyet === "Đã duyệt",
     );
   }, [selectedHD]);
 
   const getBadgeClass = (trangThai) => {
     switch (trangThai) {
-      case 'Đang mở đăng ký': return 'hdk-badge--open';
-      case 'Đang diễn ra':    return 'hdk-badge--ongoing';
-      case 'Đã kết thúc':     return 'hdk-badge--ended';
-      default:                return 'hdk-badge--closed';
+      case "Đang mở đăng ký":
+        return "hdk-badge--open";
+      case "Đang diễn ra":
+        return "hdk-badge--ongoing";
+      case "Đã kết thúc":
+        return "hdk-badge--ended";
+      default:
+        return "hdk-badge--closed";
     }
   };
 
@@ -66,7 +63,11 @@ const HoatDongKhoaQuanLy = () => {
         <div className="hdk-actions">
           <button
             className="hdk-btn"
-            style={{ backgroundColor: '#004f9f', borderColor: '#004f9f', color: '#fff' }}
+            style={{
+              backgroundColor: "#004f9f",
+              borderColor: "#004f9f",
+              color: "#fff",
+            }}
           >
             <Plus size={18} />
             Tạo hoạt động mới
@@ -78,23 +79,27 @@ const HoatDongKhoaQuanLy = () => {
       <div className="hdk-stats">
         <div className="hdk-stat-item">
           <span className="hdk-stat-item__label">Tổng hoạt động</span>
-          <span className="hdk-stat-item__value">{ACTIVITY_STATS_KHOA.tongHoatDong}</span>
+          <span className="hdk-stat-item__value">
+            {ACTIVITY_STATS_KHOA.tongHoatDong}
+          </span>
         </div>
-        <div className="hdk-stat-item" style={{ borderLeftColor: '#15803d' }}>
+        <div className="hdk-stat-item" style={{ borderLeftColor: "#15803d" }}>
           <span className="hdk-stat-item__label">Đang mở đăng ký</span>
-          <span className="hdk-stat-item__value" style={{ color: '#15803d' }}>
+          <span className="hdk-stat-item__value" style={{ color: "#15803d" }}>
             {ACTIVITY_STATS_KHOA.dangMo}
           </span>
         </div>
-        <div className="hdk-stat-item" style={{ borderLeftColor: '#0369a1' }}>
+        <div className="hdk-stat-item" style={{ borderLeftColor: "#0369a1" }}>
           <span className="hdk-stat-item__label">Đang diễn ra</span>
-          <span className="hdk-stat-item__value" style={{ color: '#0369a1' }}>
+          <span className="hdk-stat-item__value" style={{ color: "#0369a1" }}>
             {ACTIVITY_STATS_KHOA.dangDienRa}
           </span>
         </div>
-        <div className="hdk-stat-item" style={{ borderLeftColor: '#475569' }}>
+        <div className="hdk-stat-item" style={{ borderLeftColor: "#475569" }}>
           <span className="hdk-stat-item__label">Đã kết thúc</span>
-          <span className="hdk-stat-item__value">{ACTIVITY_STATS_KHOA.daKetThuc}</span>
+          <span className="hdk-stat-item__value">
+            {ACTIVITY_STATS_KHOA.daKetThuc}
+          </span>
         </div>
       </div>
 
@@ -133,7 +138,7 @@ const HoatDongKhoaQuanLy = () => {
                 <td>
                   <div className="hdk-activity-info">
                     <Calendar size={13} />
-                    {new Date(hd.ngayToChuc).toLocaleDateString('vi-VN')}
+                    {new Date(hd.ngayToChuc).toLocaleDateString("vi-VN")}
                   </div>
                   <div className="hdk-activity-info">
                     <MapPin size={13} /> {hd.diaDiem}
@@ -142,30 +147,46 @@ const HoatDongKhoaQuanLy = () => {
                 <td>
                   <div
                     className="hdk-activity-info"
-                    style={{ color: '#004f9f', fontWeight: 700, cursor: 'pointer' }}
-                    onClick={() => { setSelectedHD(hd); setShowRegModal(true); }}
+                    style={{
+                      color: "#004f9f",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      setSelectedHD(hd);
+                      setShowRegModal(true);
+                    }}
                   >
                     {hd.soLuongDaDK}/{hd.soLuongMax} (Xem)
                   </div>
                   <div className="hdk-progress-wrap">
                     <div
                       className="hdk-progress-bar"
-                      style={{ width: `${(hd.soLuongDaDK / hd.soLuongMax) * 100}%` }}
+                      style={{
+                        width: `${(hd.soLuongDaDK / hd.soLuongMax) * 100}%`,
+                      }}
                     />
                   </div>
                 </td>
-                <td style={{ fontWeight: 800, color: '#004f9f' }}>{hd.diemHD}</td>
+                <td style={{ fontWeight: 800, color: "#004f9f" }}>
+                  {hd.diemHD}
+                </td>
                 <td>
-                  <span className={`hdk-badge ${getBadgeClass(hd.trangThaiHD)}`}>
+                  <span
+                    className={`hdk-badge ${getBadgeClass(hd.trangThaiHD)}`}
+                  >
                     {hd.trangThaiHD}
                   </span>
                 </td>
                 <td>
-                  <div style={{ display: 'flex', gap: '6px' }}>
+                  <div style={{ display: "flex", gap: "6px" }}>
                     <button
                       className="hdk-btn"
                       title="Xem danh sách đăng ký"
-                      onClick={() => { setSelectedHD(hd); setShowRegModal(true); }}
+                      onClick={() => {
+                        setSelectedHD(hd);
+                        setShowRegModal(true);
+                      }}
                     >
                       <Users size={15} />
                     </button>
@@ -181,7 +202,14 @@ const HoatDongKhoaQuanLy = () => {
             ))}
             {filteredActivities.length === 0 && (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                <td
+                  colSpan="6"
+                  style={{
+                    textAlign: "center",
+                    padding: "3rem",
+                    color: "#94a3b8",
+                  }}
+                >
                   Không tìm thấy hoạt động phù hợp
                 </td>
               </tr>

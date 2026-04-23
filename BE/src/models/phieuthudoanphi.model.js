@@ -17,20 +17,20 @@ const PhieuThuDoanPhi = sequelize.define(
         key: "idUser",
       },
     },
-    fileDinhKem: {
-      type: DataTypes.STRING(200),
-      allowNull: true,
-    },
-    trangThai: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-    },
     ngayLap: {
       type: DataTypes.DATE,
       allowNull: true,
     },
     tongTien: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    fileDinhKem: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+    },
+    trangThai: {
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
   },

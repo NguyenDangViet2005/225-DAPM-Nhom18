@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { CheckCircle, Search } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import doanviendangkiAPI from "@/apis/doanviendangki.api";
-import HoatDongDuyetTable from "@/components/commons/tables/HoatDongDuyetTable";
-import RejectRegistrationModal from "@/components/commons/modals/RejectRegistrationModal";
+import HoatDongDuyetTable from "@/pages/protected/doantruong/hoat-dong/HoatDongDuyetTable";
+import RejectRegistrationModal from "@/pages/protected/doantruong/hoat-dong/RejectRegistrationModal";
+import HoatDongDuyetStatsSection from "@/pages/protected/doantruong/hoat-dong/HoatDongDuyetStatsSection";
+import HoatDongDuyetToolbar from "@/pages/protected/doantruong/hoat-dong/HoatDongDuyetToolbar";
 import "./HoatDong.css";
 
 const HoatDongDuyet = () => {
@@ -53,35 +55,38 @@ const HoatDongDuyet = () => {
     }
   }, [fetchRegistrations]);
 
-  // Duyệt / Từ chối
-  const handleDuyet = async (maSV, idHD, trangThai, lyDo = null) => {
-    const key = `${maSV}-${idHD}`;
-    setProcessingId(key);
-    try {
-      const result = await doanviendangkiAPI.duyetDangKy(
-        idHD,
-        maSV,
-        trangThai,
-        lyDo,
-      );
-      if (result.success) {
-        setRegistrations((prev) =>
-          prev.map((r) =>
-            r.maSV === maSV && r.idHD === idHD
-              ? { ...r, trangThaiDuyet: trangThai }
-              : r,
-          ),
+  // Handler duyệt đăng ký
+  const handleDuyet = useCallback(
+    async (maSV, idHD, trangThai, lyDo = null) => {
+      const key = `${maSV}-${idHD}`;
+      setProcessingId(key);
+      try {
+        const result = await doanviendangkiAPI.duyetDangKy(
+          idHD,
+          maSV,
+          trangThai,
+          lyDo,
         );
-      } else {
-        alert(result.message || "Có lỗi xảy ra");
+        if (result.success) {
+          setRegistrations((prev) =>
+            prev.map((r) =>
+              r.maSV === maSV && r.idHD === idHD
+                ? { ...r, trangThaiDuyet: trangThai }
+                : r,
+            ),
+          );
+        } else {
+          alert(result.message || "Có lỗi xảy ra");
+        }
+      } catch (err) {
+        console.error("Lỗi duyệt đăng ký:", err);
+        alert("Không thể kết nối server");
+      } finally {
+        setProcessingId(null);
       }
-    } catch (err) {
-      console.error("Lỗi duyệt đăng ký:", err);
-      alert("Không thể kết nối server");
-    } finally {
-      setProcessingId(null);
-    }
-  };
+    },
+    [],
+  );
 
   const handleConfirmReject = async () => {
     if (!rejectTarget) return;
@@ -143,62 +148,20 @@ const HoatDongDuyet = () => {
       </div>
 
       {/* Stats — lấy từ DB */}
-      <div className="hd-stats">
-        <div
-          className="hd-stat-item"
-          style={{ borderLeft: "3px solid #b45309", cursor: "pointer" }}
-          onClick={() => setStatusFilter("Chờ duyệt")}
-        >
-          <span className="hd-stat-item__label">Chờ xử lý (Cấp trường)</span>
-          <span className="hd-stat-item__value" style={{ color: "#b45309" }}>
-            {pendingRegs.length} đơn
-          </span>
-        </div>
-        <div
-          className="hd-stat-item"
-          style={{ borderLeft: "3px solid #15803d", cursor: "pointer" }}
-          onClick={() => setStatusFilter("Đã duyệt")}
-        >
-          <span className="hd-stat-item__label">Đã duyệt</span>
-          <span className="hd-stat-item__value" style={{ color: "#15803d" }}>
-            {approvedRegs.length} đơn
-          </span>
-        </div>
-        <div
-          className="hd-stat-item"
-          style={{ borderLeft: "3px solid #dc2626", cursor: "pointer" }}
-          onClick={() => setStatusFilter("Từ chối")}
-        >
-          <span className="hd-stat-item__label">Từ chối</span>
-          <span className="hd-stat-item__value" style={{ color: "#dc2626" }}>
-            {rejectedRegs.length} đơn
-          </span>
-        </div>
-      </div>
+      <HoatDongDuyetStatsSection
+        pendingRegs={pendingRegs}
+        approvedRegs={approvedRegs}
+        rejectedRegs={rejectedRegs}
+        onStatusFilterChange={setStatusFilter}
+      />
 
       {/* Toolbar */}
-      <div className="hd-toolbar" style={{ marginBottom: "1rem" }}>
-        <div className="hd-search-wrap" style={{ flex: 1 }}>
-          <Search size={18} />
-          <input
-            type="text"
-            className="hd-search-input"
-            placeholder="Tìm tên đoàn viên, MSSV hoặc tên hoạt động (Trường)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <select
-          className="hd-filter-select"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="all">Tất cả</option>
-          <option value="Chờ duyệt">Chờ duyệt</option>
-          <option value="Đã duyệt">Đã duyệt</option>
-          <option value="Từ chối">Từ chối</option>
-        </select>
-      </div>
+      <HoatDongDuyetToolbar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
 
       {/* Table */}
       <div className="hd-card">

@@ -64,6 +64,13 @@ const SIDEBAR_CONFIG = {
       path: "/doan-truong/dashboard",
     },
     {
+      key: "doan-vien",
+      label: "Quản lý đoàn viên",
+      icon: "Users",
+      path: "/doan-truong/doan-vien",
+      permission: PERMISSIONS.ACCOUNT_MANAGE,
+    },
+    {
       key: "so-doan",
       label: "Sổ đoàn",
       icon: "BookOpen",
@@ -110,13 +117,6 @@ const SIDEBAR_CONFIG = {
       icon: "ClipboardList",
       path: "/doan-truong/yeu-cau",
       permission: PERMISSIONS.ACTIVITY_REQUEST_VIEW,
-    },
-    {
-      key: "doan-vien",
-      label: "Quản lý đoàn viên",
-      icon: "GraduationCap",
-      path: "/doan-truong/doan-vien",
-      permission: PERMISSIONS.ACCOUNT_MANAGE,
     },
     {
       key: "tai-khoan",

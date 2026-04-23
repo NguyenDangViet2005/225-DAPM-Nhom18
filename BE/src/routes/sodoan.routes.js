@@ -4,13 +4,6 @@ const sodoanController = require("../controllers/sodoan.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 
 // Cấp quyền theo từng route
-// Đoàn viên xem tình trạng sổ đoàn của mình — phải đặt TRƯỚC /:id
-router.get(
-  "/me",
-  verifyToken,
-  sodoanController.getMySoDoan,
-);
-
 router.get(
   "/lop/ds",
   verifyToken,
@@ -24,7 +17,12 @@ router.patch(
   sodoanController.submitLopSoDoan,
 );
 
-router.post("/tao-moi", verifyToken, checkRole(["DOANTRUONG", "VT001"]), sodoanController.createSoDoan);
+router.post(
+  "/tao-moi",
+  verifyToken,
+  checkRole(["DOANTRUONG", "VT001"]),
+  sodoanController.createSoDoan,
+);
 
 router.get(
   "/ds/cho-duyet",

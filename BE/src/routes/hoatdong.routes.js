@@ -12,6 +12,7 @@ const {
   getYeuCauActivities,
   approveActivity,
   rejectActivity,
+  getAvailableActivities,
 } = require("../controllers/hoatdong.controller");
 const {
   createActivityValidator,
@@ -28,6 +29,9 @@ router.use(verifyToken);
 
 // Get all school-level activities
 router.get("/doantruong", getAllSchoolActivities);
+
+// Get all available activities for registration (all levels, not paginated)
+router.get("/available", getAvailableActivities);
 
 // Get all khoa-level activities
 router.get("/khoa/", getAllKhoaActivities);

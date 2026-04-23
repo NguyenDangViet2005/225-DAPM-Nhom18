@@ -266,7 +266,6 @@ module.exports = {
   getActivityRegistrations,
   getApprovedActivityRegistrations,
   getChiDoanRegistrations,
-  getAvailableActivities,
   dangKyHoatDong,
   huyDangKy,
   getLichSuDangKy,

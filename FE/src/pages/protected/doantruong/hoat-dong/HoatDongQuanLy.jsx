@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, BarChart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, BarChart } from "lucide-react";
+import { HOAT_DONG_FILTER_OPTIONS, PAGE_SIZE } from "@/constants";
+import { getErrorMessage } from "@/utils";
 import hoatdongAPI from "@/apis/hoatdong.api";
 import doanviendangkiAPI from "@/apis/doanviendangki.api";
 import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
-import RegistrationListModal from "@/components/commons/modals/DanhSachDoanVienDangKiModal";
-import HoatDongModal from "@/components/commons/modals/HoatDongModal";
-import DeleteConfirmModal from "@/components/commons/modals/DeleteConfirmModal";
-import HoatDongTable from "../../../../components/commons/tables/HoatDongTable";
+import Pagination from "@/components/commons/Pagination/Pagination";
+import RegistrationListModal from "@/pages/protected/doantruong/hoat-dong/DanhSachDoanVienDangKiModal";
+import HoatDongModal from "@/pages/protected/doantruong/hoat-dong/HoatDongModal";
+import DeleteConfirmModal from "@/pages/protected/doantruong/hoat-dong/DeleteConfirmModal";
+import HoatDongTable from "./HoatDongTable";
 import "./HoatDong.css";
 
-const PAGE_SIZE = 10;
-
 const HoatDongQuanLy = () => {
-  console.log("🔌 HoatDongQuanLy component rendering...");
   const [activities, setActivities] = useState([]);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
   const [error, setError] = useState(null);
@@ -51,45 +51,34 @@ const HoatDongQuanLy = () => {
   const loadActivities = useCallback(
     async (page = 1) => {
       try {
-        console.log(
-          "🔄 loadActivities called with page:",
-          page,
-          "tabMode:",
-          tabMode,
-        );
         setIsLoadingActivities(true);
         setError(null);
         let result;
         if (tabMode === "doantruong") {
           result = await hoatdongAPI.getAllSchoolActivities({
             page,
-            limit: PAGE_SIZE,
+            limit: PAGE_SIZE.DEFAULT,
           });
         } else if (tabMode === "khoa") {
           result = await hoatdongAPI.getAllKhoaActivities({
             page,
-            limit: PAGE_SIZE,
+            limit: PAGE_SIZE.DEFAULT,
           });
         } else if (tabMode === "chidoan") {
           result = await hoatdongAPI.getAllChidoanActivities({
             page,
-            limit: PAGE_SIZE,
+            limit: PAGE_SIZE.DEFAULT,
           });
         }
 
         if (result && result.success) {
-          console.log("✅ Activities loaded:", result.data?.length, "items");
           setActivities(result.data || []);
           if (result.pagination) setPagination(result.pagination);
         } else {
-          console.error("❌ API error:", result?.message);
           setError(result?.message || "Không thể tải danh sách hoạt động");
         }
       } catch (err) {
-        console.error("❌ Exception:", err.message);
-        setError(
-          err.response?.data?.message || err.message || "Lỗi khi tải hoạt động",
-        );
+        setError(getErrorMessage(err, "Lỗi khi tải hoạt động"));
       } finally {
         setIsLoadingActivities(false);
       }
@@ -99,10 +88,6 @@ const HoatDongQuanLy = () => {
 
   // Agora chama o useEffect DEPOIS de loadActivities estar definida
   useEffect(() => {
-    console.log(
-      "📡 useEffect triggered - calling loadActivities for page:",
-      currentPage,
-    );
     loadActivities(currentPage);
   }, [currentPage, tabMode, loadActivities]);
 
@@ -116,11 +101,7 @@ const HoatDongQuanLy = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const filterOptions = [
-    { value: "all", label: "Tất cả trạng thái" },
-    { value: "Đã duyệt", label: "Đã duyệt" },
-    { value: "Chưa duyệt", label: "Chưa duyệt" },
-  ];
+  const filterOptions = HOAT_DONG_FILTER_OPTIONS;
 
   // Only school-level activities (no idKhoa, no idChiDoan) can be edited/deleted
   const isSchoolLevel = (hd) => !hd.idKhoa && !hd.idChiDoan;
@@ -391,45 +372,14 @@ const HoatDongQuanLy = () => {
         />
 
         {/* Pagination */}
-        {pagination.totalPages > 1 && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              gap: "8px",
-              padding: "16px",
-              borderTop: "1px solid #e2e8f0",
-            }}
-          >
-            <button
-              className="hd-update-btn"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1 || isLoadingActivities}
-              title="Trang trước"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <span style={{ fontSize: "14px", color: "#4a5568" }}>
-              Trang <strong>{currentPage}</strong> / {pagination.totalPages}
-              <span style={{ marginLeft: "8px", color: "#94a3b8" }}>
-                ({pagination.total} hoạt động)
-              </span>
-            </span>
-            <button
-              className="hd-update-btn"
-              onClick={() =>
-                setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))
-              }
-              disabled={
-                currentPage === pagination.totalPages || isLoadingActivities
-              }
-              title="Trang sau"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.total}
+          onPageChange={setCurrentPage}
+          loading={isLoadingActivities}
+          itemLabel="hoạt động"
+        />
       </div>
 
       {/* Modals */}

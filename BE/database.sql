@@ -140,6 +140,8 @@ GO
 CREATE TABLE PhieuThuDoanPhi (
     idPhieuThu CHAR(15) PRIMARY KEY,
     nguoiNop CHAR(15),
+    ngayLap DATETIME,
+    tongTien INT,
     fileDinhKem NVARCHAR(200),
     trangThai NVARCHAR(50),
     CONSTRAINT FK_PhieuThuDoanPhi_TaiKhoan FOREIGN KEY (nguoiNop) REFERENCES TaiKhoan(idUser)

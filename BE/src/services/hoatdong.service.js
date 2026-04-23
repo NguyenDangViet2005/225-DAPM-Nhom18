@@ -360,19 +360,19 @@ const hoatdongService = {
   // ─────────────────────────────────────────────────────────
 
   // Lấy danh sách các hoạt động do Liên chi / Chi đoàn đề xuất (Yêu cầu duyệt)
-  async getYeuCauActivities({ page = 1, limit = 10, status = 'all' } = {}) {
+  async getYeuCauActivities({ page = 1, limit = 10, status = "all" } = {}) {
     try {
       const { Op } = require("sequelize");
       const offset = (page - 1) * limit;
-      
+
       const whereCondition = {
         [Op.or]: [
           { idKhoa: { [Op.ne]: null } },
-          { idChiDoan: { [Op.ne]: null } }
-        ]
+          { idChiDoan: { [Op.ne]: null } },
+        ],
       };
 
-      if (status !== 'all') {
+      if (status !== "all") {
         whereCondition.trangThaiHD = status;
       }
 
@@ -406,13 +406,18 @@ const hoatdongService = {
   async approveActivity(idHD) {
     try {
       const activity = await HoatDongDoan.findByPk(idHD);
-      if (!activity) return { success: false, message: "Hoạt động không tồn tại" };
+      if (!activity)
+        return { success: false, message: "Hoạt động không tồn tại" };
 
       await activity.update({ trangThaiHD: "Đã duyệt" });
 
       return { success: true, message: "Đã duyệt hoạt động thành công" };
     } catch (error) {
-      return { success: false, message: "Lỗi duyệt hoạt động", error: error.message };
+      return {
+        success: false,
+        message: "Lỗi duyệt hoạt động",
+        error: error.message,
+      };
     }
   },
 
@@ -420,13 +425,79 @@ const hoatdongService = {
   async rejectActivity(idHD) {
     try {
       const activity = await HoatDongDoan.findByPk(idHD);
-      if (!activity) return { success: false, message: "Hoạt động không tồn tại" };
+      if (!activity)
+        return { success: false, message: "Hoạt động không tồn tại" };
 
       await activity.update({ trangThaiHD: "Từ chối" });
 
       return { success: true, message: "Đã từ chối hoạt động" };
     } catch (error) {
-      return { success: false, message: "Lỗi từ chối hoạt động", error: error.message };
+      return {
+        success: false,
+        message: "Lỗi từ chối hoạt động",
+        error: error.message,
+      };
+    }
+  },
+
+  // Get all available activities (all levels) - for doàn viên và bí thư đăng ký
+  async getAvailableActivities({ idDV } = {}) {
+    try {
+      const { Op } = require("sequelize");
+      
+      // Nếu có idDV → lấy danh sách idHD đã đăng ký
+      let registeredIds = [];
+      if (idDV) {
+        const myRegs = await DoanVienDangKi.findAll({
+          where: { idDV },
+          attributes: ["idHD"],
+        });
+        registeredIds = myRegs.map(r => r.idHD?.trim()).filter(Boolean);
+      }
+
+      // Lấy hoạt động đang mở, đã duyệt
+      // Bỏ điều kiện ngayToChuc > now để hiển thị cả hoạt động đã qua (cho demo/test)
+      const whereCondition = {
+        trangThai: "Đang mở",
+        trangThaiHD: "Đã duyệt",
+      };
+      
+      if (idDV && registeredIds.length > 0) {
+        whereCondition.idHD = { [Op.notIn]: registeredIds };
+      }
+
+      const activities = await HoatDongDoan.findAll({
+        where: whereCondition,
+        order: [["ngayToChuc", "DESC"]], // Sắp xếp mới nhất trước
+      });
+
+      // Calculate actual soLuongDaDK from DoanVienDangKi for each activity (only "Đã duyệt")
+      const activitiesWithCount = await Promise.all(
+        activities.map(async (hd) => {
+          const { count: registrationCount } =
+            await DoanVienDangKi.findAndCountAll({
+              where: { idHD: hd.idHD, trangThaiDuyet: "Đã duyệt" },
+            });
+          
+          return {
+            ...hd.toJSON(),
+            soLuongDaDK: registrationCount,
+            daDangKy: false, // Luôn false vì đã lọc ra các hoạt động chưa đăng ký
+            trangThaiDangKy: null,
+          };
+        }),
+      );
+
+      return {
+        success: true,
+        data: activitiesWithCount,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Lỗi lấy danh sách hoạt động đang mở",
+        error: error.message,
+      };
     }
   },
 };

@@ -1,4 +1,5 @@
-const { DoanVien, ChiDoan, Khoa } = require("../models");
+const { DoanVien, ChiDoan, Khoa, SoDoan, TaiKhoan } = require("../models");
+const { sequelize } = require("../models");
 const { Op } = require("sequelize");
 
 const ALLOWED_UPDATE_FIELDS = ["hoTen", "ngaySinh", "SDT", "email", "diaChi"];
@@ -10,9 +11,18 @@ const doanvienService = {
   getProfile: async (idDV) => {
     const doanVien = await DoanVien.findByPk(idDV, {
       attributes: [
-        "idDV", "hoTen", "ngaySinh", "gioiTinh",
-        "SDT", "email", "diaChi", "idChiDoan",
-        "ngayVaoDoan", "trangThaiSH", "diemHD", "chucVu",
+        "idDV",
+        "hoTen",
+        "ngaySinh",
+        "gioiTinh",
+        "SDT",
+        "email",
+        "diaChi",
+        "idChiDoan",
+        "ngayVaoDoan",
+        "trangThaiSH",
+        "diemHD",
+        "chucVu",
       ],
       include: [
         {
@@ -76,14 +86,26 @@ const doanvienService = {
   },
 
   /**
-   * Lấy danh sách đoàn viên (có phân trang, tìm kiếm)
+   * Lấy thông tin sổ đoàn của đoàn viên
    */
-  getAllDoanVien: async ({ page = 1, limit = 10, search = "" }) => {
-    const offset = (parseInt(page) - 1) * parseInt(limit);
-    
-    const whereClause = {};
+  getMySoDoan: async (idDV) => {
+    const soDoan = await SoDoan.findOne({
+      where: { idDV },
+      attributes: ["idSoDoan", "ngayCap", "noiCap", "trangThai", "ngayRutSo"],
+    });
+
+    return soDoan;
+  },
+
+  /**
+   * Lấy danh sách đoàn viên với phân trang và tìm kiếm
+   */
+  getAll: async (page = 1, limit = 10, search = "") => {
+    const offset = (page - 1) * limit;
+    const where = {};
+
     if (search) {
-      whereClause[Op.or] = [
+      where[Op.or] = [
         { idDV: { [Op.like]: `%${search}%` } },
         { hoTen: { [Op.like]: `%${search}%` } },
         { email: { [Op.like]: `%${search}%` } },
@@ -91,12 +113,12 @@ const doanvienService = {
     }
 
     const { count, rows } = await DoanVien.findAndCountAll({
-      where: whereClause,
+      where,
       include: [
         {
           model: ChiDoan,
           as: "chiDoan",
-          attributes: ["idChiDoan", "tenChiDoan", "nienKhoa"],
+          attributes: ["idChiDoan", "tenChiDoan"],
           include: [
             {
               model: Khoa,
@@ -106,68 +128,20 @@ const doanvienService = {
           ],
         },
       ],
-      limit: parseInt(limit),
+      limit,
       offset,
-      order: [["hoTen", "ASC"]],
+      order: [["idDV", "ASC"]],
     });
 
     return {
       data: rows,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(count / parseInt(limit)),
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
         totalItems: count,
-        itemsPerPage: parseInt(limit),
+        itemsPerPage: limit,
       },
     };
-  },
-
-  /**
-   * Tạo đoàn viên mới
-   */
-  createDoanVien: async (data) => {
-    const { idDV, hoTen, gioiTinh, ngaySinh, SDT, email, diaChi, idChiDoan } = data;
-
-    // Kiểm tra trùng mã đoàn viên
-    const existing = await DoanVien.findByPk(idDV);
-    if (existing) {
-      throw new Error("Mã đoàn viên đã tồn tại");
-    }
-
-    const newDoanVien = await DoanVien.create({
-      idDV,
-      hoTen,
-      gioiTinh: gioiTinh || "Nam",
-      ngaySinh: ngaySinh || null,
-      SDT: SDT || null,
-      email: email || null,
-      diaChi: diaChi || null,
-      idChiDoan: idChiDoan || null,
-    });
-
-    return newDoanVien;
-  },
-
-  /**
-   * Cập nhật đoàn viên
-   */
-  updateDoanVien: async (idDV, updateData) => {
-    const doanVien = await DoanVien.findByPk(idDV);
-    if (!doanVien) return null;
-
-    const { hoTen, gioiTinh, ngaySinh, SDT, email, diaChi, idChiDoan } = updateData;
-    
-    const dataToUpdate = {};
-    if (hoTen !== undefined) dataToUpdate.hoTen = hoTen;
-    if (gioiTinh !== undefined) dataToUpdate.gioiTinh = gioiTinh;
-    if (ngaySinh !== undefined) dataToUpdate.ngaySinh = ngaySinh;
-    if (SDT !== undefined) dataToUpdate.SDT = SDT;
-    if (email !== undefined) dataToUpdate.email = email;
-    if (diaChi !== undefined) dataToUpdate.diaChi = diaChi;
-    if (idChiDoan !== undefined) dataToUpdate.idChiDoan = idChiDoan;
-
-    await doanVien.update(dataToUpdate);
-    return doanVien;
   },
 
   /**
@@ -178,10 +152,11 @@ const doanvienService = {
     const male = await DoanVien.count({ where: { gioiTinh: "Nam" } });
     const female = await DoanVien.count({ where: { gioiTinh: "Nữ" } });
     
-    // Đếm số đoàn viên đã có tài khoản
-    const { TaiKhoan } = require("../models");
+    // Count đoàn viên có tài khoản
     const withAccount = await TaiKhoan.count({
-      where: { idDV: { [Op.ne]: null } }
+      where: {
+        idDV: { [Op.ne]: null },
+      },
     });
 
     return { total, male, female, withAccount };
@@ -191,7 +166,8 @@ const doanvienService = {
    * Lấy danh sách chi đoàn
    */
   getChiDoanList: async () => {
-    return await ChiDoan.findAll({
+    const list = await ChiDoan.findAll({
+      attributes: ["idChiDoan", "tenChiDoan"],
       include: [
         {
           model: Khoa,
@@ -199,8 +175,60 @@ const doanvienService = {
           attributes: ["idKhoa", "tenKhoa"],
         },
       ],
-      order: [["tenChiDoan", "ASC"]],
+      order: [["idChiDoan", "ASC"]],
     });
+
+    return list;
+  },
+
+  /**
+   * Tạo đoàn viên mới
+   */
+  create: async (data) => {
+    const { idDV, hoTen, gioiTinh, ngaySinh, SDT, email, diaChi, idChiDoan } = data;
+
+    // Check if idDV already exists
+    const existing = await DoanVien.findByPk(idDV);
+    if (existing) {
+      throw new Error("Mã đoàn viên đã tồn tại");
+    }
+
+    const doanvien = await DoanVien.create({
+      idDV,
+      hoTen,
+      gioiTinh,
+      ngaySinh,
+      SDT,
+      email,
+      diaChi,
+      idChiDoan,
+      trangThaiSH: "Đang sinh hoạt",
+      diemHD: 0,
+    });
+
+    return doanvien;
+  },
+
+  /**
+   * Cập nhật đoàn viên
+   */
+  update: async (idDV, data) => {
+    const doanvien = await DoanVien.findByPk(idDV);
+    if (!doanvien) return null;
+
+    const { hoTen, gioiTinh, ngaySinh, SDT, email, diaChi, idChiDoan } = data;
+
+    await doanvien.update({
+      hoTen,
+      gioiTinh,
+      ngaySinh,
+      SDT,
+      email,
+      diaChi,
+      idChiDoan,
+    });
+
+    return doanvien;
   },
 };
 

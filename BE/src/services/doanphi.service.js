@@ -183,7 +183,7 @@ const duyetPhieuThu = async (idPhieuThu, trangThai) => {
     await phieu.update({ trangThai }, { transaction: t });
     if (trangThai === "Đã duyệt") {
       await DoanPhi.update(
-        { trangThai: "Đã đóng", ngayDong: new Date() },
+        { trangThai: "Đã đóng", ngayDong: sequelize.literal('CAST(GETDATE() AS DATE)') },
         { where: { idPhieuThu }, transaction: t },
       );
     }
@@ -193,46 +193,6 @@ const duyetPhieuThu = async (idPhieuThu, trangThai) => {
         { where: { idPhieuThu }, transaction: t },
       );
     }
-    await t.commit();
-    return phieu;
-  } catch (err) {
-    await t.rollback();
-    throw err;
-  }
-};
-
-const createPhieuThu = async (data) => {
-  const { idUser, fileDinhKem, listIdDoanPhi } = data;
-  if (!listIdDoanPhi || listIdDoanPhi.length === 0) {
-    throw new Error("Không có đoàn phí nào được chọn");
-  }
-
-  const t = await sequelize.transaction();
-  try {
-    const count = await PhieuThuDoanPhi.count();
-    const idPhieuThu = `PT${String(count + 1).padStart(4, "0")}`;
-
-    const phieu = await PhieuThuDoanPhi.create(
-      {
-        idPhieuThu,
-        nguoiNop: idUser,
-        fileDinhKem: fileDinhKem || null,
-        trangThai: "Đang chờ duyệt",
-      },
-      { transaction: t },
-    );
-
-    await DoanPhi.update(
-      {
-        idPhieuThu,
-        trangThai: "Đang chờ duyệt",
-      },
-      {
-        where: { idDoanPhi: listIdDoanPhi },
-        transaction: t,
-      },
-    );
-
     await t.commit();
     return phieu;
   } catch (err) {
@@ -285,98 +245,123 @@ const getStats = async ({ idChiDoan, namHoc } = {}) => {
 const fs = require("fs");
 const path = require("path");
 
-const createPhieuThu = async ({ listIdDoanPhi }, user) => {
+const createPhieuThu = async (data, user, file) => {
+  const { listIdDoanPhi } = data;
+
+  // Validation
+  if (
+    !listIdDoanPhi ||
+    !Array.isArray(listIdDoanPhi) ||
+    listIdDoanPhi.length === 0
+  ) {
+    throw new Error("Danh sách đoàn phí không hợp lệ");
+  }
+
+  // Validate file
+  if (!file) {
+    throw new Error("Vui lòng đính kèm file chứng từ");
+  }
+
+  // Validate user info
+  if (!user || !user.idUser) {
+    throw new Error("Thông tin người dùng không hợp lệ");
+  }
+
   const transaction = await sequelize.transaction();
   try {
-    const count = await PhieuThuDoanPhi.count();
-    const idPhieuThu = `PT${String(count + 1).padStart(3, "0")}`;
+    // Kiểm tra user tồn tại trong TaiKhoan
+    const existingUser = await TaiKhoan.findByPk(user.idUser.trim(), { transaction });
+    if (!existingUser) {
+      throw new Error("Người dùng không tồn tại trong hệ thống");
+    }
 
-    const phieuThu = await PhieuThuDoanPhi.create(
-      {
-        idPhieuThu,
-        ngayLap: new Date(),
-        nguoiNop: user.idUser,
-        tongTien: 0,
-        trangThai: "Chờ duyệt",
-        fileDinhKem: null, // Sẽ cập nhật sau khi tạo HTML
-      },
-      { transaction },
+    // Tạo ID phiếu thu - use raw query to avoid ORDER BY conflict with MAX()
+    const results = await sequelize.query(
+      'SELECT MAX(idPhieuThu) as maxId FROM PhieuThuDoanPhi',
+      { transaction, type: sequelize.QueryTypes.SELECT }
     );
+    
+    let nextNum = 1;
+    if (results && results[0] && results[0].maxId) {
+      const lastNum = parseInt(results[0].maxId.substring(2));
+      nextNum = lastNum + 1;
+    }
+    
+    const idPhieuThu = `PT${String(nextNum).padStart(3, "0")}`;
+
+    // Generate file URL from uploaded file
+    const fileDinhKem = file ? `http://localhost:8000/uploads/phieuthu/${file.filename}` : null;
+
+    const phieuThuData = {
+      idPhieuThu,
+      nguoiNop: user.idUser.trim(),
+      ngayLap: sequelize.literal('GETDATE()'),
+      tongTien: 0,
+      trangThai: "Chờ duyệt",
+      fileDinhKem: fileDinhKem,
+    };
+
+    const phieuThu = await PhieuThuDoanPhi.create(phieuThuData, { transaction });
 
     let tongTien = 0;
     const dsDoanVien = [];
 
     for (const idDP of listIdDoanPhi) {
+      // Include mucDoanPhi relationship
       const doanPhi = await DoanPhi.findByPk(idDP, {
-        include: [{ model: MucDoanPhi, as: "mucDoanPhi" }],
         transaction,
+        include: [
+          { model: MucDoanPhi, as: "mucDoanPhi", attributes: ["idMucDP", "soTien", "namHoc"] }
+        ]
       });
 
       if (!doanPhi) {
         throw new Error(`Không tìm thấy đoàn phí ${idDP}`);
       }
 
+      // Kiểm tra mức đoàn phí
+      const mucDoanPhi = doanPhi.mucDoanPhi;
+      if (!mucDoanPhi) {
+        throw new Error(`Không tìm thấy mức đoàn phí cho đoàn phí ${idDP}`);
+      }
+
+      if (!mucDoanPhi.soTien) {
+        throw new Error(`Mức đoàn phí ${mucDoanPhi.idMucDP} chưa có số tiền`);
+      }
+
       // Nạp thêm thông tin đoàn viên để hiển thị
       const dv = await DoanVien.findByPk(doanPhi.idDV, { transaction });
-      if (dv) dsDoanVien.push({ ...doanPhi.toJSON(), doanVien: dv.toJSON() });
+      if (dv) {
+        dsDoanVien.push({
+          idDV: doanPhi.idDV,
+          hoTen: dv.hoTen,
+          soTien: mucDoanPhi.soTien,
+        });
+      }
 
-      tongTien += doanPhi.mucDoanPhi.soTien;
+      tongTien += mucDoanPhi.soTien;
 
       await doanPhi.update(
         {
           idPhieuThu: phieuThu.idPhieuThu,
           trangThai: "Đang chờ duyệt",
-          ngayDong: new Date(),
+          ngayDong: sequelize.literal('CAST(GETDATE() AS DATE)'),
         },
         { transaction },
       );
     }
 
-    // Tự động sinh file HTML danh sách nộp
-    const uploadDir = path.join(__dirname, "../../uploads/phieuthu");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-    const fileName = `${idPhieuThu}_${Date.now()}.html`;
-    const filePath = path.join(uploadDir, fileName);
-
-    const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Danh sách nộp phí - ${idPhieuThu}</title>
-<style>
-body { font-family: Arial, sans-serif; padding: 20px; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-th { background-color: #004f9f; color: white; }
-</style>
-</head>
-<body>
-  <h2 style="color: #004f9f; text-align: center; text-transform: uppercase;">Danh sách Đoàn viên nộp phí</h2>
-  <p><strong>Mã phiếu:</strong> ${idPhieuThu}</p>
-  <p><strong>Người nộp (Bí thư):</strong> ${user.tenNguoiDung}</p>
-  <p><strong>Ngày nộp:</strong> ${new Date().toLocaleDateString("vi-VN")}</p>
-  <p><strong>Tổng tiền:</strong> ${tongTien.toLocaleString()} VNĐ</p>
-  <table>
-    <thead><tr><th>STT</th><th>Mã Đoàn viên</th><th>Họ và tên</th><th>Số tiền nộp</th></tr></thead>
-    <tbody>
-      ${dsDoanVien.map((dp, i) => `<tr><td>${i + 1}</td><td>${dp.idDV}</td><td>${dp.doanVien?.hoTen}</td><td>${dp.mucDoanPhi.soTien.toLocaleString()} ₫</td></tr>`).join("")}
-    </tbody>
-  </table>
-</body>
-</html>`;
-    fs.writeFileSync(filePath, htmlContent);
-    const generatedUrl = `http://localhost:8000/uploads/phieuthu/${fileName}`;
-
-    await phieuThu.update(
-      { tongTien, fileDinhKem: generatedUrl },
-      { transaction },
-    );
+    // Update tongTien
+    await phieuThu.update({ tongTien }, { transaction });
+    
     await transaction.commit();
     return phieuThu;
   } catch (error) {
     await transaction.rollback();
+    // Delete uploaded file if transaction fails
+    if (file && file.path && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
     throw error;
   }
 };
@@ -392,5 +377,4 @@ module.exports = {
   createPhieuThu,
   getAllChiDoan,
   getStats,
-  createPhieuThu,
 };

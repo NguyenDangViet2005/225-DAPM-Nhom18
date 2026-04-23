@@ -49,6 +49,11 @@ export const getDoanPhiAPI = async ({
 
 // ── Phiếu thu ────────────────────────────────────────────
 
+export const getMyDoanPhiAPI = async () => {
+  const res = await apiClient.get("/doan-phi/me");
+  return res.data;
+};
+
 export const getPhieuThuAPI = async ({ trangThai = "all" } = {}) => {
   const res = await apiClient.get("/doan-phi/phieu-thu", {
     params: { trangThai },
@@ -56,10 +61,17 @@ export const getPhieuThuAPI = async ({ trangThai = "all" } = {}) => {
   return res.data;
 };
 
-export const createPhieuThuAPI = async ({ listIdDoanPhi, fileDinhKem }) => {
-  const res = await apiClient.post("/doan-phi/phieu-thu", {
-    listIdDoanPhi,
-    fileDinhKem,
+export const createPhieuThuAPI = async ({ listIdDoanPhi, file }) => {
+  const formData = new FormData();
+  formData.append('listIdDoanPhi', JSON.stringify(listIdDoanPhi));
+  if (file) {
+    formData.append('fileDinhKem', file);
+  }
+  
+  const res = await apiClient.post("/doan-phi/phieu-thu", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return res.data;
 };

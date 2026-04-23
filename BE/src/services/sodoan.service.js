@@ -1,24 +1,6 @@
 const { SoDoan, DoanVien, ChiDoan, Khoa } = require("../models");
 
 const sodoanService = {
-  /**
-   * Lấy thông tin sổ đoàn của đoàn viên theo idDV
-   */
-  getMySoDoan: async (idDV) => {
-    const soDoan = await SoDoan.findOne({
-      where: { idDV },
-    });
-
-    if (!soDoan) return null;
-
-    // Trim CHAR fields
-    const data = soDoan.toJSON();
-    for (const key in data) {
-      if (typeof data[key] === "string") data[key] = data[key].trim();
-    }
-    return data;
-  },
-
   getLopSoDoan: async (idDV) => {
     // Lấy chi đoàn của bí thư
     const biThu = await DoanVien.findByPk(idDV);
@@ -195,33 +177,45 @@ const sodoanService = {
   },
 
   createSoDoan: async (idDV, ngayCap, noiCap) => {
-     const tonTai = await SoDoan.findOne({ where: { idDV } });
-     if (tonTai && tonTai.trangThai !== "Đã rút sổ") {
-       throw new Error("Đoàn viên biểu đã có sổ đoàn!");
-     }
-     if (tonTai) {
-       return await SoDoan.update({
+    const tonTai = await SoDoan.findOne({ where: { idDV } });
+    if (tonTai && tonTai.trangThai !== "Đã rút sổ") {
+      throw new Error("Đoàn viên biểu đã có sổ đoàn!");
+    }
+    
+    // Cập nhật ngayVaoDoan cho đoàn viên nếu chưa có
+    const doanVien = await DoanVien.findByPk(idDV);
+    if (doanVien && !doanVien.ngayVaoDoan) {
+      await doanVien.update({ 
+        ngayVaoDoan: ngayCap || new Date() 
+      });
+    }
+    
+    if (tonTai) {
+      return await SoDoan.update(
+        {
           ngayCap: ngayCap || new Date(),
           noiCap: noiCap || null,
           trangThai: "Đã nộp sổ",
-          ngayRutSo: null
-       }, { where: { idSoDoan: tonTai.idSoDoan }});
-     }
+          ngayRutSo: null,
+        },
+        { where: { idSoDoan: tonTai.idSoDoan } },
+      );
+    }
 
-     const lastSoDoan = await SoDoan.findOne({ order: [["idSoDoan", "DESC"]] });
-     let nextIdNumber = 1;
-     if (lastSoDoan && lastSoDoan.idSoDoan.startsWith("SD")) {
-        nextIdNumber = parseInt(lastSoDoan.idSoDoan.replace("SD", ""), 10) + 1;
-     }
-     
-     const idSoDoan = "SD" + String(nextIdNumber).padStart(3, "0");
-     return await SoDoan.create({
-        idSoDoan,
-        idDV,
-        ngayCap: ngayCap || new Date(),
-        noiCap: noiCap || "Đoàn trường cấp",
-        trangThai: "Đã nộp sổ"
-     });
+    const lastSoDoan = await SoDoan.findOne({ order: [["idSoDoan", "DESC"]] });
+    let nextIdNumber = 1;
+    if (lastSoDoan && lastSoDoan.idSoDoan.startsWith("SD")) {
+      nextIdNumber = parseInt(lastSoDoan.idSoDoan.replace("SD", ""), 10) + 1;
+    }
+
+    const idSoDoan = "SD" + String(nextIdNumber).padStart(3, "0");
+    return await SoDoan.create({
+      idSoDoan,
+      idDV,
+      ngayCap: ngayCap || new Date(),
+      noiCap: noiCap || "Đoàn trường cấp",
+      trangThai: "Đã nộp sổ",
+    });
   },
 
   duyetSoDoanLop: async (idSoDoans, trangThai) => {

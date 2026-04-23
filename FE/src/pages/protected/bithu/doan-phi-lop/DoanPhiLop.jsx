@@ -1,72 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Search,
-  Wallet,
-  CheckCircle,
-  AlertTriangle,
-  Send,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Upload,
-} from "lucide-react";
 import AuthContext from "@/contexts/AuthContext";
-import {
-  getDoanPhiStatsAPI,
-  getDoanPhiAPI,
-  createPhieuThuAPI,
-  getPhieuThuAPI,
-} from "@/apis/doanphi.api";
+import { getDoanPhiStatsAPI, getDoanPhiAPI, createPhieuThuAPI, getPhieuThuAPI } from "@/apis/doanphi.api";
+import { PAGE_SIZE } from "@/constants";
+import { getErrorMessage } from "@/utils";
+import DoanPhiLopStats from "./DoanPhiLopStats";
+import DoanPhiLopTable from "./DoanPhiLopTable";
+import DoanPhiLopModal from "./DoanPhiLopModal";
+import PhieuThuTable from "./PhieuThuTable";
 import "./DoanPhiLop.css";
-
-const PAGE_SIZE = 20;
-
-/* ── Circle Progress ── */
-const CircleProgress = ({ pct, size = 56, stroke = 5 }) => {
-  const r = (size - stroke) / 2;
-  const circ = 2 * Math.PI * r;
-  const offset = circ - (pct / 100) * circ;
-  return (
-    <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke="#e2e8f0"
-        strokeWidth={stroke}
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke="#004f9f"
-        strokeWidth={stroke}
-        strokeDasharray={circ}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-      />
-      <text
-        x="50%"
-        y="50%"
-        dominantBaseline="middle"
-        textAnchor="middle"
-        style={{
-          transform: "rotate(90deg)",
-          transformOrigin: "center",
-          fontSize: 11,
-          fontWeight: 700,
-          fill: "#004f9f",
-        }}
-      >
-        {pct}%
-      </text>
-    </svg>
-  );
-};
 
 const DoanPhiLop = () => {
   const location = useLocation();
@@ -79,6 +21,7 @@ const DoanPhiLop = () => {
     : location.pathname.endsWith("/lich-su")
       ? "lich-su"
       : "danh-sach";
+
   const handleTabChange = (tab) => {
     if (tab === "gui") navigate("/bi-thu/doan-phi-lop/gui");
     else if (tab === "lich-su") navigate("/bi-thu/doan-phi-lop/lich-su");
@@ -89,6 +32,7 @@ const DoanPhiLop = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [checked, setChecked] = useState({});
   const [page, setPage] = useState(1);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const [stats, setStats] = useState({
     tongDoanVien: 0,
@@ -125,7 +69,7 @@ const DoanPhiLop = () => {
         trangThai: statusFilter,
         idChiDoan: myChiDoan,
         page,
-        limit: PAGE_SIZE,
+        limit: PAGE_SIZE.DEFAULT,
       });
       if (res.success) {
         setDoanPhiList(res.data);
@@ -164,16 +108,17 @@ const DoanPhiLop = () => {
 
   const toggleCheck = (idDoanPhi) =>
     setChecked((prev) => ({ ...prev, [idDoanPhi]: !prev[idDoanPhi] }));
+
   const handleSearch = (v) => {
     setSearchTerm(v);
     setPage(1);
   };
+
   const handleFilter = (v) => {
     setStatusFilter(v);
     setPage(1);
   };
 
-  // Helper cho nút "Chọn tất cả" trên trang hiện tại
   const availableToSelect = doanPhiList;
   const isAllSelected =
     availableToSelect.length > 0 &&
@@ -196,103 +141,53 @@ const DoanPhiLop = () => {
   const handleSubmit = async () => {
     if (selectedCount === 0)
       return alert("Vui lòng chọn ít nhất 1 đoàn viên đã nộp phí!");
+    if (!uploadedFile)
+      return alert("Vui lòng đính kèm file chứng từ (ảnh hoặc PDF)!");
+
     try {
       const res = await createPhieuThuAPI({
         listIdDoanPhi: selectedList,
-        fileDinhKem: "minh_chung_nop_tien.pdf", // Dummy file
+        file: uploadedFile,
       });
       if (res.success) {
         alert("Gửi danh sách nộp thành công! Vui lòng chờ Đoàn trường duyệt.");
         setChecked({});
+        setUploadedFile(null);
         fetchStats();
         fetchList();
         handleTabChange("danh-sach");
       }
     } catch (e) {
-      alert("Có lỗi xảy ra: " + (e.message || ""));
+      alert(getErrorMessage(e));
     }
   };
 
   const handleLapDanhSach = () => {
     if (selectedCount === 0) {
-      return alert(
-        "Vui lòng tích chọn đoàn viên chưa đóng phí để lập danh sách!",
-      );
+      return alert("Vui lòng tích chọn đoàn viên chưa đóng phí để lập danh sách!");
     }
     handleTabChange("gui");
   };
 
   return (
     <div className="dpl-page">
-      {/* ── Page Title ── */}
+      {/* Page Title */}
       <div className="dpl-page-header">
         <div>
           <h1 className="dpl-page-title">Đoàn phí lớp</h1>
           <p className="dpl-page-sub">
             Quản lý thu đoàn phí chi đoàn &nbsp;·&nbsp; Chi đoàn:{" "}
             <strong>
-              {myChiDoan !== "Unknown"
-                ? user?.chiDoan?.tenChiDoan || myChiDoan
-                : "..."}
+              {myChiDoan !== "Unknown" ? user?.chiDoan?.tenChiDoan || myChiDoan : "..."}
             </strong>
           </p>
         </div>
       </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="dpl-stats">
-        <div className="dpl-stat-card">
-          <div className="dpl-stat-card__icon dpl-stat-card__icon--blue">
-            <Wallet size={20} />
-          </div>
-          <div>
-            <p className="dpl-stat-card__label">Mức phí {stats.namHoc}</p>
-            <p className="dpl-stat-card__value">
-              {stats.soTien.toLocaleString()} ₫
-            </p>
-          </div>
-        </div>
-        <div className="dpl-stat-card">
-          <div className="dpl-stat-card__icon dpl-stat-card__icon--green">
-            <CheckCircle size={20} />
-          </div>
-          <div>
-            <p className="dpl-stat-card__label">Đã đóng</p>
-            <p className="dpl-stat-card__value">
-              {stats.daDong}
-              <span className="dpl-stat-card__total">
-                /{stats.tongDoanVien}
-              </span>
-            </p>
-          </div>
-        </div>
-        <div className="dpl-stat-card">
-          <div className="dpl-stat-card__icon dpl-stat-card__icon--amber">
-            <AlertTriangle size={20} />
-          </div>
-          <div>
-            <p className="dpl-stat-card__label">Chưa đóng / Chờ duyệt</p>
-            <p className="dpl-stat-card__value">
-              {stats.chuaDong} / {stats.dangChoDuyet}{" "}
-              <span className="dpl-stat-card__unit">đoàn viên</span>
-            </p>
-          </div>
-        </div>
-        <div className="dpl-stat-card dpl-stat-card--progress">
-          <div className="dpl-stat-card__icon dpl-stat-card__icon--blue">
-            <Wallet size={20} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <p className="dpl-stat-card__label">Tổng đã thu (được duyệt)</p>
-            <p className="dpl-stat-card__value">
-              {stats.tongDaThu.toLocaleString()} ₫
-            </p>
-          </div>
-          <CircleProgress pct={stats.tyLe || 0} />
-        </div>
-      </div>
+      {/* Stat Cards */}
+      <DoanPhiLopStats stats={stats} />
 
-      {/* ── Tabs ── */}
+      {/* Tabs */}
       <div className="dpl-tabs-bar">
         <button
           className={`dpl-tab${activeTab === "danh-sach" ? " dpl-tab--active" : ""}`}
@@ -304,7 +199,7 @@ const DoanPhiLop = () => {
           className={`dpl-tab${activeTab === "gui" ? " dpl-tab--active" : ""}`}
           onClick={() => handleTabChange("gui")}
         >
-          Gửi danh sách nộp {selectedCount > 0 && `(${selectedCount})`}
+          Gửi danh sách nộp
         </button>
         <button
           className={`dpl-tab${activeTab === "lich-su" ? " dpl-tab--active" : ""}`}
@@ -314,291 +209,45 @@ const DoanPhiLop = () => {
         </button>
       </div>
 
-      {/* ══ TAB: DANH SÁCH THU ══ */}
+      {/* TAB: DANH SÁCH THU */}
       {activeTab === "danh-sach" && (
-        <div className="dpl-card">
-          {/* Toolbar */}
-          <div
-            className="dpl-toolbar"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div style={{ display: "flex", gap: "12px" }}>
-              <select
-                className="dpl-select"
-                value={statusFilter}
-                onChange={(e) => handleFilter(e.target.value)}
-              >
-                <option value="all">Tất cả</option>
-                <option value="Đã đóng">Đã đóng</option>
-                <option value="Chưa đóng">Chưa đóng</option>
-                <option value="Đang chờ duyệt">Đang chờ duyệt</option>
-              </select>
-              <div className="dpl-search-wrap">
-                <Search size={15} className="dpl-search-icon" />
-                <input
-                  className="dpl-search-input"
-                  placeholder="Tìm MSSV hoặc tên đoàn viên..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                />
-              </div>
-            </div>
-            {selectedCount > 0 && (
-              <button
-                className="dpl-btn dpl-btn--primary"
-                onClick={handleLapDanhSach}
-              >
-                Lập danh sách ({selectedCount})
-              </button>
-            )}
-          </div>
-
-          {/* Table */}
-          <div className="dpl-table-wrap">
-            <table className="dpl-table">
-              <thead>
-                <tr>
-                  <th style={{ width: 48 }}>
-                    <input
-                      type="checkbox"
-                      checked={isAllSelected}
-                      onChange={toggleSelectAll}
-                      disabled={availableToSelect.length === 0}
-                    />
-                  </th>
-                  <th style={{ width: 48 }}></th>
-                  <th>MSSV</th>
-                  <th>Họ và Tên</th>
-                  <th>Số tiền</th>
-                  <th>Ngày đóng</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="dpl-empty">
-                      Đang tải dữ liệu...
-                    </td>
-                  </tr>
-                ) : (
-                  doanPhiList.map((p, idx) => (
-                    <tr
-                      key={p.idDoanPhi}
-                      className={idx % 2 === 1 ? "dpl-tr--alt" : ""}
-                    >
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={!!checked[p.idDoanPhi]}
-                          onChange={() => toggleCheck(p.idDoanPhi)}
-                          disabled={
-                            p.trangThai === "Đã đóng" ||
-                            p.trangThai === "Đang chờ duyệt"
-                          }
-                        />
-                      </td>
-                      <td className="dpl-td-mssv">
-                        {p.doanVien?.idDV || p.idDV}
-                      </td>
-                      <td className="dpl-td-name">{p.doanVien?.hoTen}</td>
-                      <td>{stats.soTien.toLocaleString()} ₫</td>
-                      <td className="dpl-td-muted">
-                        {p.ngayDong
-                          ? new Date(p.ngayDong).toLocaleDateString("vi-VN")
-                          : "—"}
-                      </td>
-                      <td>
-                        <span
-                          className={`dpl-badge ${p.trangThai === "Đã đóng" ? "dpl-badge--green" : p.trangThai === "Đang chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}
-                        >
-                          {p.trangThai}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-                {!loading && doanPhiList.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="dpl-empty">
-                      Không tìm thấy đoàn viên nào
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <div className="dpl-pagination">
-            <span className="dpl-pagination__info">
-              Trang {page} / {totalPages}
-            </span>
-            <div className="dpl-pagination__btns">
-              <button
-                className="dpl-pg-btn"
-                onClick={() => setPage(1)}
-                disabled={page === 1}
-              >
-                <ChevronsLeft size={14} />
-              </button>
-              <button
-                className="dpl-pg-btn"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                <ChevronLeft size={14} />
-              </button>
-              <button
-                className="dpl-pg-btn"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                <ChevronRight size={14} />
-              </button>
-              <button
-                className="dpl-pg-btn"
-                onClick={() => setPage(totalPages)}
-                disabled={page === totalPages}
-              >
-                <ChevronsRight size={14} />
-              </button>
-            </div>
-          </div>
-        </div>
+        <DoanPhiLopTable
+          doanPhiList={doanPhiList}
+          loading={loading}
+          checked={checked}
+          toggleCheck={toggleCheck}
+          isAllSelected={isAllSelected}
+          toggleSelectAll={toggleSelectAll}
+          availableToSelect={availableToSelect}
+          searchTerm={searchTerm}
+          handleSearch={handleSearch}
+          statusFilter={statusFilter}
+          handleFilter={handleFilter}
+          selectedCount={selectedCount}
+          handleLapDanhSach={handleLapDanhSach}
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+          soTien={stats.soTien}
+        />
       )}
 
-      {/* ══ TAB: GỬI DANH SÁCH NỘP ══ */}
+      {/* TAB: GỬI DANH SÁCH NỘP */}
       {activeTab === "gui" && (
-        <div className="dpl-card dpl-gui">
-          <div className="dpl-gui__header">
-            <div className="dpl-gui__icon">
-              <Send size={22} />
-            </div>
-            <div>
-              <h3 className="dpl-gui__title">Gửi phiếu thu đoàn phí</h3>
-              <p className="dpl-gui__sub">
-                Xác nhận những đoàn viên vừa chọn để lập thành phiếu nộp lên
-                Đoàn trường
-              </p>
-            </div>
-          </div>
-
-          <div className="dpl-gui__summary">
-            {[
-              ["Số đoàn viên được chọn nộp", `${selectedCount} người`],
-              [
-                "Tổng tiền trên phiếu thu",
-                `${moneyToSubmit.toLocaleString()} ₫`,
-              ],
-              ["Năm học", stats.namHoc],
-            ].map(([k, v]) => (
-              <div key={k} className="dpl-gui__summary-row">
-                <span>{k}</span>
-                <strong>{v}</strong>
-              </div>
-            ))}
-          </div>
-
-          <div className="dpl-gui__actions">
-            <button
-              className="dpl-btn dpl-btn--outline"
-              onClick={() => handleTabChange("danh-sach")}
-            >
-              Quay lại danh sách
-            </button>
-            <button
-              className="dpl-btn dpl-btn--primary"
-              onClick={handleSubmit}
-              disabled={selectedCount === 0}
-            >
-              <Send size={15} /> Xác nhận gửi phiếu
-            </button>
-          </div>
-        </div>
+        <DoanPhiLopModal
+          selectedCount={selectedCount}
+          moneyToSubmit={moneyToSubmit}
+          namHoc={stats.namHoc}
+          uploadedFile={uploadedFile}
+          setUploadedFile={setUploadedFile}
+          handleSubmit={handleSubmit}
+          handleTabChange={handleTabChange}
+        />
       )}
 
-      {/* ══ TAB: LỊCH SỬ NỘP ══ */}
+      {/* TAB: LỊCH SỬ NỘP */}
       {activeTab === "lich-su" && (
-        <div className="dpl-card">
-          <div className="dpl-table-wrap">
-            <table className="dpl-table">
-              <thead>
-                <tr>
-                  <th>Mã Phiếu</th>
-                  <th>Ngày lập</th>
-                  <th>Tổng tiền</th>
-                  <th>File đính kèm</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={5} className="dpl-empty">
-                      Đang tải dữ liệu...
-                    </td>
-                  </tr>
-                ) : (
-                  phieuThuList.map((pt, idx) => (
-                    <tr
-                      key={pt.idPhieuThu}
-                      className={idx % 2 === 1 ? "dpl-tr--alt" : ""}
-                    >
-                      <td className="dpl-td-mssv">{pt.idPhieuThu}</td>
-                      <td className="dpl-td-muted">
-                        {pt.ngayLap
-                          ? new Date(pt.ngayLap).toLocaleDateString("vi-VN")
-                          : "—"}
-                      </td>
-                      <td>{pt.tongTien?.toLocaleString()} ₫</td>
-                      <td>
-                        {pt.fileDinhKem ? (
-                          pt.fileDinhKem.startsWith("http") ? (
-                            <a
-                              href={pt.fileDinhKem}
-                              target="_blank"
-                              rel="noreferrer"
-                              style={{ color: "#004f9f", fontWeight: 500 }}
-                            >
-                              Xem file
-                            </a>
-                          ) : (
-                            <span
-                              style={{ color: "#94a3b8", fontSize: "0.85em" }}
-                            >
-                              File thử nghiệm cũ
-                            </span>
-                          )
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                      <td>
-                        <span
-                          className={`dpl-badge ${pt.trangThai === "Đã duyệt" ? "dpl-badge--green" : pt.trangThai === "Chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}
-                        >
-                          {pt.trangThai}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-                {!loading && phieuThuList.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="dpl-empty">
-                      Bạn chưa gửi danh sách nộp nào
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <PhieuThuTable phieuThuList={phieuThuList} loading={loading} />
       )}
     </div>
   );

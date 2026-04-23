@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Wallet, CheckCircle, Clock } from 'lucide-react';
-import doanvienAPI from '@/apis/doanvien.api';
+import { getMyDoanPhiAPI } from '@/apis/doanphi.api';
 import './LSDoanPhi.css';
 
 const fmtDate  = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—';
@@ -23,7 +23,7 @@ const LSDoanPhi = () => {
     const fetch_ = async () => {
       setLoading(true);
       try {
-        const result = await doanvienAPI.getMyDoanPhi();
+        const result = await getMyDoanPhiAPI();
         if (result.success) {
           setData(result.data);
         } else {

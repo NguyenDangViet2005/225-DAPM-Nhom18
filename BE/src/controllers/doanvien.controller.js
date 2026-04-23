@@ -66,17 +66,30 @@ const doanvienController = {
   },
 
   /**
-   * GET /api/doan-vien/:id
-   * Lấy thông tin đoàn viên theo ID
+   * GET /api/doan-vien/so-doan
+   * Lấy thông tin sổ đoàn của đoàn viên đang đăng nhập
    */
-  getById: async (req, res) => {
+  getMySoDoan: async (req, res) => {
     try {
-      const { id } = req.params;
-      const doanvien = await doanvienService.getProfile(id);
-      if (!doanvien) {
-        return res.status(404).json({ success: false, message: "Không tìm thấy đoàn viên" });
+      const idDV = req.user?.idDV;
+
+      if (!idDV) {
+        return res.status(403).json({
+          success: false,
+          message: "Tài khoản này không liên kết với đoàn viên nào",
+        });
       }
-      return res.status(200).json({ success: true, data: doanvien });
+
+      const soDoan = await doanvienService.getMySoDoan(idDV);
+
+      if (!soDoan) {
+        return res.status(404).json({
+          success: false,
+          message: "Chưa có thông tin sổ đoàn",
+        });
+      }
+
+      return res.status(200).json({ success: true, data: soDoan });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }
@@ -84,79 +97,22 @@ const doanvienController = {
 
   /**
    * GET /api/doan-vien
-   * Lấy danh sách đoàn viên (có phân trang, tìm kiếm)
+   * Lấy danh sách đoàn viên với phân trang và tìm kiếm
    */
   getAll: async (req, res) => {
     try {
       const { page = 1, limit = 10, search = "" } = req.query;
-      const result = await doanvienService.getAllDoanVien({ page, limit, search });
-      return res.status(200).json({
-        success: true,
-        data: result.data,
-        pagination: result.pagination,
-      });
+      const result = await doanvienService.getAll(
+        parseInt(page),
+        parseInt(limit),
+        search
+      );
+      return res.status(200).json({ success: true, ...result });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  /**
-   * POST /api/doan-vien
-   * Tạo đoàn viên mới
-   */
-  create: async (req, res) => {
-    try {
-      const newDoanVien = await doanvienService.createDoanVien(req.body);
-      return res.status(201).json({
-        success: true,
-        message: "Tạo đoàn viên thành công",
-        data: newDoanVien,
-      });
-    } catch (error) {
-      if (error.message === "Mã đoàn viên đã tồn tại") {
-        return res.status(400).json({ success: false, message: error.message });
-      }
-      return res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  /**
-   * PUT /api/doan-vien/:id
-   * Cập nhật thông tin đoàn viên
-   */
-  update: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const updated = await doanvienService.updateDoanVien(id, req.body);
-      if (!updated) {
-        return res.status(404).json({ success: false, message: "Không tìm thấy đoàn viên" });
-      }
-      return res.status(200).json({
-        success: true,
-        message: "Cập nhật đoàn viên thành công",
-        data: updated,
-      });
-    } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
-  /**
-   * GET /api/doan-vien/search/:mssv
-   * Tìm kiếm đoàn viên theo mã sinh viên
-   */
-  searchByMSSV: async (req, res) => {
-    try {
-      const { mssv } = req.params;
-      const doanvien = await doanvienService.getProfile(mssv);
-      if (!doanvien) {
-        return res.status(404).json({ success: false, message: "Không tìm thấy đoàn viên" });
-      }
-      return res.status(200).json({ success: true, data: doanvien });
-    } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
-    }
-  },
   /**
    * GET /api/doan-vien/stats
    * Lấy thống kê đoàn viên
@@ -176,8 +132,55 @@ const doanvienController = {
    */
   getChiDoanList: async (req, res) => {
     try {
-      const chiDoanList = await doanvienService.getChiDoanList();
-      return res.status(200).json({ success: true, data: chiDoanList });
+      const list = await doanvienService.getChiDoanList();
+      return res.status(200).json({ success: true, data: list });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  /**
+   * POST /api/doan-vien
+   * Tạo đoàn viên mới
+   */
+  create: async (req, res) => {
+    try {
+      const doanvien = await doanvienService.create(req.body);
+      return res.status(201).json({ success: true, data: doanvien });
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  },
+
+  /**
+   * PUT /api/doan-vien/:id
+   * Cập nhật đoàn viên
+   */
+  update: async (req, res) => {
+    try {
+      const doanvien = await doanvienService.update(req.params.id, req.body);
+      if (!doanvien) {
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy đoàn viên",
+        });
+      }
+      return res.status(200).json({ success: true, data: doanvien });
+    } catch (error) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+  },
+
+  getById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const doanvien = await doanvienService.getProfile(id);
+      if (!doanvien) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Không tìm thấy đoàn viên" });
+      }
+      return res.status(200).json({ success: true, data: doanvien });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }

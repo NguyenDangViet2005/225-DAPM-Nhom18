@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { HOAT_DONG_STATUS, DON_VI_TO_CHUC } from "@/constants";
 
 const INITIAL_FORM_STATE = {
   idHD: "",
@@ -9,8 +10,8 @@ const INITIAL_FORM_STATE = {
   diaDiem: "",
   soLuongMax: "",
   diemHD: 0,
-  trangThai: "Đang mở",
-  donViToChuc: "Đoàn Trường",
+  trangThai: HOAT_DONG_STATUS.DANG_MO,
+  donViToChuc: DON_VI_TO_CHUC.DOAN_TRUONG,
 };
 
 const HoatDongModal = ({
@@ -44,8 +45,9 @@ const HoatDongModal = ({
         diaDiem: activity.diaDiem || "",
         soLuongMax: activity.soLuongMax || "",
         diemHD: activity.diemHD || 0,
-        trangThai: activity.trangThai?.trim() || "Đang mở",
-        donViToChuc: activity.donViToChuc?.trim() || "Đoàn Trường",
+        trangThai: activity.trangThai?.trim() || HOAT_DONG_STATUS.DANG_MO,
+        donViToChuc:
+          activity.donViToChuc?.trim() || DON_VI_TO_CHUC.DOAN_TRUONG,
       });
     } else {
       setFormData(INITIAL_FORM_STATE);
@@ -167,9 +169,15 @@ const HoatDongModal = ({
                 onChange={handleChange}
                 className={`form-input ${errors.donViToChuc ? "error" : ""}`}
               >
-                <option value="Đoàn Trường">Đoàn Trường</option>
-                <option value="Đoàn Khoa">Đoàn Khoa</option>
-                <option value="Chi đoàn">Chi đoàn</option>
+                <option value={DON_VI_TO_CHUC.DOAN_TRUONG}>
+                  {DON_VI_TO_CHUC.DOAN_TRUONG}
+                </option>
+                <option value={DON_VI_TO_CHUC.DOAN_KHOA}>
+                  {DON_VI_TO_CHUC.DOAN_KHOA}
+                </option>
+                <option value={DON_VI_TO_CHUC.CHI_DOAN}>
+                  {DON_VI_TO_CHUC.CHI_DOAN}
+                </option>
               </select>
               {errors.donViToChuc && (
                 <span className="error-text">{errors.donViToChuc}</span>
@@ -275,8 +283,12 @@ const HoatDongModal = ({
               onChange={handleChange}
               className="form-input"
             >
-              <option value="Đang mở">Đang mở</option>
-              <option value="Đã đóng">Đã đóng</option>
+              <option value={HOAT_DONG_STATUS.DANG_MO}>
+                {HOAT_DONG_STATUS.DANG_MO}
+              </option>
+              <option value={HOAT_DONG_STATUS.DA_DONG}>
+                {HOAT_DONG_STATUS.DA_DONG}
+              </option>
             </select>
           </div>
 

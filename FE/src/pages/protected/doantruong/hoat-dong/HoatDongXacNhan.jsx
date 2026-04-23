@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import hoatdongAPI from "@/apis/hoatdong.api";
 import doanviendangkiAPI from "@/apis/doanviendangki.api";
-import RegistrationListModal from "@/components/commons/modals/DanhSachDoanVienDangKiModal";
+import RegistrationListModal from "@/pages/protected/doantruong/hoat-dong/DanhSachDoanVienDangKiModal";
 import "./HoatDong.css";
 
 const API_BASE = "http://localhost:8000/api";

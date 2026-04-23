@@ -13,40 +13,17 @@ export const doanvienAPI = {
     return response.data;
   },
 
-  // GET /api/sodoan/me — Lấy tình trạng sổ đoàn
+  // GET /api/doan-vien/so-doan — Lấy thông tin sổ đoàn của đoàn viên
   getMySoDoan: async () => {
-    const response = await apiClient.get("/sodoan/me");
+    const response = await apiClient.get("/doan-vien/so-doan");
     return response.data;
   },
 
-  // GET /api/doan-phi/me — Lấy lịch sử đóng đoàn phí
-  getMyDoanPhi: async () => {
-    const response = await apiClient.get("/doan-phi/me");
-    return response.data;
-  },
-
-  getById: async (id) => {
-    const response = await apiClient.get(`/doan-vien/${id}`);
-    return response;
-  },
-
-  // GET /api/doan-vien — Lấy danh sách đoàn viên (có phân trang, tìm kiếm)
+  // GET /api/doan-vien — Lấy danh sách đoàn viên (phân trang)
   getAll: async (page = 1, limit = 10, search = "") => {
     const response = await apiClient.get("/doan-vien", {
-      params: { page, limit, search }
+      params: { page, limit, search },
     });
-    return response.data;
-  },
-
-  // POST /api/doan-vien — Tạo đoàn viên mới
-  createDoanVien: async (data) => {
-    const response = await apiClient.post("/doan-vien", data);
-    return response.data;
-  },
-
-  // PUT /api/doan-vien/:id — Cập nhật đoàn viên
-  updateDoanVien: async (id, data) => {
-    const response = await apiClient.put(`/doan-vien/${id}`, data);
     return response.data;
   },
 
@@ -62,11 +39,22 @@ export const doanvienAPI = {
     return response.data;
   },
 
-  // GET /api/doan-vien/search/:mssv — Tìm kiếm đoàn viên theo mã sinh viên
-  searchByMSSV: async (mssv) => {
-    const response = await apiClient.get(`/doan-vien/search/${mssv}`);
+  // POST /api/doan-vien — Tạo đoàn viên mới
+  createDoanVien: async (data) => {
+    const response = await apiClient.post("/doan-vien", data);
     return response.data;
-  }
+  },
+
+  // PUT /api/doan-vien/:id — Cập nhật đoàn viên
+  updateDoanVien: async (id, data) => {
+    const response = await apiClient.put(`/doan-vien/${id}`, data);
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await apiClient.get(`/doan-vien/${id}`);
+    return response;
+  },
 };
 
 export default doanvienAPI;

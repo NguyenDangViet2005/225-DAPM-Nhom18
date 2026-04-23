@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { Download, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import sodoanAPI from "@/apis/sodoan.api";
 import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
-import SoDoanTable from "@/components/commons/tables/SoDoanTable";
-import SoDoanStatusModal from "./SoDoanStatusModal";
-import SoDoanViewModal from "./SoDoanViewModal";
-import SoDoanCreateModal from "./SoDoanCreateModal";
+import Pagination from "@/components/commons/Pagination/Pagination";
+import SoDoanTable from "@/pages/protected/doantruong/so-doan/SoDoanTable";
+import SoDoanStatusModal from "@/pages/protected/doantruong/so-doan/SoDoanStatusModal";
+import SoDoanViewModal from "@/pages/protected/doantruong/so-doan/SoDoanViewModal";
+import SoDoanCreateModal from "@/pages/protected/doantruong/so-doan/SoDoanCreateModal";
 import "./SoDoan.css";
 
 const SoDoanQuanLy = () => {
@@ -185,32 +186,14 @@ const SoDoanQuanLy = () => {
       />
 
       {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="pagination-container">
-          <button
-            className="btn-icon"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1 || loading}
-            title="Trang trước"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <span className="pagination-text">
-            Trang <strong>{currentPage}</strong> / {totalPages}
-            <span className="pagination-total">({totalItems} sổ đoàn)</span>
-          </span>
-          <button
-            className="btn-icon"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages || loading}
-            title="Trang sau"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        onPageChange={setCurrentPage}
+        loading={loading}
+        itemLabel="sổ đoàn"
+      />
 
       <SoDoanStatusModal
         isOpen={showStatusModal}

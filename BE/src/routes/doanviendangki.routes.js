@@ -8,7 +8,6 @@ const {
   getActivityRegistrations,
   getApprovedActivityRegistrations,
   getChiDoanRegistrations,
-  getAvailableActivities,
   dangKyHoatDong,
   huyDangKy,
   getLichSuDangKy,
@@ -42,7 +41,6 @@ router.get(
 );
 
 // ── Đoàn viên tự đăng ký / hủy ──────────────────────────
-router.get("/available", getAvailableActivities);
 router.get("/lich-su", getLichSuDangKy);
 router.get("/xem-diem", getXemDiem);
 router.post("/:idHD/dang-ky", dangKyHoatDong);

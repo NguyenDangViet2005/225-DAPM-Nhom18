@@ -2,12 +2,14 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, Users, Clock, CheckCircle, XCircle } from "lucide-react";
 import { hoatdongAPI } from "@/apis/hoatdong.api";
 import doanviendangkiAPI from "@/apis/doanviendangki.api";
+import { formatDate } from "@/utils";
+import { DANG_KI_STATUS } from "@/constants";
 import "./HoatDongChiDoan.css";
 
 const STATUS_CFG = {
-  "Đã duyệt": { cls: "hcd-badge--approved", icon: <CheckCircle size={11} /> },
-  "Chờ duyệt": { cls: "hcd-badge--pending",  icon: <Clock size={11} /> },
-  "Từ chối":   { cls: "hcd-badge--rejected", icon: <XCircle size={11} /> },
+  [DANG_KI_STATUS.APPROVED]: { cls: "hcd-badge--approved", icon: <CheckCircle size={11} /> },
+  [DANG_KI_STATUS.PENDING]: { cls: "hcd-badge--pending", icon: <Clock size={11} /> },
+  [DANG_KI_STATUS.REJECTED]: { cls: "hcd-badge--rejected", icon: <XCircle size={11} /> },
 };
 
 const HoatDongChiDoanDanhSach = () => {
@@ -52,9 +54,9 @@ const HoatDongChiDoanDanhSach = () => {
   }, [allRegistrations, selectedHD, statusFilter, searchTerm]);
 
   const total    = registrations.length;
-  const pending  = registrations.filter((r) => r.trangThaiDuyet === "Chờ duyệt").length;
-  const approved = registrations.filter((r) => r.trangThaiDuyet === "Đã duyệt").length;
-  const rejected = registrations.filter((r) => r.trangThaiDuyet === "Từ chối").length;
+  const pending  = registrations.filter((r) => r.trangThaiDuyet === DANG_KI_STATUS.PENDING).length;
+  const approved = registrations.filter((r) => r.trangThaiDuyet === DANG_KI_STATUS.APPROVED).length;
+  const rejected = registrations.filter((r) => r.trangThaiDuyet === DANG_KI_STATUS.REJECTED).length;
 
   return (
     <div className="hcd-page">
@@ -110,9 +112,9 @@ const HoatDongChiDoanDanhSach = () => {
           <select className="hcd-select" value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="all">Tất cả trạng thái</option>
-            <option value="Chờ duyệt">Chờ duyệt</option>
-            <option value="Đã duyệt">Đã duyệt</option>
-            <option value="Từ chối">Từ chối</option>
+            <option value={DANG_KI_STATUS.PENDING}>Chờ duyệt</option>
+            <option value={DANG_KI_STATUS.APPROVED}>Đã duyệt</option>
+            <option value={DANG_KI_STATUS.REJECTED}>Từ chối</option>
           </select>
         </div>
 
@@ -138,9 +140,7 @@ const HoatDongChiDoanDanhSach = () => {
                     <td className="hcd-td-mssv">{reg.idDV}</td>
                     <td className="hcd-td-name">{reg.hoTen}</td>
                     <td>{reg.tenHD}</td>
-                    <td className="hcd-td-muted">
-                      {new Date(reg.ngayDangKi).toLocaleDateString("vi-VN")}
-                    </td>
+                    <td className="hcd-td-muted">{formatDate(reg.ngayDangKi)}</td>
                     <td>
                       <span className={`hcd-badge ${cfg.cls}`}>
                         {cfg.icon} {reg.trangThaiDuyet}

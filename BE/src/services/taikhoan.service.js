@@ -129,14 +129,27 @@ const createTaiKhoan = async (data) => {
     const dvHasTK = await TaiKhoan.findOne({ where: { idDV } });
     if (dvHasTK) throw new Error("Đoàn viên này đã có tài khoản");
 
+    // Xác định chức vụ dựa trên tên vai trò
+    const tenVaiTro = vaiTro.tenVaiTro.toLowerCase();
+    let chucVu = null;
+    if (tenVaiTro.includes("bí thư") || tenVaiTro.includes("bi thu")) {
+      chucVu = "Bí thư Chi đoàn";
+    }
+
     // Khởi tạo hồ sơ mặc định nếu chưa tồn tại
     const [dv, created] = await DoanVien.findOrCreate({
       where: { idDV },
       defaults: {
         hoTen: "Sinh viên mới (Tự động tạo)",
+        chucVu: chucVu,
         // Các trường khác được SQL hỗ trợ null sẽ tự trống
       }
     });
+
+    // Nếu đã tồn tại nhưng chưa có chức vụ, cập nhật chức vụ
+    if (!created && chucVu && !dv.chucVu) {
+      await dv.update({ chucVu });
+    }
   }
 
   // 4. Nếu có idKhoa → tự động tạo Khoa tạm nếu chưa tồn tại

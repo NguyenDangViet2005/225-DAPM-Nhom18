@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react";
-import {
-  CreditCard,
-  Download,
-  CheckCircle,
-  Clock,
-  TrendingUp,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Download, TrendingUp } from "lucide-react";
 import useDoanPhi from "@/hooks/useDoanPhi";
-import UpdateFeeModal from "@/components/commons/modals/UpdateMucDoanPhiModal";
+import UpdateFeeModal from "@/pages/protected/doantruong/doan-phi/UpdateMucDoanPhiModal";
 import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToolbar";
+import Pagination from "@/components/commons/Pagination/Pagination";
+import DoanPhiStatsCards from "@/pages/protected/doantruong/doan-phi/DoanPhiStatsCards";
+import DoanPhiPaymentTable from "@/pages/protected/doantruong/doan-phi/DoanPhiPaymentTable";
+import DoanPhiReceiptTable from "@/pages/protected/doantruong/doan-phi/DoanPhiReceiptTable";
+import DoanPhiRatesTable from "@/pages/protected/doantruong/doan-phi/DoanPhiRatesTable";
 import "./DoanPhi.css";
 
 const fmtMoney = (n) => (n ? `${Number(n).toLocaleString()} ₫` : "—");
-const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "—");
 const PAGE_SIZE = 10;
 
 const DoanPhi = () => {
@@ -77,10 +73,10 @@ const DoanPhi = () => {
     mucDoanPhi.find((r) => r.trangThai === "Đang áp dụng") ?? mucDoanPhi[0];
 
   const statCards = {
-    tongPhaiThu: fmtMoney(stats?.tongPhaiThu ?? 0),
-    daThu: fmtMoney(stats?.tongDaThu ?? 0),
+    tongPhaiThu: stats?.tongPhaiThu ?? 0,
+    tongDaThu: stats?.tongDaThu ?? 0,
     choDuyet: phieuThuList.filter((r) => r.trangThai === "Chờ duyệt").length,
-    tyLe: stats ? `${stats.tyLe}%` : "0%",
+    tyLe: stats?.tyLe ?? 0,
   };
 
   const handleConfirmUpdate = async () => {
@@ -154,74 +150,7 @@ const DoanPhi = () => {
       </div>
 
       {/* ── Stats ──────────────────────────────────────── */}
-      <div className="dp-stats">
-        <div className="dp-stat-item">
-          <span className="dp-stat-item__label">Tổng phải thu (Dự kiến)</span>
-          <span className="dp-stat-item__value">{statCards.tongPhaiThu}</span>
-          <CreditCard
-            size={40}
-            style={{
-              position: "absolute",
-              right: 20,
-              bottom: 20,
-              opacity: 0.05,
-            }}
-          />
-        </div>
-        <div
-          className="dp-stat-item"
-          style={{ borderLeft: "3px solid #15803d" }}
-        >
-          <span className="dp-stat-item__label">Đã thu thực tế</span>
-          <span className="dp-stat-item__value">{statCards.daThu}</span>
-          <CheckCircle
-            size={40}
-            style={{
-              position: "absolute",
-              right: 20,
-              bottom: 20,
-              opacity: 0.1,
-              color: "#15803d",
-            }}
-          />
-        </div>
-        <div
-          className="dp-stat-item"
-          style={{ borderLeft: "3px solid #b45309" }}
-        >
-          <span className="dp-stat-item__label">Phiếu thu chờ duyệt</span>
-          <span className="dp-stat-item__value">
-            {statCards.choDuyet} Phiếu
-          </span>
-          <Clock
-            size={40}
-            style={{
-              position: "absolute",
-              right: 20,
-              bottom: 20,
-              opacity: 0.1,
-              color: "#b45309",
-            }}
-          />
-        </div>
-        <div
-          className="dp-stat-item"
-          style={{ borderLeft: "3px solid #004f9f" }}
-        >
-          <span className="dp-stat-item__label">Tỷ lệ hoàn thành</span>
-          <span className="dp-stat-item__value">{statCards.tyLe}</span>
-          <TrendingUp
-            size={40}
-            style={{
-              position: "absolute",
-              right: 20,
-              bottom: 20,
-              opacity: 0.1,
-              color: "#004f9f",
-            }}
-          />
-        </div>
-      </div>
+      <DoanPhiStatsCards stats={statCards} />
 
       {/* ── Toolbar ────────────────────────────────────── */}
       <DataTableToolbar
@@ -261,7 +190,7 @@ const DoanPhi = () => {
         <div style={{ display: "flex", borderBottom: "1px solid #eef2f6" }}>
           {[
             { key: "payments", label: "Danh sách Đoàn viên" },
-            { key: "receipts", label: `Phiếu thu (${phieuThuList.length})` },
+            { key: "receipts", label: `Phiếu thu` },
             { key: "rates", label: "Lịch sử mức phí" },
           ].map((t) => (
             <button
@@ -304,238 +233,29 @@ const DoanPhi = () => {
         {/* Tab: Danh sách đoàn viên */}
         {!loading && activeTab === "payments" && (
           <>
-            <table className="dp-table">
-              <thead>
-                <tr>
-                  <th>MSSV</th>
-                  <th>Họ và Tên</th>
-                  <th>Chi đoàn</th>
-                  <th>Năm học</th>
-                  <th>Số tiền</th>
-                  <th>Ngày đóng</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {doanPhiList.map((p) => (
-                  <tr key={p.idDoanPhi}>
-                    <td className="dp-id-cell">{p.doanVien?.idDV ?? p.idDV}</td>
-                    <td style={{ fontWeight: 600 }}>
-                      {p.doanVien?.hoTen ?? "—"}
-                    </td>
-                    <td>
-                      {p.doanVien?.chiDoan?.tenChiDoan ??
-                        p.doanVien?.idChiDoan ??
-                        "—"}
-                    </td>
-                    <td>{p.mucDoanPhi?.namHoc ?? "—"}</td>
-                    <td className="dp-amount-cell">
-                      {fmtMoney(p.mucDoanPhi?.soTien)}
-                    </td>
-                    <td>{fmtDate(p.ngayDong)}</td>
-                    <td>
-                      <span
-                        className={`dp-badge ${
-                          p.trangThai === "Đã đóng"
-                            ? "dp-badge--paid"
-                            : p.trangThai === "Đang chờ duyệt"
-                              ? "dp-badge--pending"
-                              : "dp-badge--unpaid"
-                        }`}
-                      >
-                        {p.trangThai}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-                {doanPhiList.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={7}
-                      style={{
-                        textAlign: "center",
-                        padding: "2rem",
-                        color: "#94a3b8",
-                      }}
-                    >
-                      Không có dữ liệu
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-            {pagination.totalPages > 1 && (
-              <div className="dp-pagination">
-                <button
-                  className="dp-page-btn"
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1 || loading}
-                  title="Trang trước"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <span className="dp-page-info">
-                  Trang <strong>{currentPage}</strong> / {pagination.totalPages}
-                  <span className="dp-page-total">
-                    ({pagination.total} đoàn viên)
-                  </span>
-                </span>
-                <button
-                  className="dp-page-btn"
-                  onClick={() =>
-                    setCurrentPage((p) =>
-                      Math.min(pagination.totalPages, p + 1),
-                    )
-                  }
-                  disabled={currentPage === pagination.totalPages || loading}
-                  title="Trang sau"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            )}
+            <DoanPhiPaymentTable doanPhiList={doanPhiList} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.total}
+              onPageChange={setCurrentPage}
+              loading={loading}
+              itemLabel="đoàn viên"
+            />
           </>
         )}
 
         {/* Tab: Phiếu thu */}
         {!loading && activeTab === "receipts" && (
-          <table className="dp-table">
-            <thead>
-              <tr>
-                <th>Mã Phiếu</th>
-                <th>Người nộp</th>
-                <th>File đính kèm</th>
-                <th>Trạng thái</th>
-                <th>Duyệt phiếu</th>
-              </tr>
-            </thead>
-            <tbody>
-              {phieuThuList.map((pt) => (
-                <tr key={pt.idPhieuThu}>
-                  <td className="dp-id-cell">{pt.idPhieuThu}</td>
-                  <td style={{ fontWeight: 600 }}>
-                    {pt.nguoiNopTK?.doanVien?.hoTen ??
-                      pt.nguoiNopTK?.tenNguoiDung ??
-                      "—"}
-                    <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                      {pt.nguoiNopTK?.doanVien?.chiDoan?.tenChiDoan ??
-                        pt.nguoiNopTK?.doanVien?.idChiDoan ??
-                        ""}
-                    </div>
-                  </td>
-                  <td>
-                    {pt.fileDinhKem ? (
-                      pt.fileDinhKem.startsWith("http") ? (
-                        <a
-                          href={pt.fileDinhKem}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ color: "#004f9f", fontWeight: 500 }}
-                        >
-                          Xem file
-                        </a>
-                      ) : (
-                        <span style={{ color: "#94a3b8", fontSize: "0.85em" }}>File thử nghiệm cũ</span>
-                      )
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td>
-                    <span
-                      className={`dp-badge ${
-                        pt.trangThai === "Đã duyệt"
-                          ? "dp-badge--paid"
-                          : pt.trangThai === "Chờ duyệt"
-                            ? "dp-badge--pending"
-                            : "dp-badge--unpaid"
-                      }`}
-                    >
-                      {pt.trangThai}
-                    </span>
-                  </td>
-                  <td>
-                    {pt.trangThai === "Chờ duyệt" ? (
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        <button
-                          className="dp-update-btn"
-                          style={{
-                            padding: "0.4rem 0.8rem",
-                            background: "#004f9f",
-                            color: "#fff",
-                            borderColor: "#004f9f",
-                          }}
-                          onClick={() => handleDuyet(pt.idPhieuThu, "Đã duyệt")}
-                        >
-                          Duyệt
-                        </button>
-                        <button
-                          className="dp-update-btn"
-                          style={{
-                            padding: "0.4rem 0.8rem",
-                            color: "#b91c1c",
-                            borderColor: "#fecaca",
-                          }}
-                          onClick={() => handleDuyet(pt.idPhieuThu, "Từ chối")}
-                        >
-                          Từ chối
-                        </button>
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
-                        {pt.trangThai}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {phieuThuList.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    style={{
-                      textAlign: "center",
-                      padding: "2rem",
-                      color: "#94a3b8",
-                    }}
-                  >
-                    Không có dữ liệu
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <DoanPhiReceiptTable
+            phieuThuList={phieuThuList}
+            onDuyet={handleDuyet}
+          />
         )}
 
         {/* Tab: Lịch sử mức phí */}
         {!loading && activeTab === "rates" && (
-          <table className="dp-table">
-            <thead>
-              <tr>
-                <th>Mã</th>
-                <th>Năm học</th>
-                <th>Số tiền</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mucDoanPhi.map((m) => (
-                <tr key={m.idMucDP}>
-                  <td className="dp-id-cell">{m.idMucDP}</td>
-                  <td style={{ fontWeight: 600 }}>{m.namHoc}</td>
-                  <td className="dp-amount-cell">{fmtMoney(m.soTien)}</td>
-                  <td>
-                    <span
-                      className={`dp-badge ${m.trangThai === "Đang áp dụng" ? "dp-badge--paid" : "dp-badge--pending"}`}
-                    >
-                      {m.trangThai}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DoanPhiRatesTable mucDoanPhi={mucDoanPhi} />
         )}
       </div>
 

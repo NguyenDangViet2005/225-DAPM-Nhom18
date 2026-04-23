@@ -13,7 +13,7 @@ export const doanviendangkiAPI = {
 
   // ── Đoàn viên ────────────────────────────────────────────
   getAvailableActivities: async () => {
-    const response = await apiClient.get("/doanviendangki/available");
+    const response = await apiClient.get("/hoatdong/available");
     return response.data;
   },
 

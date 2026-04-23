@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { CheckCircle, Search, CalendarCheck } from "lucide-react";
 import { hoatdongAPI } from "@/apis/hoatdong.api";
+import { formatDate, getErrorMessage } from "@/utils";
+import { HOAT_DONG_STATUS } from "@/constants";
 import "./HoatDongChiDoan.css";
 
 const HoatDongChiDoanXacNhan = () => {
@@ -16,8 +18,7 @@ const HoatDongChiDoanXacNhan = () => {
         setActivities(res.data || []);
       }
     } catch (error) {
-      console.error("Lỗi lấy dữ liệu:", error);
-      alert("Lấy danh sách hoạt động thất bại!");
+      alert(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -32,14 +33,14 @@ const HoatDongChiDoanXacNhan = () => {
     () =>
       activities.filter(
         (hd) =>
-          hd.trangThaiHD === "Đã duyệt" &&
+          hd.trangThaiHD === HOAT_DONG_STATUS.APPROVED &&
           (hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
             hd.idHD.includes(searchTerm))
       ),
     [activities, searchTerm]
   );
 
-  const completedCount = activities.filter((hd) => hd.trangThaiHD === "Đã kết thúc").length;
+  const completedCount = activities.filter((hd) => hd.trangThaiHD === HOAT_DONG_STATUS.COMPLETED).length;
 
   const handleConfirmActivity = async (idHD) => {
     const isConfirm = window.confirm(
@@ -51,13 +52,12 @@ const HoatDongChiDoanXacNhan = () => {
       const res = await hoatdongAPI.xacNhanHoanThanh(idHD);
       if (res.success) {
         alert(res.message || "Đã xác nhận hoàn thành hoạt động!");
-        fetchActivities(); // Refresh list
+        fetchActivities();
       } else {
         alert(res.message || "Xác nhận thất bại!");
       }
     } catch (error) {
-      console.error("Lỗi xác nhận:", error);
-      alert("Lỗi hệ thống khi xác nhận hoàn thành!");
+      alert(getErrorMessage(error));
     }
   };
 
@@ -147,11 +147,7 @@ const HoatDongChiDoanXacNhan = () => {
                 >
                   <td className="hcd-td-mssv">{hd.idHD}</td>
                   <td className="hcd-td-name" style={{ maxWidth: '300px' }}>{hd.tenHD}</td>
-                  <td className="hcd-td-muted">
-                    {hd.ngayToChuc
-                      ? new Date(hd.ngayToChuc).toLocaleDateString("vi-VN")
-                      : "—"}
-                  </td>
+                  <td className="hcd-td-muted">{formatDate(hd.ngayToChuc)}</td>
                   <td style={{ fontWeight: 600, color: '#16a34a' }}>+{hd.diemHD}</td>
                   <td>
                     <span className="hcd-badge" style={{ background: '#eff6ff', color: '#1d4ed8' }}>

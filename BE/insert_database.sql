@@ -1,6 +1,21 @@
 USE QuanLyDoanVien
 GO
 
+-- DELETE existing data (in correct order to avoid foreign key conflicts)
+DELETE FROM DoanVienDangKi;
+DELETE FROM DoanPhi;
+DELETE FROM PhieuThuDoanPhi;
+DELETE FROM TieuSu;
+DELETE FROM SoDoan;
+DELETE FROM HoatDongDoan;
+DELETE FROM MucDoanPhi;
+DELETE FROM TaiKhoan;
+DELETE FROM DoanVien;
+DELETE FROM ChiDoan;
+DELETE FROM VaiTro;
+DELETE FROM Khoa;
+GO
+
 -- 1. Chèn dữ liệu danh mục Khoa, Vai trò, Chi đoàn
 INSERT INTO Khoa (idKhoa, tenKhoa) VALUES
 ('KHOA001', N'Khoa Công nghệ Số'),
@@ -181,52 +196,52 @@ GO
 -- soLuongDaDK được tính từ số lượng bản ghi "Đã duyệt" trong bảng DoanVienDangKi
 INSERT INTO HoatDongDoan (idHD, tenHD, moTa, ngayToChuc, diaDiem, soLuongMax, soLuongDaDK, trangThai, trangThaiHD, donViToChuc, diemHD, idKhoa, idChiDoan) VALUES
 -- Đoàn trường
-('HD001', N'Mùa hè xanh 2024', N'Tình nguyện tại Quảng Nam', '2024-07-15', N'Nam Trà My', 100, 3, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
-('HD002', N'Hiến máu nhân đạo đợt 1', N'Giọt hồng UTE', '2024-05-20', N'Hội trường A', 200, 0, N'Đã đóng', N'Đã duyệt', N'Đoàn Trường', 5, NULL, NULL),
-('HD003', N'Tiếp sức mùa thi 2024', N'Hỗ trợ sĩ tử', '2024-06-25', N'Điểm thi UTE', 50, 0, N'Đã đóng', N'Đã duyệt', N'Đoàn Trường', 8, NULL, NULL),
-('HD004', N'Hội thảo Du học & Học bổng', N'Cơ hội vươn xa', '2024-10-30', N'Hội trường lớn', 300, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 7, NULL, NULL),
-('HD005', N'Ngày hội sách 2024', N'Lan tỏa văn hóa đọc', '2024-04-21', N'Sân trường', 150, 2, N'Đã đóng', N'Đã duyệt', N'Đoàn Trường', 6, NULL, NULL),
-('HD006', N'Workshop Kỹ năng lãnh đạo', N'Dành cho cán bộ Đoàn', '2024-11-20', N'Hội trường D', 100, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 5, NULL, NULL),
-('HD007', N'Giải chạy UTE Marthon', N'Rèn luyện thể chất', '2024-09-26', N'Đường ven biển', 500, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
-('HD008', N'Tập huấn Đoàn vụ 2024', N'Kỹ năng quản lý sổ sách', '2024-08-25', N'Hội trường D', 50, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 4, NULL, NULL),
+('HD001', N'Mùa hè xanh 2024', N'Tình nguyện tại Quảng Nam', '2026-07-15', N'Nam Trà My', 100, 3, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
+('HD002', N'Hiến máu nhân đạo đợt 1', N'Giọt hồng UTE', '2026-05-20', N'Hội trường A', 200, 0, N'Đã đóng', N'Đã kết thúc', N'Đoàn Trường', 5, NULL, NULL),
+('HD003', N'Tiếp sức mùa thi 2024', N'Hỗ trợ sĩ tử', '2026-06-25', N'Điểm thi UTE', 50, 0, N'Đã đóng', N'Đã kết thúc', N'Đoàn Trường', 8, NULL, NULL),
+('HD004', N'Hội thảo Du học & Học bổng', N'Cơ hội vươn xa', '2026-10-30', N'Hội trường lớn', 300, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 7, NULL, NULL),
+('HD005', N'Ngày hội sách 2024', N'Lan tỏa văn hóa đọc', '2026-08-21', N'Sân trường', 150, 2, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 6, NULL, NULL),
+('HD006', N'Workshop Kỹ năng lãnh đạo', N'Dành cho cán bộ Đoàn', '2026-11-20', N'Hội trường D', 100, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 5, NULL, NULL),
+('HD007', N'Giải chạy UTE Marthon', N'Rèn luyện thể chất', '2026-09-26', N'Đường ven biển', 500, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
+('HD008', N'Tập huấn Đoàn vụ 2024', N'Kỹ năng quản lý sổ sách', '2026-08-25', N'Hội trường D', 50, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 4, NULL, NULL),
 -- Khoa Công nghệ Số
-('HD011', N'Hackathon CNS 2024', N'Thi lập trình 24h', '2024-08-10', N'Phòng Lab Tòa E', 50, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 15, 'KHOA001', NULL),
-('HD012', N'Workshop AI Tools', N'Ứng dụng AI vào học tập', '2024-09-15', N'Phòng 201-E', 100, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 8, 'KHOA001', NULL),
-('HD013', N'Giải bóng đá CNS Cup', N'Giao lưu các chi đoàn', '2024-11-05', N'Sân bóng Hòa Xuân', 120, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 12, 'KHOA001', NULL),
-('HD014', N'Tọa đàm Tuyển dụng IT', N'Phỏng vấn giả định', '2024-12-10', N'Hội trường B', 150, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 5, 'KHOA001', NULL),
-('HD015', N'Workshop Photoshop & Canva', N'Kỹ năng thiết kế cơ bản', '2024-11-12', N'Phòng 403-E', 50, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 7, 'KHOA001', NULL),
+('HD011', N'Hackathon CNS 2024', N'Thi lập trình 24h', '2026-08-10', N'Phòng Lab Tòa E', 50, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 15, 'KHOA001', NULL),
+('HD012', N'Workshop AI Tools', N'Ứng dụng AI vào học tập', '2026-09-15', N'Phòng 201-E', 100, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 8, 'KHOA001', NULL),
+('HD013', N'Giải bóng đá CNS Cup', N'Giao lưu các chi đoàn', '2026-11-05', N'Sân bóng Hòa Xuân', 120, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 12, 'KHOA001', NULL),
+('HD014', N'Tọa đàm Tuyển dụng IT', N'Phỏng vấn giả định', '2026-12-10', N'Hội trường B', 150, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 5, 'KHOA001', NULL),
+('HD015', N'Workshop Photoshop & Canva', N'Kỹ năng thiết kế cơ bản', '2026-11-12', N'Phòng 403-E', 50, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 7, 'KHOA001', NULL),
 -- Khoa Điện - Điện tử
-('HD021', N'Robot Fighting 2024', N'Thi tài robot', '2024-09-20', N'Sảnh khu C', 40, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 14, 'KHOA002', NULL),
-('HD022', N'Triển lãm Đồ án xuất sắc', N'Trưng bày sản phẩm', '2024-10-05', N'Khu C', 60, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 6, 'KHOA002', NULL),
-('HD023', N'Workshop IoT căn bản', N'Thực hành ESP32', '2024-11-25', N'Phòng Lab 402', 30, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 10, 'KHOA002', NULL),
+('HD021', N'Robot Fighting 2024', N'Thi tài robot', '2026-09-20', N'Sảnh khu C', 40, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 14, 'KHOA002', NULL),
+('HD022', N'Triển lãm Đồ án xuất sắc', N'Trưng bày sản phẩm', '2026-10-05', N'Khu C', 60, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 6, 'KHOA002', NULL),
+('HD023', N'Workshop IoT căn bản', N'Thực hành ESP32', '2026-11-25', N'Phòng Lab 402', 30, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 10, 'KHOA002', NULL),
 -- Khoa Sư phạm Công nghiệp
-('HD031', N'Giáo viên tương lai', N'Thi nghiệp vụ sư phạm', '2024-11-20', N'Phòng 505', 40, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 9, 'KHOA003', NULL),
-('HD032', N'Tình nguyện đêm trung thu', N'Phát quà trẻ em nghèo', '2024-09-17', N'Quận Liên Chiểu', 60, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 8, 'KHOA003', NULL),
+('HD031', N'Giáo viên tương lai', N'Thi nghiệp vụ sư phạm', '2026-11-20', N'Phòng 505', 40, 1, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 9, 'KHOA003', NULL),
+('HD032', N'Tình nguyện đêm trung thu', N'Phát quà trẻ em nghèo', '2026-09-17', N'Quận Liên Chiểu', 60, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 8, 'KHOA003', NULL),
 -- Khoa Cơ khí
-('HD041', N'Đua xe mô hình tự chế', N'Ứng dụng khí động học', '2024-12-05', N'Sân vận động', 20, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 13, 'KHOA004', NULL),
-('HD042', N'Workshop AutoCAD nâng cao', N'Kỹ năng thiết kế máy', '2024-10-15', N'Xưởng Cơ khí', 35, 0, N'Đang mở', N'Chưa duyệt', N'Đoàn Khoa', 7, 'KHOA004', NULL),
+('HD041', N'Đua xe mô hình tự chế', N'Ứng dụng khí động học', '2026-12-05', N'Sân vận động', 20, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Khoa', 13, 'KHOA004', NULL),
+('HD042', N'Workshop AutoCAD nâng cao', N'Kỹ năng thiết kế máy', '2026-10-15', N'Xưởng Cơ khí', 35, 0, N'Chưa mở', N'Chưa duyệt', N'Đoàn Khoa', 7, 'KHOA004', NULL),
 -- Chi đoàn
-('HD051', N'Vệ sinh phòng học 23T1', N'Lao động tập thể', '2024-05-05', N'Phòng 301-E', 15, 0, N'Đã đóng', N'Đã duyệt', N'Chi đoàn', 3, 'KHOA001', 'CD001'),
-('HD052', N'Team Building CD001', N'Gắn kết thành viên', '2024-12-15', N'Công viên Biển Đông', 30, 0, N'Đang mở', N'Chưa duyệt', N'Chi đoàn', 5, 'KHOA001', 'CD001'),
-('HD053', N'Học nhóm Giải tích 2', N'Ôn thi cuối kỳ', '2024-06-12', N'Thư viện', 20, 0, N'Đang mở', N'Chưa duyệt', N'Chi đoàn', 4, 'KHOA002', 'CD003'),
-('HD054', N'Tham quan Bảo tàng Đà Nẵng', N'Tìm hiểu lịch sử', '2024-11-10', N'Bảo tàng ĐN', 30, 0, N'Đang mở', N'Chưa duyệt', N'Chi đoàn', 6, 'KHOA002', 'CD003');
+('HD051', N'Vệ sinh phòng học 23T1', N'Lao động tập thể', '2026-05-05', N'Phòng 301-E', 15, 0, N'Đã đóng', N'Đã kết thúc', N'Chi đoàn', 3, 'KHOA001', 'CD001'),
+('HD052', N'Team Building CD001', N'Gắn kết thành viên', '2026-12-15', N'Công viên Biển Đông', 30, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 5, 'KHOA001', 'CD001'),
+('HD053', N'Học nhóm Giải tích 2', N'Ôn thi cuối kỳ', '2026-06-12', N'Thư viện', 20, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 4, 'KHOA002', 'CD003'),
+('HD054', N'Tham quan Bảo tàng Đà Nẵng', N'Tìm hiểu lịch sử', '2026-11-10', N'Bảo tàng ĐN', 30, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 6, 'KHOA002', 'CD003');
 GO
 
 -- 7. Chèn Phiếu thu đoàn phí
-INSERT INTO PhieuThuDoanPhi (idPhieuThu, nguoiNop, fileDinhKem, trangThai) VALUES
-('PT001', 'USER01', 'receipt_01.jpg', N'Đã duyệt'),
-('PT002', 'USER02', 'receipt_02.jpg', N'Đã duyệt'),
-('PT003', 'USER03', 'receipt_03.jpg', N'Đã duyệt'),
-('PT004', 'USER04', 'receipt_04.jpg', N'Đã duyệt'),
-('PT005', 'USER05', 'receipt_05.jpg', N'Chờ duyệt'),
-('PT006', 'USER06', 'receipt_06.jpg', N'Chờ duyệt'),
-('PT007', 'USER17', 'receipt_17.jpg', N'Chờ duyệt'),
-('PT008', 'USER21', 'receipt_21.jpg', N'Chờ duyệt'),
-('PT009', 'USER25', 'receipt_25.jpg', N'Chờ duyệt'),
-('PT010', 'USER10', 'receipt_10.jpg', N'Từ chối'),
-('PT011', 'USER29', 'receipt_29.jpg', N'Chờ duyệt'),
-('PT012', 'USER33', 'receipt_33.jpg', N'Chờ duyệt'),
-('PT013', 'USER13', 'receipt_13.jpg', N'Đã duyệt');
+INSERT INTO PhieuThuDoanPhi (idPhieuThu, nguoiNop, ngayLap, tongTien, fileDinhKem, trangThai) VALUES
+('PT001', 'USER01', '2023-10-15', 60000, 'receipt_01.jpg', N'Đã duyệt'),
+('PT002', 'USER02', '2023-10-16', 60000, 'receipt_02.jpg', N'Đã duyệt'),
+('PT003', 'USER03', '2023-10-17', 60000, 'receipt_03.jpg', N'Đã duyệt'),
+('PT004', 'USER04', '2023-10-18', 60000, 'receipt_04.jpg', N'Đã duyệt'),
+('PT005', 'USER05', '2024-10-01', 65000, 'receipt_05.jpg', N'Chờ duyệt'),
+('PT006', 'USER06', '2024-10-02', 65000, 'receipt_06.jpg', N'Chờ duyệt'),
+('PT007', 'USER17', '2024-10-03', 65000, 'receipt_17.jpg', N'Chờ duyệt'),
+('PT008', 'USER21', '2024-10-04', 65000, 'receipt_21.jpg', N'Chờ duyệt'),
+('PT009', 'USER25', '2024-10-05', 65000, 'receipt_25.jpg', N'Chờ duyệt'),
+('PT010', 'USER10', '2024-09-20', 65000, 'receipt_10.jpg', N'Từ chối'),
+('PT011', 'USER29', '2024-10-06', 65000, 'receipt_29.jpg', N'Chờ duyệt'),
+('PT012', 'USER33', '2024-10-07', 65000, 'receipt_33.jpg', N'Chờ duyệt'),
+('PT013', 'USER13', '2024-09-25', 65000, 'receipt_13.jpg', N'Đã duyệt');
 GO
 
 -- 8. Chèn Đoàn phí
@@ -247,31 +262,37 @@ UPDATE DoanPhi SET trangThai = N'Đang chờ duyệt', idPhieuThu = 'PT008' WHER
 GO
 
 -- 9. Chèn Đăng ký hoạt động (DoanVienDangKi)
--- Chỉ đăng ký vào các hoạt động có trangThaiHD = N'Đã duyệt' (HD001, HD002, HD003, HD005, HD011, HD021, HD031, HD041, HD051)
+-- Chỉ đăng ký vào các hoạt động có trangThaiHD = N'Đã duyệt' (HD001, HD002, HD003, HD004, HD005, HD006, HD007, HD008, HD011, HD021, HD031, HD041, HD051)
 INSERT INTO DoanVienDangKi (idDV, idHD, ngayDangKi, trangThaiDuyet, lyDoTuChoi) VALUES
--- Hoạt động HD001 (Mùa hè xanh)
-('23115053122201', 'HD001', '2024-06-01', N'Đã duyệt', NULL),
-('23115053122202', 'HD001', '2024-06-02', N'Đã duyệt', NULL),
-('23115053122205', 'HD001', '2024-06-03', N'Đã duyệt', NULL),
--- Hoạt động HD011 (Hackathon CNS)
-('23115053122201', 'HD011', '2024-07-01', N'Đã duyệt', NULL),
-('23115053122202', 'HD011', '2024-07-02', N'Chờ duyệt', NULL),
-('23115053122203', 'HD011', '2024-07-03', N'Chờ duyệt', NULL),
--- Hoạt động HD021 (Robot Fighting)
-('23115053122209', 'HD021', '2024-08-10', N'Đã duyệt', NULL),
-('23115053122210', 'HD021', '2024-08-11', N'Chờ duyệt', NULL),
--- Hoạt động HD031 (Giáo viên tương lai)
-('23115053122217', 'HD031', '2024-10-01', N'Đã duyệt', NULL),
-('23115053122218', 'HD031', '2024-10-02', N'Chờ duyệt', NULL),
--- Hoạt động HD005 (Ngày hội sách)
-('23115053122221', 'HD005', '2024-04-10', N'Đã duyệt', NULL),
-('23115053122222', 'HD005', '2024-04-11', N'Đã duyệt', NULL),
--- Hoạt động HD041 (Đua xe mô hình)
-('23115053122225', 'HD041', '2024-11-20', N'Chờ duyệt', NULL),
-('23115053122226', 'HD041', '2024-11-21', N'Từ chối', N'Hết số lượng đăng ký tối đa');
-GO
---- chèn dữ liệu chờ duyệt đăng ký hoạt động
-INSERT INTO DoanVienDangKi (idDV, idHD, ngayDangKi, trangThaiDuyet, lyDoTuChoi) VALUES
+-- Hoạt động HD001 (Mùa hè xanh - 2026-07-15)
+('23115053122201', 'HD001', '2026-06-01', N'Đã duyệt', NULL),
+('23115053122202', 'HD001', '2026-06-02', N'Đã duyệt', NULL),
+('23115053122205', 'HD001', '2026-06-03', N'Đã duyệt', NULL),
 ('23115053122203', 'HD001', GETDATE(), N'Chờ duyệt', NULL),
 ('23115053122204', 'HD001', GETDATE(), N'Chờ duyệt', NULL),
-('23115053122206', 'HD001', GETDATE(), N'Chờ duyệt', NULL);
+('23115053122206', 'HD001', GETDATE(), N'Chờ duyệt', NULL),
+-- Hoạt động HD011 (Hackathon CNS - 2026-08-10)
+('23115053122201', 'HD011', '2026-07-01', N'Đã duyệt', NULL),
+('23115053122202', 'HD011', '2026-07-02', N'Chờ duyệt', NULL),
+('23115053122203', 'HD011', '2026-07-03', N'Chờ duyệt', NULL),
+-- Hoạt động HD021 (Robot Fighting - 2026-09-20)
+('23115053122209', 'HD021', '2026-08-10', N'Đã duyệt', NULL),
+('23115053122210', 'HD021', '2026-08-11', N'Chờ duyệt', NULL),
+-- Hoạt động HD031 (Giáo viên tương lai - 2026-11-20)
+('23115053122217', 'HD031', '2026-10-01', N'Đã duyệt', NULL),
+('23115053122218', 'HD031', '2026-10-02', N'Chờ duyệt', NULL),
+-- Hoạt động HD005 (Ngày hội sách - 2026-08-21)
+('23115053122221', 'HD005', '2026-07-10', N'Đã duyệt', NULL),
+('23115053122222', 'HD005', '2026-07-11', N'Đã duyệt', NULL),
+-- Hoạt động HD041 (Đua xe mô hình - 2026-12-05)
+('23115053122225', 'HD041', '2026-11-20', N'Chờ duyệt', NULL),
+('23115053122226', 'HD041', '2026-11-21', N'Từ chối', N'Hết số lượng đăng ký tối đa'),
+-- Hoạt động HD004 (Hội thảo Du học - 2026-10-30)
+('23115053122207', 'HD004', GETDATE(), N'Chờ duyệt', NULL),
+('23115053122208', 'HD004', GETDATE(), N'Chờ duyệt', NULL),
+-- Hoạt động HD006 (Workshop Kỹ năng - 2026-11-20)
+('23115053122211', 'HD006', GETDATE(), N'Chờ duyệt', NULL),
+-- Hoạt động HD007 (Giải chạy - 2026-09-26)
+('23115053122213', 'HD007', GETDATE(), N'Chờ duyệt', NULL),
+-- Hoạt động HD008 (Tập huấn Đoàn vụ - 2026-08-25)
+('23115053122214', 'HD008', GETDATE(), N'Chờ duyệt', NULL);

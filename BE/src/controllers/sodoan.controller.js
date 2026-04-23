@@ -1,35 +1,6 @@
 const sodoanService = require("../services/sodoan.service");
 
 const sodoanController = {
-  /**
-   * GET /api/sodoan/me
-   * Đoàn viên xem tình trạng sổ đoàn của chính mình
-   */
-  getMySoDoan: async (req, res) => {
-    try {
-      const idDV = req.user?.idDV;
-      if (!idDV) {
-        return res.status(403).json({
-          success: false,
-          message: "Tài khoản này không liên kết với đoàn viên nào",
-        });
-      }
-
-      const data = await sodoanService.getMySoDoan(idDV);
-
-      if (!data) {
-        return res.status(404).json({
-          success: false,
-          message: "Chưa có thông tin sổ đoàn",
-        });
-      }
-
-      return res.status(200).json({ success: true, data });
-    } catch (error) {
-      return res.status(500).json({ success: false, message: error.message });
-    }
-  },
-
   getLopSoDoan: async (req, res) => {
     try {
       const idDV = req.user.idDV; // Lấy từ token
@@ -75,10 +46,14 @@ const sodoanController = {
     try {
       const { idDV, ngayCap, noiCap } = req.body;
       if (!idDV) {
-        return res.status(400).json({ success: false, message: "Cần mã đoàn viên" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Cần mã đoàn viên" });
       }
       const result = await sodoanService.createSoDoan(idDV, ngayCap, noiCap);
-      return res.status(201).json({ success: true, message: "Tiếp nhận thành công", data: result });
+      return res
+        .status(201)
+        .json({ success: true, message: "Tiếp nhận thành công", data: result });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }

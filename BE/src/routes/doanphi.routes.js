@@ -23,8 +23,6 @@ router.use(verifyToken);
 // ── Đoàn viên xem lịch sử đoàn phí của mình (không cần role DOANTRUONG)
 router.get("/me", getMyDoanPhiController);
 
-router.use(checkRole(["DOANTRUONG"]));
-
 // ── Mức đoàn phí ─────────────────────────────────────────
 router.get("/muc-phi", checkRole(["DOANTRUONG"]), getMucDoanPhi);
 router.post(
@@ -54,7 +52,12 @@ router.get(
   checkRole(["DOANTRUONG", "DOANKHOA", "BITHU"]),
   getPhieuThu,
 );
-router.post("/phieu-thu", checkRole(["BITHU"]), postPhieuThu);
+router.post(
+  "/phieu-thu",
+  checkRole(["BITHU"]),
+  upload.single("fileDinhKem"),
+  postPhieuThu,
+);
 router.put(
   "/phieu-thu/:idPhieuThu",
   checkRole(["DOANTRUONG"]),

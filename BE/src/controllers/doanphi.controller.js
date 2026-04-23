@@ -68,7 +68,8 @@ const getMyDoanPhiController = async (req, res) => {
   }
 };
 
-const getDoanPhi = async (req, res) => {  try {
+const getDoanPhi = async (req, res) => {
+  try {
     const { search, trangThai, idChiDoan, page, limit } = req.query;
     const data = await getAllDoanPhi({
       search,
@@ -116,16 +117,59 @@ const getPhieuThu = async (req, res) => {
 
 const postPhieuThu = async (req, res) => {
   try {
-    const data = await require("../services/doanphi.service").createPhieuThu(
-      req.body,
-      req.user,
-    );
-    const idUser = req.user.idUser;
-    const { listIdDoanPhi, fileDinhKem } = req.body;
-    const data = await createPhieuThu({ idUser, listIdDoanPhi, fileDinhKem });
+    // Parse listIdDoanPhi if it's a JSON string
+    let listIdDoanPhi = req.body.listIdDoanPhi;
+    if (typeof listIdDoanPhi === 'string') {
+      try {
+        listIdDoanPhi = JSON.parse(listIdDoanPhi);
+      } catch (e) {
+        return res.status(400).json({
+          success: false,
+          message: "Danh sách đoàn phí không đúng định dạng JSON",
+        });
+      }
+    }
+
+    // Validate input
+    if (!listIdDoanPhi || !Array.isArray(listIdDoanPhi)) {
+      return res.status(400).json({
+        success: false,
+        message: "Danh sách đoàn phí không hợp lệ (cần mảng ID)",
+      });
+    }
+
+    if (listIdDoanPhi.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Danh sách đoàn phí không được rỗng",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng đính kèm file chứng từ",
+      });
+    }
+
+    if (!req.user || !req.user.idUser) {
+      return res.status(403).json({
+        success: false,
+        message: "Thông tin người dùng không hợp lệ",
+      });
+    }
+
+    // Pass parsed data to service
+    const data = await createPhieuThu({ listIdDoanPhi }, req.user, req.file);
     return res.status(201).json({ success: true, data });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("Error in postPhieuThu:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: error.message || "Lỗi khi tạo phiếu thu",
+      errorName: error.name,
+      details: process.env.NODE_ENV === "development" ? error.stack : undefined
+    });
   }
 };
 
