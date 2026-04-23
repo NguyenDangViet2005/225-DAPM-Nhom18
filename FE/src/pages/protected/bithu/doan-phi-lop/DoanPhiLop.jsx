@@ -1,11 +1,24 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Search, Wallet, CheckCircle, AlertTriangle, Send,
-  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Upload,
+  Search,
+  Wallet,
+  CheckCircle,
+  AlertTriangle,
+  Send,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Upload,
 } from "lucide-react";
 import AuthContext from "@/contexts/AuthContext";
-import { getDoanPhiStatsAPI, getDoanPhiAPI, createPhieuThuAPI, getPhieuThuAPI } from "@/apis/doanphi.api";
+import {
+  getDoanPhiStatsAPI,
+  getDoanPhiAPI,
+  createPhieuThuAPI,
+  getPhieuThuAPI,
+} from "@/apis/doanphi.api";
 import "./DoanPhiLop.css";
 
 const PAGE_SIZE = 20;
@@ -17,11 +30,38 @@ const CircleProgress = ({ pct, size = 56, stroke = 5 }) => {
   const offset = circ - (pct / 100) * circ;
   return (
     <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth={stroke} />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#004f9f" strokeWidth={stroke}
-        strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" />
-      <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle"
-        style={{ transform: "rotate(90deg)", transformOrigin: "center", fontSize: 11, fontWeight: 700, fill: "#004f9f" }}>
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="#e2e8f0"
+        strokeWidth={stroke}
+      />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="#004f9f"
+        strokeWidth={stroke}
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+      />
+      <text
+        x="50%"
+        y="50%"
+        dominantBaseline="middle"
+        textAnchor="middle"
+        style={{
+          transform: "rotate(90deg)",
+          transformOrigin: "center",
+          fontSize: 11,
+          fontWeight: 700,
+          fill: "#004f9f",
+        }}
+      >
         {pct}%
       </text>
     </svg>
@@ -34,7 +74,11 @@ const DoanPhiLop = () => {
   const { user } = useContext(AuthContext);
   const myChiDoan = user?.idChiDoan || "Unknown";
 
-  const activeTab = location.pathname.endsWith("/gui") ? "gui" : location.pathname.endsWith("/lich-su") ? "lich-su" : "danh-sach";
+  const activeTab = location.pathname.endsWith("/gui")
+    ? "gui"
+    : location.pathname.endsWith("/lich-su")
+      ? "lich-su"
+      : "danh-sach";
   const handleTabChange = (tab) => {
     if (tab === "gui") navigate("/bi-thu/doan-phi-lop/gui");
     else if (tab === "lich-su") navigate("/bi-thu/doan-phi-lop/lich-su");
@@ -47,8 +91,15 @@ const DoanPhiLop = () => {
   const [page, setPage] = useState(1);
 
   const [stats, setStats] = useState({
-    tongDoanVien: 0, daDong: 0, chuaDong: 0, dangChoDuyet: 0,
-    tongDaThu: 0, tongPhaiThu: 0, namHoc: "", soTien: 0, tyLe: 0
+    tongDoanVien: 0,
+    daDong: 0,
+    chuaDong: 0,
+    dangChoDuyet: 0,
+    tongDaThu: 0,
+    tongPhaiThu: 0,
+    namHoc: "",
+    soTien: 0,
+    tyLe: 0,
   });
   const [doanPhiList, setDoanPhiList] = useState([]);
   const [phieuThuList, setPhieuThuList] = useState([]);
@@ -74,7 +125,7 @@ const DoanPhiLop = () => {
         trangThai: statusFilter,
         idChiDoan: myChiDoan,
         page,
-        limit: PAGE_SIZE
+        limit: PAGE_SIZE,
       });
       if (res.success) {
         setDoanPhiList(res.data);
@@ -111,20 +162,29 @@ const DoanPhiLop = () => {
     }
   }, [searchTerm, statusFilter, page, myChiDoan, activeTab]);
 
-  const toggleCheck = (idDoanPhi) => setChecked((prev) => ({ ...prev, [idDoanPhi]: !prev[idDoanPhi] }));
-  const handleSearch = (v) => { setSearchTerm(v); setPage(1); };
-  const handleFilter = (v) => { setStatusFilter(v); setPage(1); };
+  const toggleCheck = (idDoanPhi) =>
+    setChecked((prev) => ({ ...prev, [idDoanPhi]: !prev[idDoanPhi] }));
+  const handleSearch = (v) => {
+    setSearchTerm(v);
+    setPage(1);
+  };
+  const handleFilter = (v) => {
+    setStatusFilter(v);
+    setPage(1);
+  };
 
   // Helper cho nút "Chọn tất cả" trên trang hiện tại
   const availableToSelect = doanPhiList;
-  const isAllSelected = availableToSelect.length > 0 && availableToSelect.every(p => checked[p.idDoanPhi]);
+  const isAllSelected =
+    availableToSelect.length > 0 &&
+    availableToSelect.every((p) => checked[p.idDoanPhi]);
 
   const toggleSelectAll = () => {
     const newChecked = { ...checked };
     if (isAllSelected) {
-      availableToSelect.forEach(p => newChecked[p.idDoanPhi] = false);
+      availableToSelect.forEach((p) => (newChecked[p.idDoanPhi] = false));
     } else {
-      availableToSelect.forEach(p => newChecked[p.idDoanPhi] = true);
+      availableToSelect.forEach((p) => (newChecked[p.idDoanPhi] = true));
     }
     setChecked(newChecked);
   };
@@ -134,9 +194,13 @@ const DoanPhiLop = () => {
   const moneyToSubmit = selectedCount * stats.soTien;
 
   const handleSubmit = async () => {
-    if (selectedCount === 0) return alert("Vui lòng chọn ít nhất 1 đoàn viên!");
+    if (selectedCount === 0)
+      return alert("Vui lòng chọn ít nhất 1 đoàn viên đã nộp phí!");
     try {
-      const res = await createPhieuThuAPI({ listIdDoanPhi: selectedList });
+      const res = await createPhieuThuAPI({
+        listIdDoanPhi: selectedList,
+        fileDinhKem: "minh_chung_nop_tien.pdf", // Dummy file
+      });
       if (res.success) {
         alert("Gửi danh sách nộp thành công! Vui lòng chờ Đoàn trường duyệt.");
         setChecked({});
@@ -151,7 +215,9 @@ const DoanPhiLop = () => {
 
   const handleLapDanhSach = () => {
     if (selectedCount === 0) {
-      return alert("Vui lòng tích chọn đoàn viên chưa đóng phí để lập danh sách!");
+      return alert(
+        "Vui lòng tích chọn đoàn viên chưa đóng phí để lập danh sách!",
+      );
     }
     handleTabChange("gui");
   };
@@ -162,7 +228,14 @@ const DoanPhiLop = () => {
       <div className="dpl-page-header">
         <div>
           <h1 className="dpl-page-title">Đoàn phí lớp</h1>
-          <p className="dpl-page-sub">Quản lý thu đoàn phí chi đoàn &nbsp;·&nbsp; Chi đoàn: <strong>{myChiDoan !== "Unknown" ? user?.chiDoan?.tenChiDoan || myChiDoan : "..."}</strong></p>
+          <p className="dpl-page-sub">
+            Quản lý thu đoàn phí chi đoàn &nbsp;·&nbsp; Chi đoàn:{" "}
+            <strong>
+              {myChiDoan !== "Unknown"
+                ? user?.chiDoan?.tenChiDoan || myChiDoan
+                : "..."}
+            </strong>
+          </p>
         </div>
       </div>
 
@@ -174,7 +247,9 @@ const DoanPhiLop = () => {
           </div>
           <div>
             <p className="dpl-stat-card__label">Mức phí {stats.namHoc}</p>
-            <p className="dpl-stat-card__value">{stats.soTien.toLocaleString()} ₫</p>
+            <p className="dpl-stat-card__value">
+              {stats.soTien.toLocaleString()} ₫
+            </p>
           </div>
         </div>
         <div className="dpl-stat-card">
@@ -183,7 +258,12 @@ const DoanPhiLop = () => {
           </div>
           <div>
             <p className="dpl-stat-card__label">Đã đóng</p>
-            <p className="dpl-stat-card__value">{stats.daDong}<span className="dpl-stat-card__total">/{stats.tongDoanVien}</span></p>
+            <p className="dpl-stat-card__value">
+              {stats.daDong}
+              <span className="dpl-stat-card__total">
+                /{stats.tongDoanVien}
+              </span>
+            </p>
           </div>
         </div>
         <div className="dpl-stat-card">
@@ -192,7 +272,10 @@ const DoanPhiLop = () => {
           </div>
           <div>
             <p className="dpl-stat-card__label">Chưa đóng / Chờ duyệt</p>
-            <p className="dpl-stat-card__value">{stats.chuaDong} / {stats.dangChoDuyet} <span className="dpl-stat-card__unit">đoàn viên</span></p>
+            <p className="dpl-stat-card__value">
+              {stats.chuaDong} / {stats.dangChoDuyet}{" "}
+              <span className="dpl-stat-card__unit">đoàn viên</span>
+            </p>
           </div>
         </div>
         <div className="dpl-stat-card dpl-stat-card--progress">
@@ -201,7 +284,9 @@ const DoanPhiLop = () => {
           </div>
           <div style={{ flex: 1 }}>
             <p className="dpl-stat-card__label">Tổng đã thu (được duyệt)</p>
-            <p className="dpl-stat-card__value">{stats.tongDaThu.toLocaleString()} ₫</p>
+            <p className="dpl-stat-card__value">
+              {stats.tongDaThu.toLocaleString()} ₫
+            </p>
           </div>
           <CircleProgress pct={stats.tyLe || 0} />
         </div>
@@ -233,9 +318,20 @@ const DoanPhiLop = () => {
       {activeTab === "danh-sach" && (
         <div className="dpl-card">
           {/* Toolbar */}
-          <div className="dpl-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <select className="dpl-select" value={statusFilter} onChange={(e) => handleFilter(e.target.value)}>
+          <div
+            className="dpl-toolbar"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex", gap: "12px" }}>
+              <select
+                className="dpl-select"
+                value={statusFilter}
+                onChange={(e) => handleFilter(e.target.value)}
+              >
                 <option value="all">Tất cả</option>
                 <option value="Đã đóng">Đã đóng</option>
                 <option value="Chưa đóng">Chưa đóng</option>
@@ -252,7 +348,10 @@ const DoanPhiLop = () => {
               </div>
             </div>
             {selectedCount > 0 && (
-              <button className="dpl-btn dpl-btn--primary" onClick={handleLapDanhSach}>
+              <button
+                className="dpl-btn dpl-btn--primary"
+                onClick={handleLapDanhSach}
+              >
                 Lập danh sách ({selectedCount})
               </button>
             )}
@@ -264,8 +363,14 @@ const DoanPhiLop = () => {
               <thead>
                 <tr>
                   <th style={{ width: 48 }}>
-                    <input type="checkbox" checked={isAllSelected} onChange={toggleSelectAll} disabled={availableToSelect.length === 0} />
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      onChange={toggleSelectAll}
+                      disabled={availableToSelect.length === 0}
+                    />
                   </th>
+                  <th style={{ width: 48 }}></th>
                   <th>MSSV</th>
                   <th>Họ và Tên</th>
                   <th>Số tiền</th>
@@ -275,28 +380,54 @@ const DoanPhiLop = () => {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="dpl-empty">Đang tải dữ liệu...</td></tr>
-                ) : doanPhiList.map((p, idx) => (
-                  <tr key={p.idDoanPhi} className={idx % 2 === 1 ? "dpl-tr--alt" : ""}>
-                    <td>
-                      <input type="checkbox" checked={!!checked[p.idDoanPhi]}
-                        onChange={() => toggleCheck(p.idDoanPhi)} />
-                    </td>
-                    <td className="dpl-td-mssv">{p.doanVien?.idDV || p.idDV}</td>
-                    <td className="dpl-td-name">{p.doanVien?.hoTen}</td>
-                    <td>{stats.soTien.toLocaleString()} ₫</td>
-                    <td className="dpl-td-muted">
-                      {p.ngayDong ? new Date(p.ngayDong).toLocaleDateString("vi-VN") : "—"}
-                    </td>
-                    <td>
-                      <span className={`dpl-badge ${p.trangThai === "Đã đóng" ? "dpl-badge--green" : p.trangThai === "Đang chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}>
-                        {p.trangThai}
-                      </span>
+                  <tr>
+                    <td colSpan={6} className="dpl-empty">
+                      Đang tải dữ liệu...
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  doanPhiList.map((p, idx) => (
+                    <tr
+                      key={p.idDoanPhi}
+                      className={idx % 2 === 1 ? "dpl-tr--alt" : ""}
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={!!checked[p.idDoanPhi]}
+                          onChange={() => toggleCheck(p.idDoanPhi)}
+                          disabled={
+                            p.trangThai === "Đã đóng" ||
+                            p.trangThai === "Đang chờ duyệt"
+                          }
+                        />
+                      </td>
+                      <td className="dpl-td-mssv">
+                        {p.doanVien?.idDV || p.idDV}
+                      </td>
+                      <td className="dpl-td-name">{p.doanVien?.hoTen}</td>
+                      <td>{stats.soTien.toLocaleString()} ₫</td>
+                      <td className="dpl-td-muted">
+                        {p.ngayDong
+                          ? new Date(p.ngayDong).toLocaleDateString("vi-VN")
+                          : "—"}
+                      </td>
+                      <td>
+                        <span
+                          className={`dpl-badge ${p.trangThai === "Đã đóng" ? "dpl-badge--green" : p.trangThai === "Đang chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}
+                        >
+                          {p.trangThai}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
                 {!loading && doanPhiList.length === 0 && (
-                  <tr><td colSpan={6} className="dpl-empty">Không tìm thấy đoàn viên nào</td></tr>
+                  <tr>
+                    <td colSpan={6} className="dpl-empty">
+                      Không tìm thấy đoàn viên nào
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
@@ -308,10 +439,34 @@ const DoanPhiLop = () => {
               Trang {page} / {totalPages}
             </span>
             <div className="dpl-pagination__btns">
-              <button className="dpl-pg-btn" onClick={() => setPage(1)} disabled={page === 1}><ChevronsLeft size={14} /></button>
-              <button className="dpl-pg-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}><ChevronLeft size={14} /></button>
-              <button className="dpl-pg-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}><ChevronRight size={14} /></button>
-              <button className="dpl-pg-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages}><ChevronsRight size={14} /></button>
+              <button
+                className="dpl-pg-btn"
+                onClick={() => setPage(1)}
+                disabled={page === 1}
+              >
+                <ChevronsLeft size={14} />
+              </button>
+              <button
+                className="dpl-pg-btn"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                <ChevronLeft size={14} />
+              </button>
+              <button
+                className="dpl-pg-btn"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                <ChevronRight size={14} />
+              </button>
+              <button
+                className="dpl-pg-btn"
+                onClick={() => setPage(totalPages)}
+                disabled={page === totalPages}
+              >
+                <ChevronsRight size={14} />
+              </button>
             </div>
           </div>
         </div>
@@ -321,17 +476,25 @@ const DoanPhiLop = () => {
       {activeTab === "gui" && (
         <div className="dpl-card dpl-gui">
           <div className="dpl-gui__header">
-            <div className="dpl-gui__icon"><Send size={22} /></div>
+            <div className="dpl-gui__icon">
+              <Send size={22} />
+            </div>
             <div>
               <h3 className="dpl-gui__title">Gửi phiếu thu đoàn phí</h3>
-              <p className="dpl-gui__sub">Xác nhận những đoàn viên vừa chọn để lập thành phiếu nộp lên Đoàn trường</p>
+              <p className="dpl-gui__sub">
+                Xác nhận những đoàn viên vừa chọn để lập thành phiếu nộp lên
+                Đoàn trường
+              </p>
             </div>
           </div>
 
           <div className="dpl-gui__summary">
             {[
               ["Số đoàn viên được chọn nộp", `${selectedCount} người`],
-              ["Tổng tiền trên phiếu thu", `${moneyToSubmit.toLocaleString()} ₫`],
+              [
+                "Tổng tiền trên phiếu thu",
+                `${moneyToSubmit.toLocaleString()} ₫`,
+              ],
               ["Năm học", stats.namHoc],
             ].map(([k, v]) => (
               <div key={k} className="dpl-gui__summary-row">
@@ -342,10 +505,17 @@ const DoanPhiLop = () => {
           </div>
 
           <div className="dpl-gui__actions">
-            <button className="dpl-btn dpl-btn--outline" onClick={() => handleTabChange("danh-sach")}>
+            <button
+              className="dpl-btn dpl-btn--outline"
+              onClick={() => handleTabChange("danh-sach")}
+            >
               Quay lại danh sách
             </button>
-            <button className="dpl-btn dpl-btn--primary" onClick={handleSubmit} disabled={selectedCount === 0}>
+            <button
+              className="dpl-btn dpl-btn--primary"
+              onClick={handleSubmit}
+              disabled={selectedCount === 0}
+            >
               <Send size={15} /> Xác nhận gửi phiếu
             </button>
           </div>
@@ -368,34 +538,62 @@ const DoanPhiLop = () => {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={5} className="dpl-empty">Đang tải dữ liệu...</td></tr>
-                ) : phieuThuList.map((pt, idx) => (
-                  <tr key={pt.idPhieuThu} className={idx % 2 === 1 ? "dpl-tr--alt" : ""}>
-                    <td className="dpl-td-mssv">{pt.idPhieuThu}</td>
-                    <td className="dpl-td-muted">
-                      {pt.ngayLap ? new Date(pt.ngayLap).toLocaleDateString("vi-VN") : "—"}
-                    </td>
-                    <td>{pt.tongTien?.toLocaleString()} ₫</td>
-                    <td>
-                      {pt.fileDinhKem ? (
-                        pt.fileDinhKem.startsWith("http") ? (
-                          <a href={pt.fileDinhKem} target="_blank" rel="noreferrer" style={{ color: "#004f9f", fontWeight: 500 }}>
-                            Xem file
-                          </a>
-                        ) : (
-                          <span style={{ color: "#94a3b8", fontSize: "0.85em" }}>File thử nghiệm cũ</span>
-                        )
-                      ) : "—"}
-                    </td>
-                    <td>
-                      <span className={`dpl-badge ${pt.trangThai === "Đã duyệt" ? "dpl-badge--green" : pt.trangThai === "Chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}>
-                        {pt.trangThai}
-                      </span>
+                  <tr>
+                    <td colSpan={5} className="dpl-empty">
+                      Đang tải dữ liệu...
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  phieuThuList.map((pt, idx) => (
+                    <tr
+                      key={pt.idPhieuThu}
+                      className={idx % 2 === 1 ? "dpl-tr--alt" : ""}
+                    >
+                      <td className="dpl-td-mssv">{pt.idPhieuThu}</td>
+                      <td className="dpl-td-muted">
+                        {pt.ngayLap
+                          ? new Date(pt.ngayLap).toLocaleDateString("vi-VN")
+                          : "—"}
+                      </td>
+                      <td>{pt.tongTien?.toLocaleString()} ₫</td>
+                      <td>
+                        {pt.fileDinhKem ? (
+                          pt.fileDinhKem.startsWith("http") ? (
+                            <a
+                              href={pt.fileDinhKem}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{ color: "#004f9f", fontWeight: 500 }}
+                            >
+                              Xem file
+                            </a>
+                          ) : (
+                            <span
+                              style={{ color: "#94a3b8", fontSize: "0.85em" }}
+                            >
+                              File thử nghiệm cũ
+                            </span>
+                          )
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td>
+                        <span
+                          className={`dpl-badge ${pt.trangThai === "Đã duyệt" ? "dpl-badge--green" : pt.trangThai === "Chờ duyệt" ? "dpl-badge--blue" : "dpl-badge--amber"}`}
+                        >
+                          {pt.trangThai}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
                 {!loading && phieuThuList.length === 0 && (
-                  <tr><td colSpan={5} className="dpl-empty">Bạn chưa gửi danh sách nộp nào</td></tr>
+                  <tr>
+                    <td colSpan={5} className="dpl-empty">
+                      Bạn chưa gửi danh sách nộp nào
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>

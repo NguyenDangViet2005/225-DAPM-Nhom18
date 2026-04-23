@@ -6,6 +6,7 @@ const {
   getAllDoanPhi,
   getAllPhieuThu,
   duyetPhieuThu,
+  createPhieuThu,
   getAllChiDoan,
   getStats,
 } = require("../services/doanphi.service");
@@ -49,7 +50,13 @@ const putMucDoanPhi = async (req, res) => {
 const getDoanPhi = async (req, res) => {
   try {
     const { search, trangThai, idChiDoan, page, limit } = req.query;
-    const data = await getAllDoanPhi({ search, trangThai, idChiDoan, page, limit });
+    const data = await getAllDoanPhi({
+      search,
+      trangThai,
+      idChiDoan,
+      page,
+      limit,
+    });
     return res.status(200).json({ success: true, ...data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -93,6 +100,9 @@ const postPhieuThu = async (req, res) => {
       req.body,
       req.user,
     );
+    const idUser = req.user.idUser;
+    const { listIdDoanPhi, fileDinhKem } = req.body;
+    const data = await createPhieuThu({ idUser, listIdDoanPhi, fileDinhKem });
     return res.status(201).json({ success: true, data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -103,7 +113,9 @@ const putDuyetPhieuThu = async (req, res) => {
   try {
     const { trangThai } = req.body;
     if (!["Đã duyệt", "Từ chối"].includes(trangThai)) {
-      return res.status(400).json({ success: false, message: "Trạng thái không hợp lệ" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Trạng thái không hợp lệ" });
     }
     const data = await duyetPhieuThu(req.params.idPhieuThu, trangThai);
     return res.status(200).json({ success: true, data });
