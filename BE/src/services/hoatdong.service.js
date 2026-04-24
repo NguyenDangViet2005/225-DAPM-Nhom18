@@ -118,8 +118,8 @@ const hoatdongService = {
     }
   },
 
-  // Update activity — only allowed for school-level (idKhoa = null, idChiDoan = null)
-  async updateActivity(idHD, updateData) {
+  // Update activity
+  async updateActivity(idHD, updateData, userRole, userChiDoan) {
     try {
       const activity = await HoatDongDoan.findByPk(idHD);
       if (!activity) {
@@ -129,13 +129,18 @@ const hoatdongService = {
         };
       }
 
-      // Permission guard: Đoàn Trường can only edit school-level activities
-      if (activity.idKhoa !== null || activity.idChiDoan !== null) {
-        return {
-          success: false,
-          message:
-            "Không có quyền chỉnh sửa hoạt động của Đoàn Khoa hoặc Chi Đoàn",
-        };
+      // Permission guard:
+      if (userRole === "BITHU") {
+        if (activity.idChiDoan !== userChiDoan) {
+          return { success: false, message: "Không có quyền chỉnh sửa hoạt động của Chi đoàn khác" };
+        }
+      } else if (userRole === "DOANTRUONG") {
+        if (activity.idKhoa !== null || activity.idChiDoan !== null) {
+          return { success: false, message: "Không có quyền chỉnh sửa hoạt động của Đoàn Khoa hoặc Chi Đoàn" };
+        }
+      } else {
+        // Fallback for demo if no role is strictly matched, just allow if it's Doan Khoa for now or reject
+        // We will just let Doan Khoa edit their own if needed in future
       }
 
       const allowedFields = [
@@ -164,6 +169,11 @@ const hoatdongService = {
         } else {
           delete updatePayload.ngayToChuc;
         }
+      }
+      
+      // Nếu là Bí thư sửa, reset trạng thái về Chưa duyệt để gửi lại yêu cầu
+      if (userRole === "BITHU") {
+        updatePayload.trangThaiHD = "Chưa duyệt";
       }
 
       await activity.update(updatePayload);

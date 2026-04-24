@@ -8,7 +8,7 @@ const STATUS_CFG = {
   [YEU_CAU_STATUS.TU_CHOI]: { cls: "gyc-badge--rejected", icon: <XCircle size={11} /> },
 };
 
-const YeuCauTable = ({ list, onDelete }) => {
+const YeuCauTable = ({ list, onDelete, onEdit }) => {
   return (
     <div className="gyc-card">
       <div className="gyc-table-wrap">
@@ -40,16 +40,23 @@ const YeuCauTable = ({ list, onDelete }) => {
                     </span>
                   </td>
                   <td>
-                    {yc.trangThaiYC === YEU_CAU_STATUS.CHO_DUYET ? (
+                    <div style={{ display: 'flex', gap: '8px' }}>
                       <button
-                        className="gyc-btn gyc-btn--danger gyc-btn--sm"
-                        onClick={() => onDelete(yc.idYC)}
+                        className="gyc-btn gyc-btn--sm"
+                        style={{ background: "#3b82f6", color: "white", border: "none" }}
+                        onClick={() => onEdit(yc)}
                       >
-                        <Trash2 size={13} /> Hủy
+                        Sửa
                       </button>
-                    ) : (
-                      <span className="gyc-td-muted">—</span>
-                    )}
+                      {yc.trangThaiYC === YEU_CAU_STATUS.CHO_DUYET && (
+                        <button
+                          className="gyc-btn gyc-btn--danger gyc-btn--sm"
+                          onClick={() => onDelete(yc.idYC)}
+                        >
+                          <Trash2 size={13} /> Hủy
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

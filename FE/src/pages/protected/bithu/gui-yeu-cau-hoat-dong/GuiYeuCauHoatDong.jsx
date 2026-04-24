@@ -19,6 +19,7 @@ const GuiYeuCauHoatDong = () => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -78,9 +79,7 @@ const GuiYeuCauHoatDong = () => {
     }
 
     try {
-      const idHD = `HD${Date.now().toString().slice(-8)}`; // Generate unique ID
       const payload = {
-        idHD,
         tenHD: form.tenHD,
         moTa: form.moTa,
         ngayToChuc: form.ngayDuKien,
@@ -90,10 +89,20 @@ const GuiYeuCauHoatDong = () => {
         donViToChuc: `Chi đoàn ${MY_CHI_DOAN}`,
       };
 
-      const res = await hoatdongAPI.createActivity(payload);
+      let res;
+      if (editingId) {
+        // Cập nhật
+        res = await hoatdongAPI.updateActivity(editingId, payload);
+      } else {
+        // Tạo mới
+        payload.idHD = `HD${Date.now().toString().slice(-8)}`;
+        res = await hoatdongAPI.createActivity(payload);
+      }
+
       if (res.success) {
         setForm(EMPTY_FORM);
         setErrors({});
+        setEditingId(null);
         setSubmitted(true);
         setActiveTab("danh-sach");
         fetchActivities(); // Tải lại danh sách
@@ -101,9 +110,22 @@ const GuiYeuCauHoatDong = () => {
         alert(res.message || "Gửi yêu cầu thất bại");
       }
     } catch (error) {
-      console.error("Lỗi tạo yêu cầu:", error);
+      console.error("Lỗi tạo/cập nhật yêu cầu:", error);
       alert("Đã xảy ra lỗi khi gửi yêu cầu.");
     }
+  };
+
+  const handleEdit = (yc) => {
+    setEditingId(yc.idYC);
+    setForm({
+      tenHD: yc.tenHD,
+      ngayDuKien: yc.ngayDuKien,
+      diaDiemDuKien: yc.diaDiemDuKien,
+      soLuongDuKien: yc.soLuongDuKien,
+      moTa: yc.moTa || "",
+    });
+    setSubmitted(false);
+    setActiveTab("tao-moi");
   };
 
   const handleDelete = async (idYC) => {
@@ -138,6 +160,8 @@ const GuiYeuCauHoatDong = () => {
         <button
           className="gyc-btn gyc-btn--primary"
           onClick={() => {
+            setForm(EMPTY_FORM);
+            setEditingId(null);
             setSubmitted(false);
             setActiveTab("tao-moi");
           }}
@@ -172,7 +196,7 @@ const GuiYeuCauHoatDong = () => {
       <div className="gyc-tabs-bar">
         {[
           { key: "danh-sach", label: "Danh sách yêu cầu" },
-          { key: "tao-moi", label: "Tạo yêu cầu mới" },
+          { key: "tao-moi", label: editingId ? "Cập nhật yêu cầu" : "Tạo yêu cầu mới" },
         ].map((t) => (
           <button
             key={t.key}
@@ -196,7 +220,7 @@ const GuiYeuCauHoatDong = () => {
           {loading ? (
             <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Đang tải danh sách...</div>
           ) : (
-            <YeuCauTable list={list} onDelete={handleDelete} />
+            <YeuCauTable list={list} onDelete={handleDelete} onEdit={handleEdit} />
           )}
         </>
       )}

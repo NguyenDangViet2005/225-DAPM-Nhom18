@@ -96,8 +96,10 @@ const updateActivity = async (req, res) => {
   try {
     const { idHD } = req.params;
     const updateData = req.body;
+    const userRole = req.user?.type;
+    const userChiDoan = req.user?.idChiDoan;
 
-    const result = await hoatdongService.updateActivity(idHD, updateData);
+    const result = await hoatdongService.updateActivity(idHD, updateData, userRole, userChiDoan);
 
     if (!result.success) {
       return res.status(404).json(result);
