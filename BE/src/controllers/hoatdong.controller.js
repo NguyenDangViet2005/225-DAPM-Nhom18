@@ -54,7 +54,7 @@ const getActivityById = async (req, res) => {
   }
 };
 
-// Create new school-level activity
+// Create new activity
 const createActivity = async (req, res) => {
   try {
     const { idHD, tenHD, moTa, ngayToChuc, diaDiem, soLuongMax, diemHD } =
@@ -69,6 +69,8 @@ const createActivity = async (req, res) => {
       soLuongMax,
       diemHD,
       creatorRole: req.user?.type, // Pass role so service can decide approval status
+      idKhoa: req.user?.idKhoa || null, // Pass idKhoa for Doan Khoa
+      idChiDoan: req.user?.idChiDoan || null, // Pass idChiDoan for Bi Thu
     });
 
     if (!result.success) {

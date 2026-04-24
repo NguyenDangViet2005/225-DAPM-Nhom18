@@ -1,21 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, PlusCircle, Clock, CheckCircle } from "lucide-react";
-import { MOCK_YEU_CAU_CHI_DOAN } from "@/data/mockHoatDong";
-import { YEU_CAU_STATUS } from "@/constants";
+import { hoatdongAPI } from "@/apis/hoatdong.api";
+import { useAuth } from "@/hooks/useAuth";
 import YeuCauTable from "./YeuCauTable";
 import YeuCauForm from "./YeuCauForm";
 import "./GuiYeuCauHoatDong.css";
 
-const MY_CHI_DOAN = "23110CL1A";
-const MY_NAME = "Nguyễn Văn Bí Thư";
 const EMPTY_FORM = { tenHD: "", ngayDuKien: "", diaDiemDuKien: "", soLuongDuKien: "", moTa: "" };
 
 const GuiYeuCauHoatDong = () => {
+  const { user } = useAuth();
+  const MY_CHI_DOAN = user?.chiDoan?.tenChiDoan || user?.idChiDoan || "Chi đoàn";
+  const MY_NAME = user?.hoTen || "Bí thư";
+
   const [activeTab, setActiveTab] = useState("danh-sach");
-  const [list, setList] = useState(MOCK_YEU_CAU_CHI_DOAN);
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+
+  const fetchActivities = async () => {
+    setLoading(true);
+    try {
+      // Lấy tất cả hoạt động Chi đoàn
+      const res = await hoatdongAPI.getAllChidoanActivities({ limit: 1000 });
+      if (res.success) {
+        // Lọc các hoạt động do Chi đoàn hiện tại tạo
+        const myActivities = res.data.filter(a => a.idChiDoan === user?.idChiDoan);
+        
+        // Map sang format của frontend
+        const mappedData = myActivities.map(a => ({
+          idYC: a.idHD,
+          tenHD: a.tenHD,
+          idChiDoan: a.idChiDoan,
+          donViYeuCau: a.donViToChuc || `Chi đoàn ${MY_CHI_DOAN}`,
+          ngayDuKien: a.ngayToChuc,
+          diaDiemDuKien: a.diaDiem,
+          soLuongDuKien: a.soLuongMax,
+          moTa: a.moTa,
+          trangThaiYC: a.trangThaiHD || "Chưa duyệt",
+          ngayGui: a.ngayToChuc,
+          nguoiGui: MY_NAME,
+        }));
+        setList(mappedData);
+      }
+    } catch (error) {
+      console.error("Lỗi lấy danh sách yêu cầu:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.idChiDoan) {
+      fetchActivities();
+    }
+  }, [user]);
 
   const validate = () => {
     const e = {};
@@ -28,37 +69,61 @@ const GuiYeuCauHoatDong = () => {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) {
       setErrors(errs);
       return;
     }
-    setList((prev) => [
-      {
-        idYC: `YCCD${String(prev.length + 1).padStart(3, "0")}`,
+
+    try {
+      const idHD = `HD${Date.now().toString().slice(-8)}`; // Generate unique ID
+      const payload = {
+        idHD,
         tenHD: form.tenHD,
-        idChiDoan: MY_CHI_DOAN,
-        donViYeuCau: `Chi đoàn ${MY_CHI_DOAN}`,
-        ngayDuKien: new Date(form.ngayDuKien).toISOString(),
-        diaDiemDuKien: form.diaDiemDuKien,
-        soLuongDuKien: Number(form.soLuongDuKien),
         moTa: form.moTa,
-        trangThaiYC: YEU_CAU_STATUS.CHO_DUYET,
-        ngayGui: new Date().toISOString(),
-        nguoiGui: MY_NAME,
-      },
-      ...prev,
-    ]);
-    setForm(EMPTY_FORM);
-    setErrors({});
-    setSubmitted(true);
-    setActiveTab("danh-sach");
+        ngayToChuc: form.ngayDuKien,
+        diaDiem: form.diaDiemDuKien,
+        soLuongMax: Number(form.soLuongDuKien),
+        diemHD: 5, // Điểm mặc định
+        donViToChuc: `Chi đoàn ${MY_CHI_DOAN}`,
+      };
+
+      const res = await hoatdongAPI.createActivity(payload);
+      if (res.success) {
+        setForm(EMPTY_FORM);
+        setErrors({});
+        setSubmitted(true);
+        setActiveTab("danh-sach");
+        fetchActivities(); // Tải lại danh sách
+      } else {
+        alert(res.message || "Gửi yêu cầu thất bại");
+      }
+    } catch (error) {
+      console.error("Lỗi tạo yêu cầu:", error);
+      alert("Đã xảy ra lỗi khi gửi yêu cầu.");
+    }
   };
 
-  const choDuyet = list.filter((y) => y.trangThaiYC === YEU_CAU_STATUS.CHO_DUYET).length;
-  const daDuyet = list.filter((y) => y.trangThaiYC === YEU_CAU_STATUS.DA_DUYET).length;
+  const handleDelete = async (idYC) => {
+    if (window.confirm("Bạn có chắc chắn muốn hủy yêu cầu này không?")) {
+      try {
+        const res = await hoatdongAPI.deleteActivity(idYC);
+        if (res.success) {
+          fetchActivities();
+        } else {
+          alert(res.message || "Hủy thất bại");
+        }
+      } catch (error) {
+        console.error("Lỗi hủy yêu cầu:", error);
+        alert("Đã xảy ra lỗi khi hủy yêu cầu.");
+      }
+    }
+  };
+
+  const choDuyet = list.filter((y) => y.trangThaiYC === "Chưa duyệt").length;
+  const daDuyet = list.filter((y) => y.trangThaiYC === "Đã duyệt").length;
 
   return (
     <div className="gyc-page">
@@ -128,7 +193,11 @@ const GuiYeuCauHoatDong = () => {
               Yêu cầu đã gửi thành công — đang chờ Đoàn trường phê duyệt.
             </div>
           )}
-          <YeuCauTable list={list} setList={setList} />
+          {loading ? (
+            <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>Đang tải danh sách...</div>
+          ) : (
+            <YeuCauTable list={list} onDelete={handleDelete} />
+          )}
         </>
       )}
 

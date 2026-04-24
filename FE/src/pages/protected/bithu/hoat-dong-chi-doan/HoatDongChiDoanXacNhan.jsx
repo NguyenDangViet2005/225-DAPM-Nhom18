@@ -2,10 +2,12 @@ import { useState, useMemo, useEffect } from "react";
 import { CheckCircle, Search, CalendarCheck } from "lucide-react";
 import { hoatdongAPI } from "@/apis/hoatdong.api";
 import { formatDate, getErrorMessage } from "@/utils";
-import { HOAT_DONG_STATUS } from "@/constants";
+import { TRANG_THAI_DUYET } from "@/constants";
+import { useAuth } from "@/hooks/useAuth";
 import "./HoatDongChiDoan.css";
 
 const HoatDongChiDoanXacNhan = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,8 @@ const HoatDongChiDoanXacNhan = () => {
     try {
       const res = await hoatdongAPI.getAllChidoanActivities({ limit: 100 });
       if (res.success) {
-        setActivities(res.data || []);
+        const myActivities = (res.data || []).filter(a => a.idChiDoan === user?.idChiDoan);
+        setActivities(myActivities);
       }
     } catch (error) {
       alert(getErrorMessage(error));
@@ -33,14 +36,14 @@ const HoatDongChiDoanXacNhan = () => {
     () =>
       activities.filter(
         (hd) =>
-          hd.trangThaiHD === HOAT_DONG_STATUS.APPROVED &&
+          hd.trangThaiHD === TRANG_THAI_DUYET.DA_DUYET &&
           (hd.tenHD.toLowerCase().includes(searchTerm.toLowerCase()) ||
             hd.idHD.includes(searchTerm))
       ),
     [activities, searchTerm]
   );
 
-  const completedCount = activities.filter((hd) => hd.trangThaiHD === HOAT_DONG_STATUS.COMPLETED).length;
+  const completedCount = activities.filter((hd) => hd.trangThaiHD === TRANG_THAI_DUYET.DA_KET_THUC).length;
 
   const handleConfirmActivity = async (idHD) => {
     const isConfirm = window.confirm(

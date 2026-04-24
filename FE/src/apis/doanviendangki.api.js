@@ -84,6 +84,15 @@ export const doanviendangkiAPI = {
     );
     return response.data;
   },
+
+  // Duyệt đăng ký cho Bí thư
+  duyetDangKyChiDoan: async (idHD, maSV, trangThai, lyDo = null) => {
+    const response = await apiClient.put(
+      `/doanviendangki/chidoan/${idHD}/duyet`,
+      { maSV, trangThai, lyDo }
+    );
+    return response.data;
+  },
 };
 
 export default doanviendangkiAPI;

@@ -101,8 +101,8 @@ const hoatdongService = {
         trangThaiHD: isDoanTruong ? "Đã duyệt" : "Chưa duyệt",
         donViToChuc: activityData.donViToChuc || "Đoàn Trường",
         diemHD: activityData.diemHD || 0,
-        idKhoa: null,
-        idChiDoan: null,
+        idKhoa: activityData.idKhoa || null,
+        idChiDoan: activityData.idChiDoan || null,
       });
       return {
         success: true,
@@ -310,9 +310,7 @@ const hoatdongService = {
       const offset = (page - 1) * limit;
       const { count, rows: activities } = await HoatDongDoan.findAndCountAll({
         where: {
-          idKhoa: {
-            [require("sequelize").Op.ne]: null,
-          },
+          idKhoa: null,
           idChiDoan: {
             [require("sequelize").Op.ne]: null,
           },

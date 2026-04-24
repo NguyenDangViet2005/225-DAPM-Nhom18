@@ -21,25 +21,61 @@ const HoatDongChiDoanDanhSach = () => {
   const [allRegistrations, setAllRegistrations]   = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [resHD, resReg] = await Promise.all([
+        hoatdongAPI.getAllChidoanActivities({ limit: 100 }), // Lấy tối đa để hiển thị filter
+        doanviendangkiAPI.getChiDoanRegistrations()
+      ]);
+      
+      if (resHD.success) setChiDoanActivities(resHD.data || []);
+      if (resReg.success) setAllRegistrations(resReg.data || []);
+    } catch (error) {
+      console.error("Lỗi lấy dữ liệu:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [resHD, resReg] = await Promise.all([
-          hoatdongAPI.getAllChidoanActivities({ limit: 100 }), // Lấy tối đa để hiển thị filter
-          doanviendangkiAPI.getChiDoanRegistrations()
-        ]);
-        
-        if (resHD.success) setChiDoanActivities(resHD.data || []);
-        if (resReg.success) setAllRegistrations(resReg.data || []);
-      } catch (error) {
-        console.error("Lỗi lấy dữ liệu:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
+
+  const handleApprove = async (reg) => {
+    if (window.confirm(`Bạn có chắc chắn duyệt đoàn viên ${reg.hoTen} tham gia hoạt động này?`)) {
+      try {
+        const res = await doanviendangkiAPI.duyetDangKyChiDoan(reg.idHD, reg.idDV, DANG_KI_STATUS.APPROVED);
+        if (res.success) {
+          fetchData();
+        } else {
+          alert("Lỗi duyệt đăng ký: " + res.message);
+        }
+      } catch (e) {
+        alert("Lỗi khi duyệt đăng ký!");
+      }
+    }
+  };
+
+  const handleReject = async (reg) => {
+    const lyDo = window.prompt("Vui lòng nhập lý do từ chối:");
+    if (lyDo !== null) {
+      if (!lyDo.trim()) {
+        alert("Lý do từ chối không được để trống!");
+        return;
+      }
+      try {
+        const res = await doanviendangkiAPI.duyetDangKyChiDoan(reg.idHD, reg.idDV, DANG_KI_STATUS.REJECTED, lyDo);
+        if (res.success) {
+          fetchData();
+        } else {
+          alert("Lỗi từ chối đăng ký: " + res.message);
+        }
+      } catch (e) {
+        alert("Lỗi khi từ chối đăng ký!");
+      }
+    }
+  };
 
   const registrations = useMemo(() => {
     return allRegistrations.filter((reg) => {
@@ -129,6 +165,7 @@ const HoatDongChiDoanDanhSach = () => {
                 <th>Ngày đăng ký</th>
                 <th>Trạng thái</th>
                 <th>Lý do từ chối</th>
+                <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -147,12 +184,34 @@ const HoatDongChiDoanDanhSach = () => {
                       </span>
                     </td>
                     <td className="hcd-td-reject">{reg.liDoTuChoi || "—"}</td>
+                    <td>
+                      {reg.trangThaiDuyet === DANG_KI_STATUS.PENDING ? (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button 
+                            className="hcd-badge hcd-badge--approved" 
+                            style={{ cursor: "pointer", border: "none", fontSize: "12px", padding: "4px 8px" }}
+                            onClick={() => handleApprove(reg)}
+                          >
+                            Duyệt
+                          </button>
+                          <button 
+                            className="hcd-badge hcd-badge--rejected" 
+                            style={{ cursor: "pointer", border: "none", fontSize: "12px", padding: "4px 8px" }}
+                            onClick={() => handleReject(reg)}
+                          >
+                            Từ chối
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="hcd-td-muted">—</span>
+                      )}
+                    </td>
                   </tr>
                 );
               })}
-              {loading && <tr><td colSpan="6" className="hcd-empty">Đang tải dữ liệu...</td></tr>}
+              {loading && <tr><td colSpan="7" className="hcd-empty">Đang tải dữ liệu...</td></tr>}
               {!loading && registrations.length === 0 && (
-                <tr><td colSpan="6" className="hcd-empty">Không có đăng ký nào phù hợp</td></tr>
+                <tr><td colSpan="7" className="hcd-empty">Không có đăng ký nào phù hợp</td></tr>
               )}
             </tbody>
           </table>

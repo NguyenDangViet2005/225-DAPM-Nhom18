@@ -8,7 +8,7 @@ const STATUS_CFG = {
   [YEU_CAU_STATUS.TU_CHOI]: { cls: "gyc-badge--rejected", icon: <XCircle size={11} /> },
 };
 
-const YeuCauTable = ({ list, setList }) => {
+const YeuCauTable = ({ list, onDelete }) => {
   return (
     <div className="gyc-card">
       <div className="gyc-table-wrap">
@@ -43,7 +43,7 @@ const YeuCauTable = ({ list, setList }) => {
                     {yc.trangThaiYC === YEU_CAU_STATUS.CHO_DUYET ? (
                       <button
                         className="gyc-btn gyc-btn--danger gyc-btn--sm"
-                        onClick={() => setList((p) => p.filter((y) => y.idYC !== yc.idYC))}
+                        onClick={() => onDelete(yc.idYC)}
                       >
                         <Trash2 size={13} /> Hủy
                       </button>

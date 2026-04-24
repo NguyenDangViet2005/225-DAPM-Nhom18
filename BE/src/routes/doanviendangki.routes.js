@@ -67,4 +67,12 @@ router.put(
   duyetDangKy,
 );
 
+// Duyệt hoặc từ chối đăng ký (Bí thư chi đoàn)
+router.put(
+  "/chidoan/:idHD/duyet",
+  checkRole(["BITHU"]),
+  duyetDangKyValidator,
+  duyetDangKy,
+);
+
 module.exports = router;
