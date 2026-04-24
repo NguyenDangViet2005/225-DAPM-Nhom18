@@ -79,7 +79,11 @@ const HoatDongChiDoanDanhSach = () => {
 
   const registrations = useMemo(() => {
     return allRegistrations.filter((reg) => {
-      const matchHD     = selectedHD === "all" || reg.idHD === selectedHD;
+      // Fix lỗi dư khoảng trắng từ database (khi kiểu dữ liệu là CHAR)
+      const cleanRegIdHD = reg.idHD?.trim();
+      const cleanSelectedHD = selectedHD?.trim();
+
+      const matchHD     = selectedHD === "all" || cleanRegIdHD === cleanSelectedHD;
       const matchStatus = statusFilter === "all" || reg.trangThaiDuyet === statusFilter;
       const matchSearch =
         reg.hoTen?.toLowerCase().includes(searchTerm.toLowerCase()) ||
