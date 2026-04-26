@@ -42,4 +42,13 @@ export const formatDate = (date, format = "DD/MM/YYYY") => {
   return patterns[format] || `${day}/${month}/${year}`;
 };
 
+/**
+ * Format date with time (shorthand for formatDate with time format)
+ * @param {string | Date} date - ISO string or Date object
+ * @returns {string} - Formatted date string with time
+ */
+export const formatDateTime = (date) => {
+  return formatDate(date, "DD/MM/YYYY HH:mm");
+};
+
 export default formatDate;

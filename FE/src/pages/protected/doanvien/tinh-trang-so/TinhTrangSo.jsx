@@ -112,6 +112,8 @@ const TinhTrangSo = () => {
               <th>Nơi cấp</th>
               <th>Trạng thái</th>
               <th>Ngày rút</th>
+              <th>Ngày vào đoàn</th>
+              <th>Nơi kết nạp</th>
             </tr>
           </thead>
           <tbody>
@@ -127,6 +129,8 @@ const TinhTrangSo = () => {
                 </span>
               </td>
               <td>{fmtDate(soDoan.ngayRutSo)}</td>
+              <td>{fmtDate(soDoan.ngayVaoDoan)}</td>
+              <td style={{ color: '#64748b', fontSize: '0.8rem' }}>{soDoan.noiKetNap || '—'}</td>
             </tr>
           </tbody>
         </table>

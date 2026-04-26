@@ -55,6 +55,12 @@ export const doanvienAPI = {
     const response = await apiClient.get(`/doan-vien/${id}`);
     return response;
   },
+
+  // GET /api/doan-vien/:id/full-detail — Lấy thông tin đầy đủ đoàn viên
+  getFullDetail: async (id) => {
+    const response = await apiClient.get(`/doan-vien/${id}/full-detail`);
+    return response.data;
+  },
 };
 
 export default doanvienAPI;

@@ -37,20 +37,29 @@ CREATE TABLE ChiDoan (
 GO
 
 CREATE TABLE DoanVien (
-    idDV CHAR(15) PRIMARY KEY,
+    idDV CHAR(15) PRIMARY KEY, -- idDV và maSV là cùng một field
+    -- Thông tin cá nhân
     hoTen NVARCHAR(100) NOT NULL,
+    anhThe TEXT,
     ngaySinh DATE,
     gioiTinh NVARCHAR(10),
+    CCCD VARCHAR(12),
+    ngayCapCCCD DATE,
+    noiCapCCCD NVARCHAR(100),
     SDT VARCHAR(11),
     email VARCHAR(50),
-    diaChi NVARCHAR(200),
+    diaChiThuongTru NVARCHAR(200),
+    diaChiTamTru NVARCHAR(200),
+    danToc NVARCHAR(50),
+    tonGiao NVARCHAR(50),
+    -- Thông tin sinh viên
+    heDaoTao NVARCHAR(50),
+    trangThaiHoc NVARCHAR(50),
+    -- Thông tin Đoàn (chỉ giữ thông tin cơ bản)
     idChiDoan CHAR(15),
-    ngayVaoDoan DATE,
-    noiChuyenDen NVARCHAR(100),
-    ngayChuyenDen DATE, 
-    trangThaiSH NVARCHAR(50),
-    diemHD INT,
     chucVu NVARCHAR(100),
+    -- Quá trình sinh hoạt
+    diemHoatDong INT,
     CONSTRAINT FK_DoanVien_ChiDoan FOREIGN KEY (idChiDoan) REFERENCES ChiDoan(idChiDoan)
 );
 GO
@@ -70,11 +79,6 @@ CREATE TABLE TaiKhoan (
 );
 GO
 
--- Tạo Index unique cho idDV nhưng cho phép NHIỀU giá trị NULL (dành cho Admin/Khoa)
--- SQL Server quy định: UNIQUE constraint chỉ cho phép 1 giá trị NULL. 
--- Do đó phải dùng Filtered Index này thay thế.
-CREATE UNIQUE INDEX UIX_TaiKhoan_idDV ON TaiKhoan(idDV) WHERE idDV IS NOT NULL;
-GO
 
 CREATE TABLE SoDoan (
     idSoDoan CHAR(15) PRIMARY KEY,
@@ -83,20 +87,27 @@ CREATE TABLE SoDoan (
     noiCap NVARCHAR(100),
     trangThai NVARCHAR(50),
     ngayRutSo DATE,
+    -- Thông tin Đoàn
+    ngayVaoDoan DATE,
+    noiKetNap NVARCHAR(100),
     CONSTRAINT FK_SoDoan_DoanVien FOREIGN KEY (idDV) REFERENCES DoanVien(idDV)
 );
 GO
 
-CREATE TABLE TieuSu (
-    idTieuSu CHAR(15) PRIMARY KEY,
-    idDV CHAR(15),
-    tuThoiGian DATE,
-    denThoiGian DATE,
-    donViCongTac NVARCHAR(200),
-    chucVuCu NVARCHAR(200),
-    CONSTRAINT FK_TieuSu_DoanVien FOREIGN KEY (idDV) REFERENCES DoanVien(idDV)
+
+-- Bảng lưu lịch sử chuyển chi đoàn
+CREATE TABLE LichSuChuyenChiDoan (
+    idLichSu CHAR(15) PRIMARY KEY,
+    idSoDoan CHAR(15) NOT NULL,
+    tuDonVi NVARCHAR(150),
+    denDonVi NVARCHAR(150),
+    ngayBatDau DATE,
+    ngayKetThu DATE,
+    lyDo NVARCHAR(200),
+    CONSTRAINT FK_LichSuChuyenChiDoan_SoDoan FOREIGN KEY (idSoDoan) REFERENCES SoDoan(idSoDoan),
 );
 GO
+
 
 CREATE TABLE HoatDongDoan (
     idHD CHAR(15) PRIMARY KEY,

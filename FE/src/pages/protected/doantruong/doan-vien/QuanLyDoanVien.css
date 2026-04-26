@@ -396,3 +396,23 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 79, 159, 0.3);
 }
+
+/* Form field with label */
+.ql-dv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.ql-dv-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  padding-left: 2px;
+}
+
+.ql-dv-modal {
+  max-height: 90vh;
+  overflow-y: auto;
+}

@@ -9,9 +9,14 @@ const DoanVien = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
+    // Thông tin cá nhân
     hoTen: {
       type: DataTypes.STRING(100),
       allowNull: false,
+    },
+    anhThe: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
     ngaySinh: {
       type: DataTypes.DATEONLY,
@@ -19,6 +24,18 @@ const DoanVien = sequelize.define(
     },
     gioiTinh: {
       type: DataTypes.STRING(10),
+      allowNull: true,
+    },
+    CCCD: {
+      type: DataTypes.STRING(12),
+      allowNull: true,
+    },
+    ngayCapCCCD: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    noiCapCCCD: {
+      type: DataTypes.STRING(100),
       allowNull: true,
     },
     SDT: {
@@ -30,10 +47,32 @@ const DoanVien = sequelize.define(
       allowNull: true,
       unique: true,
     },
-    diaChi: {
+    diaChiThuongTru: {
       type: DataTypes.STRING(200),
       allowNull: true,
     },
+    diaChiTamTru: {
+      type: DataTypes.STRING(200),
+      allowNull: true,
+    },
+    danToc: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    tonGiao: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    // Thông tin sinh viên
+    heDaoTao: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    trangThaiHoc: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+    },
+    // Thông tin Đoàn
     idChiDoan: {
       type: DataTypes.STRING(15),
       allowNull: true,
@@ -42,28 +81,13 @@ const DoanVien = sequelize.define(
         key: "idChiDoan",
       },
     },
-    ngayVaoDoan: {
-      type: DataTypes.DATEONLY,
-      allowNull: true,
-    },
-    noiChuyenDen: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
-    },
-    ngayChuyenDen: {
-      type: DataTypes.DATEONLY,
-      allowNull: true,
-    },
-    trangThaiSH: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
-    },
-    diemHD: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
     chucVu: {
       type: DataTypes.STRING(100),
+      allowNull: true,
+    },
+    // Quá trình sinh hoạt
+    diemHoatDong: {
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
   },

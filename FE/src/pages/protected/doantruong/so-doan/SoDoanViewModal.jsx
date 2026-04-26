@@ -100,6 +100,16 @@ const SoDoanViewModal = ({ isOpen, onClose, viewSoDoan, loadingView }) => {
               </div>
             )}
             <div>
+              <strong>Ngày vào đoàn:</strong>{" "}
+              {viewSoDoan.ngayVaoDoan
+                ? formatDate(viewSoDoan.ngayVaoDoan)
+                : "Chưa cập nhật"}
+            </div>
+            <div>
+              <strong>Nơi kết nạp:</strong>{" "}
+              {viewSoDoan.noiKetNap || "Chưa cập nhật"}
+            </div>
+            <div>
               <strong>Ngày cấp:</strong>{" "}
               {viewSoDoan.ngayCap
                 ? formatDate(viewSoDoan.ngayCap)

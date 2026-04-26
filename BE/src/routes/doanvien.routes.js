@@ -35,4 +35,7 @@ router.put("/:id", checkRole(["DOANTRUONG"]), doanvienController.update);
 // GET /api/doan-vien/:id — Xem chi tiết đoàn viên
 router.get("/:id", doanvienController.getById);
 
+// GET /api/doan-vien/:id/full-detail — Xem chi tiết đầy đủ đoàn viên (tất cả quan hệ)
+router.get("/:id/full-detail", doanvienController.getFullDetail);
+
 module.exports = router;

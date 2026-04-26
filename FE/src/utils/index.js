@@ -8,4 +8,5 @@ export * from "./format.util";
 export * from "./pagination.util";
 export * from "./filter.util";
 export * from "./dateFormat";
+export * from "./address.util";
 export { getRoleBasedRedirectPath } from "./getRoleBasedRedirectPath";

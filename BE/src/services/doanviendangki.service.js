@@ -14,7 +14,7 @@ const doanviendangkiService = {
     try {
       // Lấy tổng điểm từ DoanVien.diemHD (được cộng khi xác nhận hoàn thành)
       const doanVien = await DoanVien.findByPk(idDV, {
-        attributes: ["idDV", "hoTen", "diemHD"],
+        attributes: ["idDV", "hoTen", "diemHoatDong"],
       });
 
       const registrations = await DoanVienDangKi.findAll({
@@ -48,7 +48,7 @@ const doanviendangkiService = {
       return {
         success: true,
         data,
-        tongDiem: doanVien?.diemHD ?? 0,
+        tongDiem: doanVien?.diemHoatDong ?? 0,
       };
     } catch (error) {
       return { success: false, message: "Lỗi lấy điểm hoạt động", error: error.message };
@@ -467,7 +467,7 @@ const doanviendangkiService = {
               "gioiTinh",
               "SDT",
               "email",
-              "diaChi",
+              "diaChiThuongTru",
             ],
           },
         ],
@@ -510,7 +510,7 @@ const doanviendangkiService = {
               "gioiTinh",
               "SDT",
               "email",
-              "diaChi",
+              "diaChiThuongTru",
             ],
           },
         ],

@@ -10,7 +10,7 @@ const SoDoan = sequelize.define(
       allowNull: false,
     },
     idDV: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.STRING(15),
       allowNull: false,
       unique: true,
       references: {
@@ -32,6 +32,15 @@ const SoDoan = sequelize.define(
     },
     ngayRutSo: {
       type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    // Thông tin Đoàn
+    ngayVaoDoan: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    noiKetNap: {
+      type: DataTypes.STRING(100),
       allowNull: true,
     },
   },

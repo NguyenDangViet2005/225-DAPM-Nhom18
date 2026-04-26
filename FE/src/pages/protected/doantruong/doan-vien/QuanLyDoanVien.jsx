@@ -5,6 +5,7 @@ import DataTableToolbar from "@/components/commons/DataTableToolbar/DataTableToo
 import StatsCards from "./StatsCards";
 import DoanVienTable from "./DoanVienTable";
 import DoanVienModal from "./DoanVienModal";
+import DoanVienDetailModal from "./DoanVienDetailModal";
 import "./QuanLyDoanVien.css";
 
 const EMPTY_FORM = {
@@ -14,7 +15,15 @@ const EMPTY_FORM = {
   ngaySinh: "",
   SDT: "",
   email: "",
-  diaChi: "",
+  CCCD: "",
+  ngayCapCCCD: "",
+  noiCapCCCD: "",
+  diaChiThuongTru: "",
+  diaChiTamTru: "",
+  danToc: "",
+  tonGiao: "",
+  heDaoTao: "",
+  trangThaiHoc: "Đang học",
   idChiDoan: "",
 };
 
@@ -39,6 +48,10 @@ const QuanLyDoanVien = () => {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [isEdit, setIsEdit] = useState(false);
+
+  // State cho modal chi tiết
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedIdDV, setSelectedIdDV] = useState(null);
 
   const fetchDoanVien = useCallback(
     async (page = 1) => {
@@ -97,7 +110,9 @@ const QuanLyDoanVien = () => {
 
   const handleOpenCreate = () => {
     setIsEdit(false);
-    setForm(EMPTY_FORM);
+    const newForm = { ...EMPTY_FORM };
+    console.log("Creating new form:", newForm); // Debug log
+    setForm(newForm);
     setShowModal(true);
   };
 
@@ -110,20 +125,40 @@ const QuanLyDoanVien = () => {
       ngaySinh: dv.ngaySinh ? dv.ngaySinh.split("T")[0] : "",
       SDT: dv.SDT || "",
       email: dv.email || "",
-      diaChi: dv.diaChi || "",
+      CCCD: dv.CCCD || "",
+      ngayCapCCCD: dv.ngayCapCCCD ? dv.ngayCapCCCD.split("T")[0] : "",
+      noiCapCCCD: dv.noiCapCCCD || "",
+      diaChiThuongTru: dv.diaChiThuongTru || "",
+      diaChiTamTru: dv.diaChiTamTru || "",
+      danToc: dv.danToc || "",
+      tonGiao: dv.tonGiao || "",
+      heDaoTao: dv.heDaoTao || "",
+      trangThaiHoc: dv.trangThaiHoc || "Đang học",
       idChiDoan: dv.idChiDoan ? dv.idChiDoan.trim() : "",
     });
+    
     setShowModal(true);
+  };
+
+  const handleViewDetail = (idDV) => {
+    setSelectedIdDV(idDV);
+    setShowDetailModal(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const submitData = {
+        ...form,
+      };
+      
+      console.log("Submit data:", submitData);
+      
       if (isEdit) {
-        await doanvienAPI.updateDoanVien(form.idDV, form);
+        await doanvienAPI.updateDoanVien(form.idDV, submitData);
         alert("Cập nhật dữ liệu thành công");
       } else {
-        await doanvienAPI.createDoanVien(form);
+        await doanvienAPI.createDoanVien(submitData);
         alert("Tạo đoàn viên thành công");
       }
       setShowModal(false);
@@ -155,14 +190,16 @@ const QuanLyDoanVien = () => {
 
       {/* Table */}
       <DoanVienTable
+        key="doan-vien-table"
         data={data}
         loading={loading}
         pagination={pagination}
         onEdit={handleOpenEdit}
+        onViewDetail={handleViewDetail}
         onPageChange={fetchDoanVien}
       />
 
-      {/* Modal */}
+      {/* Modal Form */}
       <DoanVienModal
         show={showModal}
         isEdit={isEdit}
@@ -171,6 +208,16 @@ const QuanLyDoanVien = () => {
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
         onChange={setForm}
+      />
+
+      {/* Modal Chi tiết */}
+      <DoanVienDetailModal
+        show={showDetailModal}
+        idDV={selectedIdDV}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedIdDV(null);
+        }}
       />
     </div>
   );

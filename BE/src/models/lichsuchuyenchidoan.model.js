@@ -1,43 +1,47 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../configs/database.config");
 
-const TieuSu = sequelize.define(
-  "TieuSu",
+const LichSuChuyenChiDoan = sequelize.define(
+  "LichSuChuyenChiDoan",
   {
-    idTieuSu: {
+    idLichSu: {
       type: DataTypes.STRING(15),
       primaryKey: true,
       allowNull: false,
     },
-    idDV: {
+    idSoDoan: {
       type: DataTypes.STRING(15),
-      allowNull: true,
+      allowNull: false,
       references: {
-        model: "DoanVien",
-        key: "idDV",
+        model: "SoDoan",
+        key: "idSoDoan",
       },
     },
-    tuThoiGian: {
+    tuDonVi: {
+      type: DataTypes.STRING(150),
+      allowNull: true,
+    },
+    denDonVi: {
+      type: DataTypes.STRING(150),
+      allowNull: true,
+    },
+    ngayBatDau: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    denThoiGian: {
+    ngayKetThuc: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    donViCongTac: {
-      type: DataTypes.STRING(200),
-      allowNull: true,
-    },
-    chucVuCu: {
+    lyDo: {
       type: DataTypes.STRING(200),
       allowNull: true,
     },
   },
   {
-    tableName: "TieuSu",
+    tableName: "LichSuChuyenChiDoan",
     timestamps: false,
   },
 );
 
-module.exports = TieuSu;
+module.exports = LichSuChuyenChiDoan;

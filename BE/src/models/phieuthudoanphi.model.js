@@ -22,7 +22,7 @@ const PhieuThuDoanPhi = sequelize.define(
       allowNull: true,
     },
     tongTien: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(18, 2),
       allowNull: true,
     },
     fileDinhKem: {

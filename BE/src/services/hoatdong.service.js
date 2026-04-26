@@ -242,7 +242,7 @@ const hoatdongService = {
 
       // 3. Cộng điểm cho từng đoàn viên
       if (idDVList.length > 0 && diemHD > 0) {
-        await DoanVien.increment("diemHD", {
+        await DoanVien.increment("diemHoatDong", {
           by: diemHD,
           where: { idDV: { [Op.in]: idDVList } },
         });

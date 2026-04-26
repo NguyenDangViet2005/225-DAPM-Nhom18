@@ -90,72 +90,65 @@ const TaiKhoanFormModal = ({
 
     if (roleType === "DOANVIEN") {
       return (
-        <div className="tk-form-group" style={{ marginTop: "1rem" }}>
-          <label className="tk-form-label">
-            Liên kết Đoàn viên{" "}
-            <span
-              style={{
-                color: "#64748b",
-                fontWeight: 400,
-                textTransform: "none",
-                fontSize: "0.72rem",
-              }}
-            >
-              (Tìm kiếm theo mã SV để liên kết hoặc nhập mã SV mới)
-            </span>
-            {isDropdownLoading && (
-              <Loader
-                size={12}
-                className="tk-spin"
-                style={{ marginLeft: 6 }}
-              />
-            )}
-          </label>
-          <div className="tk-dv-input-row">
-            <input
-              id="input-id-dv"
-              className="tk-form-input tk-dv-manual"
-              type="text"
-              placeholder="Nhập mã sinh viên..."
-              value={form.idDV}
-              onChange={(e) => setForm((f) => ({ ...f, idDV: e.target.value }))}
-            />
-            <div className="tk-dv-search">
-              <SearchableSelect
-                id="searchable-id-dv"
+        <>
+          <div className="tk-form-group" style={{ marginTop: "1rem" }}>
+            <label className="tk-form-label">
+              Liên kết Đoàn viên{" "}
+              <span style={{ color: "#64748b", fontWeight: 400, textTransform: "none", fontSize: "0.72rem" }}>
+                (Tìm kiếm theo mã SV để liên kết hoặc nhập mã SV mới)
+              </span>
+              {isDropdownLoading && <Loader size={12} className="tk-spin" style={{ marginLeft: 6 }} />}
+            </label>
+            <div className="tk-dv-input-row">
+              <input
+                id="input-id-dv"
+                className="tk-form-input tk-dv-manual"
+                type="text"
+                placeholder="Nhập mã sinh viên..."
                 value={form.idDV}
-                onChange={(val) => setForm((f) => ({ ...f, idDV: val }))}
-                disabled={isDropdownLoading}
-                placeholder="Hoặc tìm trong DS Đoàn viên..."
-                emptyText="Không tìm thấy đoàn viên chưa có tài khoản"
-                options={[
-                  ...(editTarget?.idDV &&
-                  !doanVienList.find((dv) => dv.idDV === editTarget.idDV)
-                    ? [
-                        {
-                          value: editTarget.idDV,
-                          label: editTarget.doanVien?.hoTen || editTarget.idDV,
-                          sub: "(Đoàn viên hiện tại)",
-                        },
-                      ]
-                    : []),
-                  ...doanVienList.map((dv) => ({
-                    value: dv.idDV,
-                    label: dv.hoTen,
-                    sub: [dv.chiDoan?.tenChiDoan, dv.chucVu, dv.idDV]
-                      .filter(Boolean)
-                      .join(" • "),
-                  })),
-                ]}
+                onChange={(e) => setForm((f) => ({ ...f, idDV: e.target.value }))}
               />
+              <div className="tk-dv-search">
+                <SearchableSelect
+                  id="searchable-id-dv"
+                  value={form.idDV}
+                  onChange={(val) => setForm((f) => ({ ...f, idDV: val }))}
+                  disabled={isDropdownLoading}
+                  placeholder="Hoặc tìm trong DS Đoàn viên..."
+                  emptyText="Không tìm thấy đoàn viên chưa có tài khoản"
+                  options={[
+                    ...(editTarget?.idDV && !doanVienList.find((dv) => dv.idDV === editTarget.idDV)
+                      ? [{ value: editTarget.idDV, label: editTarget.doanVien?.hoTen || editTarget.idDV, sub: "(Đoàn viên hiện tại)" }]
+                      : []),
+                    ...doanVienList.map((dv) => ({
+                      value: dv.idDV,
+                      label: dv.hoTen,
+                      sub: [dv.chiDoan?.tenChiDoan, dv.idDV].filter(Boolean).join(" • "),
+                    })),
+                  ]}
+                />
+              </div>
             </div>
+            <span className="tk-dv-hint">
+              💡 Nhập mã sinh viên mới để tạo đoàn viên và tài khoản cùng lúc,
+              hoặc tìm kiếm đoàn viên đã có để liên kết tài khoản.
+            </span>
           </div>
-          <span className="tk-dv-hint">
-            💡 Nhập mã sinh viên mới để tạo đoàn viên và tài khoản cùng lúc,
-            hoặc tìm kiếm đoàn viên đã có để liên kết tài khoản. Nếu đoàn viên
-            đã có tài khoản sẽ báo lỗi.
-          </span>
-        </div>
+
+          <div className="tk-form-group">
+            <label className="tk-form-label">Chức vụ trong Chi đoàn <span className="req">*</span></label>
+            <select
+              className="tk-form-input"
+              value={form.chucVu || ""}
+              onChange={(e) => setForm((f) => ({ ...f, chucVu: e.target.value }))}
+            >
+              <option value="">-- Chọn chức vụ --</option>
+              <option value="Bí thư">Bí thư</option>
+              <option value="Phó bí thư">Phó bí thư</option>
+              <option value="Đoàn viên">Đoàn viên</option>
+            </select>
+          </div>
+        </>
       );
     }
 
@@ -222,6 +215,7 @@ const TaiKhoanFormModal = ({
                   idVaiTro: e.target.value,
                   idDV: "",
                   idKhoa: "",
+                  chucVu: "",
                 }))
               }
             >

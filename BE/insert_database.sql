@@ -5,7 +5,7 @@ GO
 DELETE FROM DoanVienDangKi;
 DELETE FROM DoanPhi;
 DELETE FROM PhieuThuDoanPhi;
-DELETE FROM TieuSu;
+DELETE FROM LichSuChuyenChiDoan;
 DELETE FROM SoDoan;
 DELETE FROM HoatDongDoan;
 DELETE FROM MucDoanPhi;
@@ -45,57 +45,141 @@ INSERT INTO ChiDoan (idChiDoan, tenChiDoan, nienKhoa, siSo, idKhoa) VALUES
 GO
 
 -- 2. Chèn Đoàn viên (40 người) - Người thứ nhất mỗi chi đoàn là Bí thư
-INSERT INTO DoanVien (idDV, hoTen, ngaySinh, gioiTinh, SDT, email, diaChi, idChiDoan, ngayVaoDoan, trangThaiSH, diemHD, chucVu) VALUES
+INSERT INTO DoanVien (
+    idDV, hoTen, anhThe, ngaySinh, gioiTinh, CCCD, ngayCapCCCD, noiCapCCCD, 
+    SDT, email, diaChiThuongTru, diaChiTamTru, danToc, tonGiao,
+    heDaoTao, trangThaiHoc, idChiDoan, chucVu, diemHoatDong
+) VALUES
 -- CD001 - Người 201 là Bí thư
-('23115053122201', N'Nguyễn Văn An', '2005-01-15', N'Nam', '0901234501', 'an01@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 85, N'Bí thư Chi đoàn'),
-('23115053122202', N'Trần Thị Bình', '2005-03-20', N'Nữ', '0901234502', 'binh02@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 90, NULL),
-('23115053122203', N'Lê Hoàng Cường', '2005-05-10', N'Nam', '0901234503', 'cuong03@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 78, NULL),
-('23115053122204', N'Phạm Thị Dung', '2005-07-25', N'Nữ', '0901234504', 'dung04@student.ute.udn.vn', N'Đà Nẵng', 'CD001', '2021-09-15', N'Đang sinh hoạt', 92, NULL),
+('23115053122201', N'Nguyễn Văn An', NULL, '2005-01-15', N'Nam', '079205001234', '2020-01-15', N'Công an Thành phố Đà Nẵng',
+ '0901234501', 'an01@student.ute.udn.vn', N'123 Lê Duẩn, Hải Châu, Thành phố Đà Nẵng', N'45 Nguyễn Văn Linh, Thanh Khê, Thành phố Đà Nẵng', N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD001', N'Bí thư Chi đoàn', 85),
+('23115053122202', N'Trần Thị Bình', NULL, '2005-03-20', N'Nữ', '079205002345', '2020-03-20', N'Công an Thành phố Đà Nẵng',
+ '0901234502', 'binh02@student.ute.udn.vn', N'456 Trần Phú, Hải Châu, Thành phố Đà Nẵng', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD001', NULL, 90),
+('23115053122203', N'Lê Hoàng Cường', NULL, '2005-05-10', N'Nam', '079205003456', '2020-05-10', N'Công an Thành phố Đà Nẵng',
+ '0901234503', 'cuong03@student.ute.udn.vn', N'789 Hùng Vương, Thanh Khê, Thành phố Đà Nẵng', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD001', NULL, 78),
+('23115053122204', N'Phạm Thị Dung', NULL, '2005-07-25', N'Nữ', '079205004567', '2020-07-25', N'Công an Thành phố Đà Nẵng',
+ '0901234504', 'dung04@student.ute.udn.vn', N'321 Ngô Quyền, Sơn Trà, Thành phố Đà Nẵng', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD001', NULL, 92),
 -- CD002 - Người 205 là Bí thư
-('23115053122205', N'Hoàng Văn Em', '2005-02-14', N'Nam', '0901234505', 'em05@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2021-09-15', N'Đang sinh hoạt', 88, N'Bí thư Chi đoàn'),
-('23115053122206', N'Võ Thị Phương', '2005-01-20', N'Nữ', '0901234506', 'phuong06@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2022-09-15', N'Đang sinh hoạt', 86, NULL),
-('23115053122207', N'Đặng Văn Giang', '2005-03-15', N'Nam', '0901234507', 'giang07@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2022-09-15', N'Đang sinh hoạt', 91, NULL),
-('23115053122208', N'Bùi Thị Hà', '2005-05-22', N'Nữ', '0901234508', 'ha08@student.ute.udn.vn', N'Quảng Nam', 'CD002', '2022-09-15', N'Đang sinh hoạt', 84, NULL),
+('23115053122205', N'Hoàng Văn Em', NULL, '2005-02-14', N'Nam', '051205005678', '2020-02-14', N'Công an Thành phố Đà Nẵng',
+ '0901234505', 'em05@student.ute.udn.vn', N'234 Hùng Vương, Tam Kỳ, Thành phố Đà Nẵng', N'67 Ông Ích Khiêm, Hải Châu, Thành phố Đà Nẵng', N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD002', N'Bí thư Chi đoàn', 88),
+('23115053122206', N'Võ Thị Phương', NULL, '2005-01-20', N'Nữ', '051205006789', '2020-01-20', N'Công an Thành phố Đà Nẵng',
+ '0901234506', 'phuong06@student.ute.udn.vn', N'567 Phan Bội Châu, Hội An, Thành phố Đà Nẵng', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD002', NULL, 86),
+('23115053122207', N'Đặng Văn Giang', NULL, '2005-03-15', N'Nam', '051205007890', '2020-03-15', N'Công an Thành phố Đà Nẵng',
+ '0901234507', 'giang07@student.ute.udn.vn', N'890 Trần Hưng Đạo, Tam Kỳ, Thành phố Đà Nẵng', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD002', NULL, 91),
+('23115053122208', N'Bùi Thị Hà', NULL, '2005-05-22', N'Nữ', '051205008901', '2020-05-22', N'Công an Thành phố Đà Nẵng',
+ '0901234508', 'ha08@student.ute.udn.vn', N'123 Lê Lợi, Hội An, Thành phố Đà Nẵng', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD002', NULL, 84),
 -- CD003 - Người 209 là Bí thư
-('23115053122209', N'Trương Văn Ích', '2005-07-30', N'Nam', '0901234509', 'ich09@student.ute.udn.vn', N'Huế', 'CD003', '2022-09-15', N'Đang sinh hoạt', 89, N'Bí thư Chi đoàn'),
-('23115053122210', N'Lý Thị Kim', '2005-09-12', N'Nữ', '0901234510', 'kim10@student.ute.udn.vn', N'Huế', 'CD003', '2022-09-15', N'Đang sinh hoạt', 93, NULL),
-('23115053122211', N'Phan Văn Long', '2005-01-18', N'Nam', '0901234511', 'long11@student.ute.udn.vn', N'Huế', 'CD003', '2023-09-15', N'Đang sinh hoạt', 87, NULL),
-('23115053122212', N'Ngô Thị Mai', '2005-03-25', N'Nữ', '0901234512', 'mai12@student.ute.udn.vn', N'Huế', 'CD003', '2023-09-15', N'Đang sinh hoạt', 90, NULL),
+('23115053122209', N'Trương Văn Ích', NULL, '2005-07-30', N'Nam', '046205009012', '2020-07-30', N'Công an Thừa Thiên Huế',
+ '0901234509', 'ich09@student.ute.udn.vn', N'456 Lê Duẩn, Thành phố Huế', N'89 Điện Biên Phủ, Thanh Khê, Thành phố Đà Nẵng', N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD003', N'Bí thư Chi đoàn', 89),
+('23115053122210', N'Lý Thị Kim', NULL, '2005-09-12', N'Nữ', '046205010123', '2020-09-12', N'Công an Thừa Thiên Huế',
+ '0901234510', 'kim10@student.ute.udn.vn', N'789 Trần Hưng Đạo, Thành phố Huế', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD003', NULL, 93),
+('23115053122211', N'Phan Văn Long', NULL, '2005-01-18', N'Nam', '046205011234', '2020-01-18', N'Công an Thừa Thiên Huế',
+ '0901234511', 'long11@student.ute.udn.vn', N'321 Nguyễn Huệ, Thành phố Huế', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD003', NULL, 87),
+('23115053122212', N'Ngô Thị Mai', NULL, '2005-03-25', N'Nữ', '046205012345', '2020-03-25', N'Công an Thừa Thiên Huế',
+ '0901234512', 'mai12@student.ute.udn.vn', N'654 Hai Bà Trưng, Thành phố Huế', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD003', NULL, 90),
 -- CD004 - Người 213 là Bí thư
-('23115053122213', N'Đinh Văn Nam', '2005-05-14', N'Nam', '0901234513', 'nam13@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2023-09-15', N'Đang sinh hoạt', 82, N'Bí thư Chi đoàn'),
-('23115053122214', N'Huỳnh Thị Oanh', '2005-07-20', N'Nữ', '0901234514', 'oanh14@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2023-09-15', N'Đang sinh hoạt', 94, NULL),
-('23115053122215', N'Vũ Văn Phúc', '2005-09-08', N'Nam', '0901234515', 'phuc15@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2023-09-15', N'Đang sinh hoạt', 88, NULL),
-('23115053122216', N'Dương Thị Quỳnh', '2005-01-12', N'Nữ', '0901234516', 'quynh16@student.ute.udn.vn', N'Quảng Ngãi', 'CD004', '2024-09-15', N'Đang sinh hoạt', 85, NULL),
+('23115053122213', N'Đinh Văn Nam', NULL, '2005-05-14', N'Nam', '055205013456', '2020-05-14', N'Công an Quảng Ngãi',
+ '0901234513', 'nam13@student.ute.udn.vn', N'123 Quang Trung, TP Quảng Ngãi', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD004', N'Bí thư Chi đoàn', 82),
+('23115053122214', N'Huỳnh Thị Oanh', NULL, '2005-07-20', N'Nữ', '055205014567', '2020-07-20', N'Công an Quảng Ngãi',
+ '0901234514', 'oanh14@student.ute.udn.vn', N'456 Phan Đình Phùng, TP Quảng Ngãi', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD004', NULL, 94),
+('23115053122215', N'Vũ Văn Phúc', NULL, '2005-09-08', N'Nam', '055205015678', '2020-09-08', N'Công an Quảng Ngãi',
+ '0901234515', 'phuc15@student.ute.udn.vn', N'789 Hùng Vương, TP Quảng Ngãi', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD004', NULL, 88),
+('23115053122216', N'Dương Thị Quỳnh', NULL, '2005-01-12', N'Nữ', '055205016789', '2020-01-12', N'Công an Quảng Ngãi',
+ '0901234516', 'quynh16@student.ute.udn.vn', N'321 Trần Phú, TP Quảng Ngãi', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD004', NULL, 85),
 -- CD005 - Người 217 là Bí thư
-('23115053122217', N'Tô Văn Rồng', '2005-03-19', N'Nam', '0901234517', 'rong17@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 91, N'Bí thư Chi đoàn'),
-('23115053122218', N'Mai Thị Sương', '2005-05-27', N'Nữ', '0901234518', 'suong18@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 89, NULL),
-('23115053122219', N'Lâm Văn Tài', '2005-07-15', N'Nam', '0901234519', 'tai19@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 86, NULL),
-('23115053122220', N'Cao Thị Uyên', '2005-09-22', N'Nữ', '0901234520', 'uyen20@student.ute.udn.vn', N'Bình Định', 'CD005', '2024-09-15', N'Đang sinh hoạt', 92, NULL),
+('23115053122217', N'Tô Văn Rồng', NULL, '2005-03-19', N'Nam', '047205017890', '2020-03-19', N'Công an Bình Định',
+ '0901234517', 'rong17@student.ute.udn.vn', N'123 Lê Lợi, Quy Nhơn, Bình Định', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD005', N'Bí thư Chi đoàn', 91),
+('23115053122218', N'Mai Thị Sương', NULL, '2005-05-27', N'Nữ', '047205018901', '2020-05-27', N'Công an Bình Định',
+ '0901234518', 'suong18@student.ute.udn.vn', N'456 Trần Hưng Đạo, Quy Nhơn, Bình Định', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD005', NULL, 89),
+('23115053122219', N'Lâm Văn Tài', NULL, '2005-07-15', N'Nam', '047205019012', '2020-07-15', N'Công an Bình Định',
+ '0901234519', 'tai19@student.ute.udn.vn', N'789 Hùng Vương, Quy Nhơn, Bình Định', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD005', NULL, 86),
+('23115053122220', N'Cao Thị Uyên', NULL, '2005-09-22', N'Nữ', '047205020123', '2020-09-22', N'Công an Bình Định',
+ '0901234520', 'uyen20@student.ute.udn.vn', N'321 Ngô Quyền, Quy Nhơn, Bình Định', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD005', NULL, 92),
 -- CD006 - Người 221 là Bí thư
-('23115053122221', N'Đỗ Văn Vinh', '2005-02-10', N'Nam', '0901234521', 'vinh21@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 87, N'Bí thư Chi đoàn'),
-('23115053122222', N'Hồ Thị Xuân', '2005-04-18', N'Nữ', '0901234522', 'xuan22@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 90, NULL),
-('23115053122223', N'Trịnh Văn Yên', '2005-06-25', N'Nam', '0901234523', 'yen23@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 83, NULL),
-('23115053122224', N'Lưu Thị Ánh', '2005-08-30', N'Nữ', '0901234524', 'anh24@student.ute.udn.vn', N'Gia Lai', 'CD006', '2021-09-15', N'Đang sinh hoạt', 95, NULL),
+('23115053122221', N'Đỗ Văn Vinh', NULL, '2005-02-10', N'Nam', '060205021234', '2020-02-10', N'Công an Gia Lai',
+ '0901234521', 'vinh21@student.ute.udn.vn', N'123 Lê Duẩn, Pleiku, Gia Lai', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD006', N'Bí thư Chi đoàn', 87),
+('23115053122222', N'Hồ Thị Xuân', NULL, '2005-04-18', N'Nữ', '060205022345', '2020-04-18', N'Công an Gia Lai',
+ '0901234522', 'xuan22@student.ute.udn.vn', N'456 Trần Phú, Pleiku, Gia Lai', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD006', NULL, 90),
+('23115053122223', N'Trịnh Văn Yên', NULL, '2005-06-25', N'Nam', '060205023456', '2020-06-25', N'Công an Gia Lai',
+ '0901234523', 'yen23@student.ute.udn.vn', N'789 Hùng Vương, Pleiku, Gia Lai', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD006', NULL, 83),
+('23115053122224', N'Lưu Thị Ánh', NULL, '2005-08-30', N'Nữ', '060205024567', '2020-08-30', N'Công an Gia Lai',
+ '0901234524', 'anh24@student.ute.udn.vn', N'321 Ngô Quyền, Pleiku, Gia Lai', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD006', NULL, 95),
 -- CD007 - Người 225 là Bí thư
-('23115053122225', N'Kiều Văn Bảo', '2005-10-05', N'Nam', '0901234525', 'bao25@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2021-09-15', N'Đang sinh hoạt', 88, N'Bí thư Chi đoàn'),
-('23115053122226', N'Ông Thị Chi', '2005-02-14', N'Nữ', '0901234526', 'chi26@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2022-09-15', N'Đang sinh hoạt', 86, NULL),
-('23115053122227', N'Tạ Văn Đức', '2005-04-20', N'Nam', '0901234527', 'duc27@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2022-09-15', N'Đang sinh hoạt', 91, NULL),
-('23115053122228', N'Lương Thị Ê', '2005-06-28', N'Nữ', '0901234528', 'e28@student.ute.udn.vn', N'Đắk Lắk', 'CD007', '2022-09-15', N'Đang sinh hoạt', 84, NULL),
+('23115053122225', N'Kiều Văn Bảo', NULL, '2005-10-05', N'Nam', '061205025678', '2020-10-05', N'Công an Đắk Lắk',
+ '0901234525', 'bao25@student.ute.udn.vn', N'123 Lê Lợi, Buôn Ma Thuột, Đắk Lắk', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD007', N'Bí thư Chi đoàn', 88),
+('23115053122226', N'Ông Thị Chi', NULL, '2005-02-14', N'Nữ', '061205026789', '2020-02-14', N'Công an Đắk Lắk',
+ '0901234526', 'chi26@student.ute.udn.vn', N'456 Trần Hưng Đạo, Buôn Ma Thuột, Đắk Lắk', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD007', NULL, 86),
+('23115053122227', N'Tạ Văn Đức', NULL, '2005-04-20', N'Nam', '061205027890', '2020-04-20', N'Công an Đắk Lắk',
+ '0901234527', 'duc27@student.ute.udn.vn', N'789 Hùng Vương, Buôn Ma Thuột, Đắk Lắk', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD007', NULL, 91),
+('23115053122228', N'Lương Thị Ê', NULL, '2005-06-28', N'Nữ', '061205028901', '2020-06-28', N'Công an Đắk Lắk',
+ '0901234528', 'e28@student.ute.udn.vn', N'321 Ngô Quyền, Buôn Ma Thuột, Đắk Lắk', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD007', NULL, 84),
 -- CD008 - Người 229 là Bí thư
-('23115053122229', N'Hà Văn Phong', '2005-08-15', N'Nam', '0901234529', 'phong29@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2022-09-15', N'Đang sinh hoạt', 89, N'Bí thư Chi đoàn'),
-('23115053122230', N'Thái Thị Giang', '2005-10-22', N'Nữ', '0901234530', 'giang30@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2022-09-15', N'Đang sinh hoạt', 93, NULL),
-('23115053122231', N'Quách Văn Hải', '2005-02-16', N'Nam', '0901234531', 'hai31@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2023-09-15', N'Đang sinh hoạt', 87, NULL),
-('23115053122232', N'Từ Thị Ích', '2005-04-23', N'Nữ', '0901234532', 'ich32@student.ute.udn.vn', N'Ninh Thuận', 'CD008', '2023-09-15', N'Đang sinh hoạt', 90, NULL),
+('23115053122229', N'Hà Văn Phong', NULL, '2005-08-15', N'Nam', '068205029012', '2020-08-15', N'Công an Ninh Thuận',
+ '0901234529', 'phong29@student.ute.udn.vn', N'123 Lê Duẩn, Phan Rang, Ninh Thuận', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD008', N'Bí thư Chi đoàn', 89),
+('23115053122230', N'Thái Thị Giang', NULL, '2005-10-22', N'Nữ', '068205030123', '2020-10-22', N'Công an Ninh Thuận',
+ '0901234530', 'giang30@student.ute.udn.vn', N'456 Trần Phú, Phan Rang, Ninh Thuận', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD008', NULL, 93),
+('23115053122231', N'Quách Văn Hải', NULL, '2005-02-16', N'Nam', '068205031234', '2020-02-16', N'Công an Ninh Thuận',
+ '0901234531', 'hai31@student.ute.udn.vn', N'789 Hùng Vương, Phan Rang, Ninh Thuận', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD008', NULL, 87),
+('23115053122232', N'Từ Thị Ích', NULL, '2005-04-23', N'Nữ', '068205032345', '2020-04-23', N'Công an Ninh Thuận',
+ '0901234532', 'ich32@student.ute.udn.vn', N'321 Ngô Quyền, Phan Rang, Ninh Thuận', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD008', NULL, 90),
 -- CD009 - Người 233 là Bí thư
-('23115053122233', N'Ứng Văn Khang', '2005-06-30', N'Nam', '0901234533', 'khang33@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2023-09-15', N'Đang sinh hoạt', 82, N'Bí thư Chi đoàn'),
-('23115053122234', N'Vương Thị Linh', '2005-08-17', N'Nữ', '0901234534', 'linh34@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2023-09-15', N'Đang sinh hoạt', 94, NULL),
-('23115053122235', N'Xa Văn Minh', '2005-10-24', N'Nam', '0901234535', 'minh35@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2023-09-15', N'Đang sinh hoạt', 88, NULL),
-('23115053122236', N'Yên Thị Nga', '2005-03-11', N'Nữ', '0901234536', 'nga36@student.ute.udn.vn', N'Khánh Hòa', 'CD009', '2022-09-15', N'Đang sinh hoạt', 85, NULL),
+('23115053122233', N'Ứng Văn Khang', NULL, '2005-06-30', N'Nam', '058205033456', '2020-06-30', N'Công an Khánh Hòa',
+ '0901234533', 'khang33@student.ute.udn.vn', N'123 Lê Lợi, Nha Trang, Khánh Hòa', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD009', N'Bí thư Chi đoàn', 82),
+('23115053122234', N'Vương Thị Linh', NULL, '2005-08-17', N'Nữ', '058205034567', '2020-08-17', N'Công an Khánh Hòa',
+ '0901234534', 'linh34@student.ute.udn.vn', N'456 Trần Hưng Đạo, Nha Trang, Khánh Hòa', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD009', NULL, 94),
+('23115053122235', N'Xa Văn Minh', NULL, '2005-10-24', N'Nam', '058205035678', '2020-10-24', N'Công an Khánh Hòa',
+ '0901234535', 'minh35@student.ute.udn.vn', N'789 Hùng Vương, Nha Trang, Khánh Hòa', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD009', NULL, 88),
+('23115053122236', N'Yên Thị Nga', NULL, '2005-03-11', N'Nữ', '058205036789', '2020-03-11', N'Công an Khánh Hòa',
+ '0901234536', 'nga36@student.ute.udn.vn', N'321 Ngô Quyền, Nha Trang, Khánh Hòa', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD009', NULL, 85),
 -- CD010 - Người 237 là Bí thư
-('23115053122237', N'Gia Văn Oanh', '2005-05-19', N'Nam', '0901234537', 'oanh37@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 91, N'Bí thư Chi đoàn'),
-('23115053122238', N'Âu Thị Phượng', '2005-07-26', N'Nữ', '0901234538', 'phuong38@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 89, NULL),
-('23115053122239', N'Ê Văn Quang', '2005-09-13', N'Nam', '0901234539', 'quang39@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 86, NULL),
-('23115053122240', N'Ô Thị Rạng', '2005-11-20', N'Nữ', '0901234540', 'rang40@student.ute.udn.vn', N'Đà Lạt', 'CD010', '2022-09-15', N'Đang sinh hoạt', 92, NULL);
+('23115053122237', N'Gia Văn Oanh', NULL, '2005-05-19', N'Nam', '067205037890', '2020-05-19', N'Công an Lâm Đồng',
+ '0901234537', 'oanh37@student.ute.udn.vn', N'123 Lê Duẩn, Đà Lạt, Lâm Đồng', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD010', N'Bí thư Chi đoàn', 91),
+('23115053122238', N'Âu Thị Phượng', NULL, '2005-07-26', N'Nữ', '067205038901', '2020-07-26', N'Công an Lâm Đồng',
+ '0901234538', 'phuong38@student.ute.udn.vn', N'456 Trần Phú, Đà Lạt, Lâm Đồng', NULL, N'Kinh', N'Phật giáo',
+ N'Chính quy', N'Đang học', 'CD010', NULL, 89),
+('23115053122239', N'Ê Văn Quang', NULL, '2005-09-13', N'Nam', '067205039012', '2020-09-13', N'Công an Lâm Đồng',
+ '0901234539', 'quang39@student.ute.udn.vn', N'789 Hùng Vương, Đà Lạt, Lâm Đồng', NULL, N'Kinh', N'Không',
+ N'Chính quy', N'Đang học', 'CD010', NULL, 86),
+('23115053122240', N'Ô Thị Rạng', NULL, '2005-11-20', N'Nữ', '067205040123', '2020-11-20', N'Công an Lâm Đồng',
+ '0901234540', 'rang40@student.ute.udn.vn', N'321 Ngô Quyền, Đà Lạt, Lâm Đồng', NULL, N'Kinh', N'Công giáo',
+ N'Chính quy', N'Đang học', 'CD010', NULL, 92);
 GO
 
 -- 3. Chèn Tài khoản (Admin, Đoàn khoa, Đoàn viên/Bí thư)
@@ -165,8 +249,8 @@ INSERT INTO TaiKhoan (idUser, tenNguoiDung, matKhau, trangThai, ngayTao, idVaiTr
 ('USER40', N'23115053122240', '$2b$10$IVkEDROpkvh1uNb9qFGieOuQi/VVWBNWa0/VPQSPlPLbJy/jHcFBq', 1, GETDATE(), 'VT004', '23115053122240', NULL);
 GO
 
--- 4. Chèn Sổ đoàn & Tiểu sử
-INSERT INTO SoDoan (idSoDoan, idDV, ngayCap, noiCap, trangThai, ngayRutSo)
+-- 4. Chèn Sổ đoàn
+INSERT INTO SoDoan (idSoDoan, idDV, ngayCap, noiCap, trangThai, ngayRutSo, ngayVaoDoan, noiKetNap)
 SELECT 'SD' + RIGHT('00' + CAST(ROW_NUMBER() OVER (ORDER BY idDV) AS VARCHAR), 3), idDV, '2023-09-01', N'Đoàn Trường ĐH Sư phạm Kỹ thuật', 
        CASE 
          WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 3) = 0 THEN N'Chưa nộp sổ'
@@ -176,12 +260,70 @@ SELECT 'SD' + RIGHT('00' + CAST(ROW_NUMBER() OVER (ORDER BY idDV) AS VARCHAR), 3
        CASE 
          WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 4) = 0 THEN '2024-01-15'
          ELSE NULL 
+       END,
+       '2023-09-15',
+       CASE 
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 5) = 1 THEN N'THPT Việt Đức, Thành phố Đà Nẵng'
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 5) = 2 THEN N'THPT Lê Quý Đôn, Thành phố Đà Nẵng'
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 5) = 3 THEN N'THPT Nguyễn Huệ, Thành phố Huế'
+         WHEN (ROW_NUMBER() OVER (ORDER BY idDV) % 5) = 4 THEN N'THPT Trần Phú, Thành phố Đà Nẵng'
+         ELSE N'THPT Phan Bội Châu, Quảng Ngãi'
        END
 FROM DoanVien;
+GO
 
-INSERT INTO TieuSu (idTieuSu, idDV, tuThoiGian, denThoiGian, donViCongTac, chucVuCu)
-SELECT 'TS' + RIGHT('00' + CAST(ROW_NUMBER() OVER (ORDER BY idDV) AS VARCHAR), 3), idDV, '2021-09-01', '2023-06-30', N'THPT Việt Đức', N'Đoàn viên'
-FROM DoanVien;
+-- 4.1 Chèn Lịch sử chuyển chi đoàn (từ THCS → THPT → ĐH)
+INSERT INTO LichSuChuyenChiDoan (idLichSu, idSoDoan, tuDonVi, denDonVi, ngayBatDau, ngayKetThu, lyDo) VALUES
+-- Nhóm 1-4: Từ THPT Việt Đức sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23T1)
+('LS001', 'SD001', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23T1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS002', 'SD002', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23T1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS003', 'SD003', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23T1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS004', 'SD004', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23T1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 5-8: Từ THPT Lê Quý Đôn sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23T2)
+('LS005', 'SD005', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23T2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS006', 'SD006', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23T2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS007', 'SD007', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23T2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS008', 'SD008', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23T2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 9-12: Từ THPT Nguyễn Huệ sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23D1)
+('LS009', 'SD009', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23D1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS010', 'SD010', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23D1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS011', 'SD011', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23D1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS012', 'SD012', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23D1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 13-16: Từ THPT Trần Phú sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23D2)
+('LS013', 'SD013', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23D2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS014', 'SD014', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23D2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS015', 'SD015', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23D2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS016', 'SD016', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23D2 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 17-20: Từ THPT Phan Bội Châu sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23SP1)
+('LS017', 'SD017', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23SP1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS018', 'SD018', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23SP1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS019', 'SD019', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23SP1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS020', 'SD020', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23SP1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 21-24: Từ THPT Việt Đức sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23CK1)
+('LS021', 'SD021', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23CK1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS022', 'SD022', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23CK1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS023', 'SD023', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23CK1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS024', 'SD024', N'Chi đoàn THPT Việt Đức', N'Chi đoàn 23CK1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 25-28: Từ THPT Lê Quý Đôn sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23XD1)
+('LS025', 'SD025', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23XD1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS026', 'SD026', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23XD1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS027', 'SD027', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23XD1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS028', 'SD028', N'Chi đoàn THPT Lê Quý Đôn', N'Chi đoàn 23XD1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 29-32: Từ THPT Nguyễn Huệ sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23HH1)
+('LS029', 'SD029', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23HH1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS030', 'SD030', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23HH1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS031', 'SD031', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23HH1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS032', 'SD032', N'Chi đoàn THPT Nguyễn Huệ', N'Chi đoàn 23HH1 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 33-36: Từ THPT Trần Phú sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23T3)
+('LS033', 'SD033', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23T3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS034', 'SD034', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23T3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS035', 'SD035', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23T3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS036', 'SD036', N'Chi đoàn THPT Trần Phú', N'Chi đoàn 23T3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+-- Nhóm 37-40: Từ THPT Phan Bội Châu sang ĐH Sư phạm Kỹ thuật (Chi đoàn 23D3)
+('LS037', 'SD037', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23D3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS038', 'SD038', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23D3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS039', 'SD039', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23D3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH'),
+('LS040', 'SD040', N'Chi đoàn THPT Phan Bội Châu', N'Chi đoàn 23D3 - ĐH Sư phạm Kỹ thuật', '2021-09-01', '2023-06-30', N'Tốt nghiệp THPT, nhập học ĐH');
 GO
 
 -- 5. Chèn Mức đoàn phí
@@ -196,7 +338,7 @@ GO
 -- soLuongDaDK được tính từ số lượng bản ghi "Đã duyệt" trong bảng DoanVienDangKi
 INSERT INTO HoatDongDoan (idHD, tenHD, moTa, ngayToChuc, diaDiem, soLuongMax, soLuongDaDK, trangThai, trangThaiHD, donViToChuc, diemHD, idKhoa, idChiDoan) VALUES
 -- Đoàn trường
-('HD001', N'Mùa hè xanh 2024', N'Tình nguyện tại Quảng Nam', '2026-07-15', N'Nam Trà My', 100, 3, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
+('HD001', N'Mùa hè xanh 2024', N'Tình nguyện tại Thành phố Đà Nẵng', '2026-07-15', N'Nam Trà My', 100, 3, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 10, NULL, NULL),
 ('HD002', N'Hiến máu nhân đạo đợt 1', N'Giọt hồng UTE', '2026-05-20', N'Hội trường A', 200, 0, N'Đã đóng', N'Đã kết thúc', N'Đoàn Trường', 5, NULL, NULL),
 ('HD003', N'Tiếp sức mùa thi 2024', N'Hỗ trợ sĩ tử', '2026-06-25', N'Điểm thi UTE', 50, 0, N'Đã đóng', N'Đã kết thúc', N'Đoàn Trường', 8, NULL, NULL),
 ('HD004', N'Hội thảo Du học & Học bổng', N'Cơ hội vươn xa', '2026-10-30', N'Hội trường lớn', 300, 0, N'Đang mở', N'Đã duyệt', N'Đoàn Trường', 7, NULL, NULL),
@@ -224,7 +366,7 @@ INSERT INTO HoatDongDoan (idHD, tenHD, moTa, ngayToChuc, diaDiem, soLuongMax, so
 ('HD051', N'Vệ sinh phòng học 23T1', N'Lao động tập thể', '2026-05-05', N'Phòng 301-E', 15, 0, N'Đã đóng', N'Đã kết thúc', N'Chi đoàn', 3, 'KHOA001', 'CD001'),
 ('HD052', N'Team Building CD001', N'Gắn kết thành viên', '2026-12-15', N'Công viên Biển Đông', 30, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 5, 'KHOA001', 'CD001'),
 ('HD053', N'Học nhóm Giải tích 2', N'Ôn thi cuối kỳ', '2026-06-12', N'Thư viện', 20, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 4, 'KHOA002', 'CD003'),
-('HD054', N'Tham quan Bảo tàng Đà Nẵng', N'Tìm hiểu lịch sử', '2026-11-10', N'Bảo tàng ĐN', 30, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 6, 'KHOA002', 'CD003');
+('HD054', N'Tham quan Bảo tàng Thành phố Đà Nẵng', N'Tìm hiểu lịch sử', '2026-11-10', N'Bảo tàng Thành phố Đà Nẵng', 30, 0, N'Chưa mở', N'Chưa duyệt', N'Chi đoàn', 6, 'KHOA002', 'CD003');
 GO
 
 -- 7. Chèn Phiếu thu đoàn phí
@@ -249,16 +391,24 @@ INSERT INTO DoanPhi (idDoanPhi, idDV, trangThai, ngayDong, idPhieuThu, idMucDP) 
 ('DP001', '23115053122201', N'Đã đóng', '2023-10-15', 'PT001', 'MDP003'),
 ('DP002', '23115053122202', N'Đã đóng', '2023-10-16', 'PT002', 'MDP003'),
 ('DP003', '23115053122203', N'Đã đóng', '2023-10-17', 'PT003', 'MDP003'),
-('DP004', '23115053122204', N'Đã đóng', '2023-10-18', 'PT004', 'MDP003');
+('DP004', '23115053122204', N'Đã đóng', '2023-10-18', 'PT004', 'MDP003'),
+('DP005', '23115053122205', N'Đang chờ duyệt', NULL, 'PT005', 'MDP004'),
+('DP006', '23115053122206', N'Đang chờ duyệt', NULL, 'PT006', 'MDP004'),
+('DP007', '23115053122217', N'Đang chờ duyệt', NULL, 'PT007', 'MDP004'),
+('DP008', '23115053122221', N'Đang chờ duyệt', NULL, 'PT008', 'MDP004'),
+('DP009', '23115053122225', N'Đang chờ duyệt', NULL, 'PT009', 'MDP004'),
+('DP010', '23115053122210', N'Từ chối', NULL, 'PT010', 'MDP004'),
+('DP011', '23115053122229', N'Đang chờ duyệt', NULL, 'PT011', 'MDP004'),
+('DP012', '23115053122233', N'Đang chờ duyệt', NULL, 'PT012', 'MDP004'),
+('DP013', '23115053122213', N'Đã đóng', '2024-09-25', 'PT013', 'MDP004');
 
+-- Chèn các đoàn phí chưa đóng cho các đoàn viên còn lại
 INSERT INTO DoanPhi (idDoanPhi, idDV, trangThai, ngayDong, idPhieuThu, idMucDP)
-SELECT 'DP' + RIGHT('000' + CAST(ROW_NUMBER() OVER (ORDER BY idDV) + 10 AS VARCHAR), 4), idDV, N'Chưa đóng', NULL, NULL, 'MDP004'
-FROM DoanVien;
-
-UPDATE DoanPhi SET trangThai = N'Đang chờ duyệt', idPhieuThu = 'PT005' WHERE idDV = '23115053122205' AND idMucDP = 'MDP004';
-UPDATE DoanPhi SET trangThai = N'Đang chờ duyệt', idPhieuThu = 'PT006' WHERE idDV = '23115053122206' AND idMucDP = 'MDP004';
-UPDATE DoanPhi SET trangThai = N'Đang chờ duyệt', idPhieuThu = 'PT007' WHERE idDV = '23115053122217' AND idMucDP = 'MDP004';
-UPDATE DoanPhi SET trangThai = N'Đang chờ duyệt', idPhieuThu = 'PT008' WHERE idDV = '23115053122221' AND idMucDP = 'MDP004';
+SELECT 'DP' + RIGHT('000' + CAST(ROW_NUMBER() OVER (ORDER BY dv.idDV) + 20 AS VARCHAR), 4), dv.idDV, N'Chưa đóng', NULL, NULL, 'MDP004'
+FROM DoanVien dv
+WHERE dv.idDV NOT IN ('23115053122201', '23115053122202', '23115053122203', '23115053122204', 
+                       '23115053122205', '23115053122206', '23115053122217', '23115053122221',
+                       '23115053122225', '23115053122210', '23115053122229', '23115053122233', '23115053122213');
 GO
 
 -- 9. Chèn Đăng ký hoạt động (DoanVienDangKi)

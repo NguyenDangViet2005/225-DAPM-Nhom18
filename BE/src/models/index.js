@@ -7,7 +7,7 @@ const ChiDoan = require("./chidoan.model");
 const DoanVien = require("./doanvien.model");
 const TaiKhoan = require("./taikhoan.model");
 const SoDoan = require("./sodoan.model");
-const TieuSu = require("./tieusu.model");
+const LichSuChuyenChiDoan = require("./lichsuchuyenchidoan.model");
 const HoatDongDoan = require("./hoatdongdoan.model");
 const DoanVienDangKi = require("./doanviendangki.model");
 const MucDoanPhi = require("./mucdoanphi.model");
@@ -92,19 +92,6 @@ DoanVien.hasOne(SoDoan, {
   as: "soDoan",
 });
 SoDoan.belongsTo(DoanVien, {
-  foreignKey: "idDV",
-  as: "doanVien",
-});
-
-/**
- * 7. DoanVien - TieuSu (1:N)
- * One DoanVien has many TieuSus
- */
-DoanVien.hasMany(TieuSu, {
-  foreignKey: "idDV",
-  as: "tieuSus",
-});
-TieuSu.belongsTo(DoanVien, {
   foreignKey: "idDV",
   as: "doanVien",
 });
@@ -223,6 +210,19 @@ PhieuThuDoanPhi.belongsTo(TaiKhoan, {
   as: "nguoiNopTK",
 });
 
+/**
+ * 15. SoDoan - LichSuChuyenChiDoan (1:N)
+ * One SoDoan has many LichSuChuyenChiDoans
+ */
+SoDoan.hasMany(LichSuChuyenChiDoan, {
+  foreignKey: "idSoDoan",
+  as: "lichSuChuyenChiDoans",
+});
+LichSuChuyenChiDoan.belongsTo(SoDoan, {
+  foreignKey: "idSoDoan",
+  as: "soDoan",
+});
+
 // ========================================
 // Export all models and sequelize instance
 // ========================================
@@ -234,7 +234,7 @@ module.exports = {
   DoanVien,
   TaiKhoan,
   SoDoan,
-  TieuSu,
+  LichSuChuyenChiDoan,
   HoatDongDoan,
   DoanVienDangKi,
   MucDoanPhi,

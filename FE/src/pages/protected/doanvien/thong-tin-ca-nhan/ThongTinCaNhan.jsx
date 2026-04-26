@@ -3,21 +3,35 @@ import { Upload, Save, X } from "lucide-react";
 import doanvienAPI from "@/apis/doanvien.api";
 import "./ThongTinCaNhan.css";
 
-const EDITABLE_FIELDS = ["hoTen", "ngaySinh", "SDT", "email", "diaChi"];
+const EDITABLE_FIELDS = [
+  "hoTen", "ngaySinh", "SDT", "email",
+  "diaChiThuongTru", "diaChiTamTru",
+  "CCCD", "ngayCapCCCD", "noiCapCCCD",
+  "danToc", "tonGiao",
+];
 
 const FIELDS = [
-  { label: "Họ và tên",          field: "hoTen",      type: "text",  required: true  },
-  { label: "Mã sinh viên",       field: "idDV",       type: "text",  required: false },
-  { label: "Email",              field: "email",      type: "email", required: true  },
-  { label: "Ngày sinh",          field: "ngaySinh",   type: "date",  required: true  },
-  { label: "Số điện thoại",      field: "SDT",        type: "text",  required: true  },
-  { label: "Giới tính",          field: "gioiTinh",   type: "text",  required: false },
-  { label: "Địa chỉ thường trú", field: "diaChi",     type: "text",  required: true  },
-  { label: "Chi đoàn",           field: "tenChiDoan", type: "text",  required: false },
-  { label: "Khoa",               field: "tenKhoa",    type: "text",  required: false },
-  { label: "Ngày vào đoàn",      field: "ngayVaoDoan",type: "date",  required: false },
-  { label: "Chức vụ",            field: "chucVu",     type: "text",  required: false },
-  { label: "Trạng thái sinh hoạt",field: "trangThaiSH",type: "text", required: false },
+  { label: "Họ và tên",           field: "hoTen",           type: "text",  required: true  },
+  { label: "Mã sinh viên",        field: "idDV",            type: "text",  required: false },
+  { label: "Email",               field: "email",           type: "email", required: true  },
+  { label: "Ngày sinh",           field: "ngaySinh",        type: "date",  required: true  },
+  { label: "Số điện thoại",       field: "SDT",             type: "text",  required: true  },
+  { label: "Giới tính",           field: "gioiTinh",        type: "text",  required: false },
+  { label: "CCCD",                field: "CCCD",            type: "text",  required: false },
+  { label: "Ngày cấp CCCD",       field: "ngayCapCCCD",     type: "date",  required: false },
+  { label: "Nơi cấp CCCD",        field: "noiCapCCCD",      type: "text",  required: false },
+  { label: "Địa chỉ thường trú",  field: "diaChiThuongTru", type: "text",  required: true  },
+  { label: "Địa chỉ tạm trú",     field: "diaChiTamTru",    type: "text",  required: false },
+  { label: "Dân tộc",             field: "danToc",          type: "text",  required: false },
+  { label: "Tôn giáo",            field: "tonGiao",         type: "text",  required: false },
+  { label: "Hệ đào tạo",          field: "heDaoTao",        type: "text",  required: false },
+  { label: "Trạng thái học",       field: "trangThaiHoc",    type: "text",  required: false },
+  { label: "Chi đoàn",            field: "tenChiDoan",      type: "text",  required: false },
+  { label: "Khoa",                field: "tenKhoa",         type: "text",  required: false },
+  { label: "Chức vụ",             field: "chucVu",          type: "text",  required: false },
+  { label: "Ngày vào đoàn",       field: "ngayVaoDoan",     type: "date",  required: false },
+  { label: "Nơi kết nạp",         field: "noiKetNap",       type: "text",  required: false },
+  { label: "Điểm hoạt động",      field: "diemHoatDong",    type: "number",required: false },
 ];
 
 const ThongTinCaNhan = () => {
@@ -152,6 +166,14 @@ const ThongTinCaNhan = () => {
               <label className="ttcn-info-label">Khoa:</label>
               <p className="ttcn-info-value">{formData.tenKhoa || "—"}</p>
             </div>
+            <div className="ttcn-info-item">
+              <label className="ttcn-info-label">Hệ đào tạo:</label>
+              <p className="ttcn-info-value">{formData.heDaoTao || "—"}</p>
+            </div>
+            <div className="ttcn-info-item">
+              <label className="ttcn-info-label">Trạng thái học:</label>
+              <p className="ttcn-info-value">{formData.trangThaiHoc || "—"}</p>
+            </div>
           </div>
         </div>
 
@@ -180,7 +202,7 @@ const ThongTinCaNhan = () => {
                   <input
                     className="ttcn-form-input"
                     type={type}
-                    value={formData[field] || ""}
+                    value={formData[field] ?? ""}
                     disabled={!isEditing || !EDITABLE_FIELDS.includes(field)}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, [field]: e.target.value }))

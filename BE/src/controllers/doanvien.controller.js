@@ -185,6 +185,26 @@ const doanvienController = {
       return res.status(500).json({ success: false, message: error.message });
     }
   },
+
+  /**
+   * GET /api/doan-vien/:id/full-detail
+   * Lấy thông tin đầy đủ của đoàn viên (bao gồm tất cả quan hệ)
+   */
+  getFullDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const detail = await doanvienService.getFullDetail(id);
+      if (!detail) {
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy đoàn viên",
+        });
+      }
+      return res.status(200).json({ success: true, data: detail });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
 };
 
 module.exports = doanvienController;

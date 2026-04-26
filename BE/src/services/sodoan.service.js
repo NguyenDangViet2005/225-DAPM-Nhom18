@@ -182,14 +182,6 @@ const sodoanService = {
       throw new Error("Đoàn viên biểu đã có sổ đoàn!");
     }
     
-    // Cập nhật ngayVaoDoan cho đoàn viên nếu chưa có
-    const doanVien = await DoanVien.findByPk(idDV);
-    if (doanVien && !doanVien.ngayVaoDoan) {
-      await doanVien.update({ 
-        ngayVaoDoan: ngayCap || new Date() 
-      });
-    }
-    
     if (tonTai) {
       return await SoDoan.update(
         {
@@ -197,6 +189,7 @@ const sodoanService = {
           noiCap: noiCap || null,
           trangThai: "Đã nộp sổ",
           ngayRutSo: null,
+          ngayVaoDoan: tonTai.ngayVaoDoan || ngayCap || new Date(),
         },
         { where: { idSoDoan: tonTai.idSoDoan } },
       );
@@ -215,6 +208,7 @@ const sodoanService = {
       ngayCap: ngayCap || new Date(),
       noiCap: noiCap || "Đoàn trường cấp",
       trangThai: "Đã nộp sổ",
+      ngayVaoDoan: ngayCap || new Date(),
     });
   },
 

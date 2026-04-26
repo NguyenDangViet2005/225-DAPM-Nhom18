@@ -18,7 +18,7 @@ const HoatDongDoan = sequelize.define(
       allowNull: true,
     },
     ngayToChuc: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: true,
     },
     diaDiem: {

@@ -1,4 +1,4 @@
-import { Edit, RefreshCw } from "lucide-react";
+import { Edit, RefreshCw, Eye } from "lucide-react";
 import Pagination from "@/components/commons/Pagination/Pagination";
 import { formatDate } from "@/utils";
 
@@ -6,7 +6,8 @@ const DoanVienTable = ({
   data, 
   loading, 
   pagination, 
-  onEdit, 
+  onEdit,
+  onViewDetail,
   onPageChange 
 }) => {
   return (
@@ -80,13 +81,30 @@ const DoanVienTable = ({
                   </div>
                 </td>
                 <td>
-                  <button
-                    className="ql-dv-btn-icon"
-                    onClick={() => onEdit(item)}
-                    title="Chỉnh sửa"
-                  >
-                    <Edit size={18} />
-                  </button>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      className="ql-dv-btn-icon"
+                      onClick={() => {
+                        console.log("Eye button clicked, idDV:", item.idDV);
+                        console.log("onViewDetail:", onViewDetail);
+                        if (onViewDetail) {
+                          onViewDetail(item.idDV);
+                        } else {
+                          console.error("onViewDetail is not defined!");
+                        }
+                      }}
+                      title="Xem chi tiết"
+                    >
+                      <Eye size={18} />
+                    </button>
+                    <button
+                      className="ql-dv-btn-icon"
+                      onClick={() => onEdit && onEdit(item)}
+                      title="Chỉnh sửa"
+                    >
+                      <Edit size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))
