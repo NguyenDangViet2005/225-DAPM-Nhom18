@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getSidebarItems } from "@/configs/SidebarConfig";
-import { ROLE_LABELS } from "@/constants/roles";
+import { ROLE_LABELS } from "@/constants";
 import SidebarItem from "./SidebarItem";
 import { X } from "lucide-react";
 import "./Sidebar.css";
@@ -91,11 +91,11 @@ const Sidebar = ({
         {(!isCollapsed || isMobileOpen) && (
           <div className="sidebar__user">
             <div className="sidebar__user-avatar">
-              {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+              {user?.hoTen ? user.hoTen.charAt(0).toUpperCase() : "U"}
             </div>
             <div className="sidebar__user-info">
               <span className="sidebar__user-name">
-                {user.name ?? "Người dùng"}
+                {user?.hoTen ?? "Người dùng"}
               </span>
               <span className="sidebar__user-role">
                 {ROLE_LABELS[role] ?? role}

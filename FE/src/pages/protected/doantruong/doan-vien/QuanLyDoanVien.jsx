@@ -111,7 +111,6 @@ const QuanLyDoanVien = () => {
   const handleOpenCreate = () => {
     setIsEdit(false);
     const newForm = { ...EMPTY_FORM };
-    console.log("Creating new form:", newForm); // Debug log
     setForm(newForm);
     setShowModal(true);
   };
@@ -151,8 +150,6 @@ const QuanLyDoanVien = () => {
       const submitData = {
         ...form,
       };
-      
-      console.log("Submit data:", submitData);
       
       if (isEdit) {
         await doanvienAPI.updateDoanVien(form.idDV, submitData);

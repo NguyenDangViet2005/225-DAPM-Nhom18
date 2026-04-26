@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Upload, Save, X } from "lucide-react";
 import doanvienAPI from "@/apis/doanvien.api";
 import "./ThongTinCaNhan.css";
@@ -28,7 +28,7 @@ const FIELDS = [
   { label: "Trạng thái học",       field: "trangThaiHoc",    type: "text",  required: false },
   { label: "Chi đoàn",            field: "tenChiDoan",      type: "text",  required: false },
   { label: "Khoa",                field: "tenKhoa",         type: "text",  required: false },
-  { label: "Chức vụ",             field: "chucVu",          type: "text",  required: false },
+  { label: "Vai trò",             field: "laBiThu",         type: "text",  required: false, render: (value) => value ? "Bí thư chi đoàn" : "Đoàn viên" },
   { label: "Ngày vào đoàn",       field: "ngayVaoDoan",     type: "date",  required: false },
   { label: "Nơi kết nạp",         field: "noiKetNap",       type: "text",  required: false },
   { label: "Điểm hoạt động",      field: "diemHoatDong",    type: "number",required: false },
@@ -42,6 +42,10 @@ const ThongTinCaNhan = () => {
   const [saving, setSaving]         = useState(false);
   const [error, setError]           = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
+  const [uploading, setUploading]   = useState(false);
+  const fileInputRef = useRef(null);
+
+  const API_BASE_URL = import.meta.env.VITE_BE_API_DOMAIN?.replace('/api', '') || "http://localhost:8000";
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
@@ -102,6 +106,43 @@ const ThongTinCaNhan = () => {
     setError(null);
   };
 
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setError("Vui lòng chọn file ảnh");
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Kích thước ảnh không được vượt quá 5MB");
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+    setSuccessMsg(null);
+
+    try {
+      const result = await doanvienAPI.uploadPhoto(file);
+      if (result.success) {
+        setSuccessMsg("Cập nhật ảnh thẻ thành công!");
+        // Update local state
+        setFormData((prev) => ({ ...prev, anhThe: result.data.anhThe }));
+        setOriginal((prev) => ({ ...prev, anhThe: result.data.anhThe }));
+      } else {
+        setError(result.message || "Cập nhật ảnh thất bại");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Lỗi kết nối server");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const initials = formData.hoTen
     ?.split(" ")
     .slice(-2)
@@ -142,10 +183,29 @@ const ThongTinCaNhan = () => {
         <div className="ttcn-left">
           <div className="ttcn-card-box">
             <div className="ttcn-id-card__rect">
-              <div className="ttcn-id-card__avatar-rect">{initials}</div>
+              {formData.anhThe ? (
+                <img 
+                  src={`${API_BASE_URL}${formData.anhThe}`} 
+                  alt="Ảnh thẻ" 
+                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }}
+                />
+              ) : (
+                <div className="ttcn-id-card__avatar-rect">{initials}</div>
+              )}
             </div>
-            <button className="ttcn-btn ttcn-btn--primary ttcn-upload-btn">
-              <Upload size={16} /> Thay đổi
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              accept="image/*"
+              onChange={handlePhotoUpload}
+            />
+            <button 
+              className="ttcn-btn ttcn-btn--primary ttcn-upload-btn"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              <Upload size={16} /> {uploading ? "Đang tải..." : "Thay đổi"}
             </button>
           </div>
 
@@ -174,6 +234,10 @@ const ThongTinCaNhan = () => {
               <label className="ttcn-info-label">Trạng thái học:</label>
               <p className="ttcn-info-value">{formData.trangThaiHoc || "—"}</p>
             </div>
+            <div className="ttcn-info-item">
+              <label className="ttcn-info-label">Vai trò:</label>
+              <p className="ttcn-info-value">{formData.laBiThu ? "Bí thư chi đoàn" : "Đoàn viên"}</p>
+            </div>
           </div>
         </div>
 
@@ -193,21 +257,25 @@ const ThongTinCaNhan = () => {
             </div>
 
             <div className="ttcn-form-grid">
-              {FIELDS.map(({ label, field, type, required }) => (
+              {FIELDS.map(({ label, field, type, required, render }) => (
                 <div className="ttcn-form-group" key={field}>
                   <label className="ttcn-form-label">
                     {label}
                     {required && <span className="ttcn-required">*</span>}
                   </label>
-                  <input
-                    className="ttcn-form-input"
-                    type={type}
-                    value={formData[field] ?? ""}
-                    disabled={!isEditing || !EDITABLE_FIELDS.includes(field)}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, [field]: e.target.value }))
-                    }
-                  />
+                  {render ? (
+                    <p className="ttcn-info-value">{render(formData[field])}</p>
+                  ) : (
+                    <input
+                      className="ttcn-form-input"
+                      type={type}
+                      value={formData[field] ?? ""}
+                      disabled={!isEditing || !EDITABLE_FIELDS.includes(field)}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, [field]: e.target.value }))
+                      }
+                    />
+                  )}
                 </div>
               ))}
             </div>

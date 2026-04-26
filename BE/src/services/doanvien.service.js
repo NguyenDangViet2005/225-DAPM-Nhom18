@@ -39,8 +39,8 @@ const doanvienService = {
         "heDaoTao",
         "trangThaiHoc",
         "idChiDoan",
-        "chucVu",
         "diemHoatDong",
+        "laBiThu"
       ],
       include: [
         {
@@ -82,7 +82,6 @@ const doanvienService = {
       tonGiao: doanVien.tonGiao,
       heDaoTao: doanVien.heDaoTao,
       trangThaiHoc: doanVien.trangThaiHoc,
-      chucVu: doanVien.chucVu,
       diemHoatDong: doanVien.diemHoatDong,
       idChiDoan: doanVien.idChiDoan,
       tenChiDoan: doanVien.chiDoan?.tenChiDoan || null,
@@ -91,6 +90,7 @@ const doanvienService = {
       tenKhoa: doanVien.chiDoan?.khoa?.tenKhoa || null,
       ngayVaoDoan: doanVien.soDoan?.ngayVaoDoan || null,
       noiKetNap: doanVien.soDoan?.noiKetNap || null,
+      laBiThu: doanVien.laBiThu || false
     };
   },
 
@@ -223,7 +223,7 @@ const doanvienService = {
       idDV, hoTen, gioiTinh, ngaySinh, SDT, email,
       diaChiThuongTru, diaChiTamTru,
       CCCD, ngayCapCCCD, noiCapCCCD,
-      danToc, tonGiao, heDaoTao, trangThaiHoc, idChiDoan, chucVu,
+      danToc, tonGiao, heDaoTao, trangThaiHoc, idChiDoan,
     } = data;
 
     const existing = await DoanVien.findByPk(idDV);
@@ -235,7 +235,7 @@ const doanvienService = {
       CCCD, ngayCapCCCD, noiCapCCCD,
       danToc, tonGiao, heDaoTao,
       trangThaiHoc: trangThaiHoc || "Đang học",
-      idChiDoan, chucVu,
+      idChiDoan,
       diemHoatDong: 0,
     });
 
@@ -253,17 +253,28 @@ const doanvienService = {
       hoTen, gioiTinh, ngaySinh, SDT, email,
       diaChiThuongTru, diaChiTamTru,
       CCCD, ngayCapCCCD, noiCapCCCD,
-      danToc, tonGiao, heDaoTao, trangThaiHoc, idChiDoan, chucVu,
+      danToc, tonGiao, heDaoTao, trangThaiHoc, idChiDoan,
     } = data;
 
     await doanvien.update({
       hoTen, gioiTinh, ngaySinh, SDT, email,
       diaChiThuongTru, diaChiTamTru,
       CCCD, ngayCapCCCD, noiCapCCCD,
-      danToc, tonGiao, heDaoTao, trangThaiHoc, idChiDoan, chucVu,
+      danToc, tonGiao, heDaoTao, trangThaiHoc, idChiDoan,
     });
 
     return doanvien;
+  },
+
+  /**
+   * Cập nhật ảnh thẻ
+   */
+  updatePhoto: async (idDV, photoPath) => {
+    const doanVien = await DoanVien.findByPk(idDV);
+    if (!doanVien) return null;
+
+    await doanVien.update({ anhThe: photoPath });
+    return doanVien;
   },
 
   /**
@@ -361,7 +372,6 @@ const doanvienService = {
         siSo: doanVien.chiDoan?.siSo || null,
         idKhoa: doanVien.chiDoan?.khoa?.idKhoa || null,
         tenKhoa: doanVien.chiDoan?.khoa?.tenKhoa || null,
-        chucVu: doanVien.chucVu,
         diemHoatDong: doanVien.diemHoatDong,
       },
       // Sổ đoàn

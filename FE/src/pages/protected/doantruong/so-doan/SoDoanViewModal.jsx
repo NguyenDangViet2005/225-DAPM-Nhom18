@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { formatDate } from "@/utils/dateFormat";
+import { formatDate } from "@/utils";
 
 const SoDoanViewModal = ({ isOpen, onClose, viewSoDoan, loadingView }) => {
   if (!isOpen) return null;
@@ -87,27 +87,15 @@ const SoDoanViewModal = ({ isOpen, onClose, viewSoDoan, loadingView }) => {
               <strong>Mã Sổ Đoàn:</strong> {viewSoDoan.idSoDoan}
             </div>
             <div>
+              <strong>Đoàn viên:</strong> {viewSoDoan.doanVien?.hoTen} ({viewSoDoan.idDV})
+            </div>
+            <div>
               <strong>Tình trạng sổ:</strong>{" "}
               <span
                 className={`status-badge ${viewSoDoan.trangThai === "Đã nộp sổ" ? "status-badge--holding" : viewSoDoan.trangThai === "Đã rút sổ" ? "status-badge--withdrawn" : "status-badge--lost"}`}
               >
-                {viewSoDoan.trangThai}
+                {viewSoDoan.trangThai || "Chưa cập nhật"}
               </span>
-            </div>
-            {viewSoDoan.ngayRutSo && (
-              <div>
-                <strong>Ngày rút sổ:</strong> {formatDate(viewSoDoan.ngayRutSo)}
-              </div>
-            )}
-            <div>
-              <strong>Ngày vào đoàn:</strong>{" "}
-              {viewSoDoan.ngayVaoDoan
-                ? formatDate(viewSoDoan.ngayVaoDoan)
-                : "Chưa cập nhật"}
-            </div>
-            <div>
-              <strong>Nơi kết nạp:</strong>{" "}
-              {viewSoDoan.noiKetNap || "Chưa cập nhật"}
             </div>
             <div>
               <strong>Ngày cấp:</strong>{" "}
@@ -118,6 +106,11 @@ const SoDoanViewModal = ({ isOpen, onClose, viewSoDoan, loadingView }) => {
             <div>
               <strong>Nơi cấp:</strong> {viewSoDoan.noiCap || "Chưa cập nhật"}
             </div>
+            {viewSoDoan.ngayRutSo && (
+              <div>
+                <strong>Ngày rút sổ:</strong> {formatDate(viewSoDoan.ngayRutSo)}
+              </div>
+            )}
             <div
               style={{
                 height: "1px",
@@ -133,37 +126,16 @@ const SoDoanViewModal = ({ isOpen, onClose, viewSoDoan, loadingView }) => {
                 margin: "5px 0",
               }}
             >
-              Thông tin Đoàn Viên
+              Thông tin Đoàn
             </h3>
             <div>
-              <strong>MSSV:</strong> {viewSoDoan.idDV}
+              <strong>Ngày vào Đoàn:</strong>{" "}
+              {viewSoDoan.ngayVaoDoan
+                ? formatDate(viewSoDoan.ngayVaoDoan)
+                : "Chưa cập nhật"}
             </div>
             <div>
-              <strong>Họ tên:</strong> {viewSoDoan.doanVien?.hoTen}
-            </div>
-            <div>
-              <strong>Ngày sinh:</strong>{" "}
-              {viewSoDoan.doanVien?.ngaySinh
-                ? formatDate(viewSoDoan.doanVien?.ngaySinh)
-                : "—"}
-            </div>
-            <div>
-              <strong>Giới tính:</strong> {viewSoDoan.doanVien?.gioiTinh || "—"}
-            </div>
-            <div>
-              <strong>Chức vụ:</strong>{" "}
-              {viewSoDoan.doanVien?.chucVu || "Đoàn viên"}
-            </div>
-            <div>
-              <strong>Chi đoàn:</strong>{" "}
-              {viewSoDoan.doanVien?.chiDoan?.tenChiDoan} (
-              {viewSoDoan.doanVien?.chiDoan?.khoa?.tenKhoa})
-            </div>
-            <div>
-              <strong>Email:</strong> {viewSoDoan.doanVien?.email || "—"}
-            </div>
-            <div>
-              <strong>Số điện thoại:</strong> {viewSoDoan.doanVien?.SDT || "—"}
+              <strong>Nơi kết nạp:</strong> {viewSoDoan.noiKetNap || "Chưa cập nhật"}
             </div>
           </div>
         ) : (

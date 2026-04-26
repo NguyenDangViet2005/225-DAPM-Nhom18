@@ -134,20 +134,6 @@ const TaiKhoanFormModal = ({
               hoặc tìm kiếm đoàn viên đã có để liên kết tài khoản.
             </span>
           </div>
-
-          <div className="tk-form-group">
-            <label className="tk-form-label">Chức vụ trong Chi đoàn <span className="req">*</span></label>
-            <select
-              className="tk-form-input"
-              value={form.chucVu || ""}
-              onChange={(e) => setForm((f) => ({ ...f, chucVu: e.target.value }))}
-            >
-              <option value="">-- Chọn chức vụ --</option>
-              <option value="Bí thư">Bí thư</option>
-              <option value="Phó bí thư">Phó bí thư</option>
-              <option value="Đoàn viên">Đoàn viên</option>
-            </select>
-          </div>
         </>
       );
     }
@@ -215,7 +201,6 @@ const TaiKhoanFormModal = ({
                   idVaiTro: e.target.value,
                   idDV: "",
                   idKhoa: "",
-                  chucVu: "",
                 }))
               }
             >
@@ -235,7 +220,7 @@ const TaiKhoanFormModal = ({
                   DOANKHOA:
                     "🏫 Đoàn Khoa — vui lòng chọn Khoa phụ trách bên dưới",
                   DOANVIEN:
-                    "🎓 Bí thư/Đoàn viên — vui lòng nhập mã sinh viên bên dưới (tự động tạo đoàn viên nếu chưa có)",
+                    "🎓 Bí thư/Đoàn viên — vui lòng nhập mã sinh viên bên dưới (chức vụ sẽ tự động gán dựa trên vai trò)",
                 };
                 return hints[rt] ? (
                   <span className="tk-dv-hint">{hints[rt]}</span>

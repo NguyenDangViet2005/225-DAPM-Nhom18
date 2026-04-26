@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getProvinces, getWardsByProvince, formatAddress, parseAddress } from "../../../../utils/address.util";
 
 const Field = ({ label, required, children }) => (
   <div className="ql-dv-field">
@@ -8,6 +9,158 @@ const Field = ({ label, required, children }) => (
     {children}
   </div>
 );
+
+const AddressField = ({ label, value, isEdit, onChange }) => {
+  const [isEditing, setIsEditing] = useState(!isEdit);
+  const [addressParts, setAddressParts] = useState({ duong: '', quan: '', tinh: '' });
+  const [wards, setWards] = useState([]);
+
+  const provinces = getProvinces();
+
+  const handleProvinceChange = (e) => {
+    const selectedProvince = e.target.value;
+    const newWards = getWardsByProvince(selectedProvince);
+    setWards(newWards);
+    const newParts = { ...addressParts, tinh: selectedProvince, quan: '' };
+    setAddressParts(newParts);
+    
+    // Tự động cập nhật khi tạo mới
+    if (!isEdit) {
+      const fullAddress = formatAddress(newParts.duong, newParts.quan, newParts.tinh);
+      onChange(fullAddress);
+    }
+  };
+
+  const handleWardChange = (e) => {
+    const newParts = { ...addressParts, quan: e.target.value };
+    setAddressParts(newParts);
+    
+    // Tự động cập nhật khi tạo mới
+    if (!isEdit) {
+      const fullAddress = formatAddress(newParts.duong, newParts.quan, newParts.tinh);
+      onChange(fullAddress);
+    }
+  };
+
+  const handleStreetChange = (e) => {
+    const newParts = { ...addressParts, duong: e.target.value };
+    setAddressParts(newParts);
+    
+    // Tự động cập nhật khi tạo mới
+    if (!isEdit) {
+      const fullAddress = formatAddress(newParts.duong, newParts.quan, newParts.tinh);
+      onChange(fullAddress);
+    }
+  };
+
+  const handleSave = () => {
+    const fullAddress = formatAddress(addressParts.duong, addressParts.quan, addressParts.tinh);
+    onChange(fullAddress);
+    setIsEditing(false);
+  };
+
+  const handleEdit = () => {
+    // Reset về trạng thái rỗng khi bấm chỉnh sửa
+    setAddressParts({ duong: '', quan: '', tinh: '' });
+    setWards([]);
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    // Hủy và trở về trạng thái hiển thị ban đầu
+    setIsEditing(false);
+    setAddressParts({ duong: '', quan: '', tinh: '' });
+    setWards([]);
+  };
+
+  if (isEditing) {
+    return (
+      <Field label={label}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <select
+            value={addressParts.tinh || ''}
+            onChange={handleProvinceChange}
+            className="ql-dv-form-input"
+          >
+            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+            {provinces.map((province) => (
+              <option key={province.province_code} value={province.name}>
+                {province.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={addressParts.quan || ''}
+            onChange={handleWardChange}
+            className="ql-dv-form-input"
+            disabled={!addressParts.tinh}
+          >
+            <option value="">-- Chọn Phường/Xã --</option>
+            {wards.map((ward) => (
+              <option key={ward.ward_code} value={ward.name}>
+                {ward.name}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="text"
+            placeholder="Nhập số nhà, tên đường (VD: 123 Nguyễn Văn Linh)"
+            value={addressParts.duong || ''}
+            onChange={handleStreetChange}
+            className="ql-dv-form-input"
+          />
+
+          {isEdit && (
+            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="ql-dv-btn-secondary"
+                style={{ padding: '6px 12px', fontSize: '14px', flex: 1 }}
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                className="ql-dv-btn-save"
+                style={{ padding: '6px 12px', fontSize: '14px', flex: 1 }}
+              >
+                Lưu địa chỉ
+              </button>
+            </div>
+          )}
+        </div>
+      </Field>
+    );
+  }
+
+  return (
+    <Field label={label}>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <input
+          type="text"
+          value={value || ''}
+          readOnly
+          className="ql-dv-form-input"
+          style={{ flex: 1 }}
+        />
+        {isEdit && (
+          <button
+            type="button"
+            onClick={handleEdit}
+            className="ql-dv-btn-secondary"
+            style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
+          >
+            Chỉnh sửa
+          </button>
+        )}
+      </div>
+    </Field>
+  );
+};
 
 const DoanVienModal = ({
   show,
@@ -123,25 +276,19 @@ const DoanVienModal = ({
               />
             </Field>
 
-            <Field label="Địa chỉ thường trú">
-              <input
-                type="text"
-                placeholder="VD: 789 Hùng Vương, Thanh Khê, Đà Nẵng"
-                value={form.diaChiThuongTru || ""}
-                onChange={(e) => onChange({ ...form, diaChiThuongTru: e.target.value })}
-                className="ql-dv-form-input"
-              />
-            </Field>
+            <AddressField
+              label="Địa chỉ thường trú"
+              value={form.diaChiThuongTru || ""}
+              isEdit={isEdit}
+              onChange={(newAddress) => onChange({ ...form, diaChiThuongTru: newAddress })}
+            />
 
-            <Field label="Địa chỉ tạm trú">
-              <input
-                type="text"
-                placeholder="VD: 123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng"
-                value={form.diaChiTamTru || ""}
-                onChange={(e) => onChange({ ...form, diaChiTamTru: e.target.value })}
-                className="ql-dv-form-input"
-              />
-            </Field>
+            <AddressField
+              label="Địa chỉ tạm trú"
+              value={form.diaChiTamTru || ""}
+              isEdit={isEdit}
+              onChange={(newAddress) => onChange({ ...form, diaChiTamTru: newAddress })}
+            />
 
             <div className="ql-dv-form-row">
               <Field label="Dân tộc">

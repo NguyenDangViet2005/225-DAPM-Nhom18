@@ -205,6 +205,47 @@ const doanvienController = {
       return res.status(500).json({ success: false, message: error.message });
     }
   },
+  /**
+   * POST /api/doan-vien/me/upload-photo
+   * Upload ảnh thẻ cho đoàn viên
+   */
+  uploadPhoto: async (req, res) => {
+    try {
+      const idDV = req.user?.idDV;
+
+      if (!idDV) {
+        return res.status(403).json({
+          success: false,
+          message: "Tài khoản này không liên kết với đoàn viên nào",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "Vui lòng chọn file ảnh",
+        });
+      }
+
+      const photoPath = `/uploads/anhthe/${req.file.filename}`;
+      const updated = await doanvienService.updatePhoto(idDV, photoPath);
+
+      if (!updated) {
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy thông tin đoàn viên",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Cập nhật ảnh thẻ thành công",
+        data: { anhThe: photoPath },
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
 };
 
 module.exports = doanvienController;

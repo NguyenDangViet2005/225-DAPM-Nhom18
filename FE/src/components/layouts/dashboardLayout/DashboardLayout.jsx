@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/layouts/sidebar/Sidebar';
 import { ROLE_PERMISSIONS } from '@/constants/permissions';
 import { useAuth } from '@/hooks/useAuth';
-import { ROLES } from '@/constants/roles';
+import { ROLES } from '@/constants';
 import { Menu, X } from 'lucide-react';
 import './DashboardLayout.css';
 
@@ -71,7 +71,7 @@ const DashboardLayout = () => {
         onToggle={() => setIsCollapsed((c) => !c)}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
         onLogout={handleLogout}
-        user={{ name: user?.name }}
+        user={user}
       />
       <div className="dl-content">
         <Outlet />

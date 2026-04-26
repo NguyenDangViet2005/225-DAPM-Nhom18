@@ -18,7 +18,7 @@ const LoginForm = ({ onForgotPassword }) => {
 
       const redirectPath = getRoleBasedRedirectPath(
         response.user.type,
-        response.user.chucVu,
+        response.user.laBiThu,
       );
 
       const userData = {
@@ -29,7 +29,7 @@ const LoginForm = ({ onForgotPassword }) => {
         hoTen: response.user.hoTen,
         idDV: response.user.idDV,
         idKhoa: response.user.idKhoa,
-        chucVu: response.user.chucVu,
+        laBiThu: response.user.laBiThu,
       };
 
       login(userData);

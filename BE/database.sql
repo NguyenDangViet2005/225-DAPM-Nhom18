@@ -57,7 +57,7 @@ CREATE TABLE DoanVien (
     trangThaiHoc NVARCHAR(50),
     -- Thông tin Đoàn (chỉ giữ thông tin cơ bản)
     idChiDoan CHAR(15),
-    chucVu NVARCHAR(100),
+    laBiThu bit,
     -- Quá trình sinh hoạt
     diemHoatDong INT,
     CONSTRAINT FK_DoanVien_ChiDoan FOREIGN KEY (idChiDoan) REFERENCES ChiDoan(idChiDoan)

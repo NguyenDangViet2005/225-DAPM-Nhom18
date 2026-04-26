@@ -42,16 +42,28 @@ const loginService = async (tenNguoiDung, matKhau) => {
 
     if (account.idDV) {
       // Has idDV -> Bí thư Chi đoàn or Đoàn viên
-      const doanVien = account.doanVien;
-      const role =
-        doanVien.chucVu === "Bí thư Chi đoàn" ? "BITHU" : "DOANVIEN";
+      // Use include result or direct query
+      const doanVien = account.doanVien || await DoanVien.findOne({
+        where: { idDV: account.idDV },
+      });
+      
+      console.log("=== AUTH DEBUG ===");
+      console.log("account.idDV:", account.idDV);
+      console.log("doanVien:", doanVien?.toJSON?.() || doanVien);
+      console.log("laBiThu value:", doanVien?.laBiThu);
+      console.log("laBiThu type:", typeof doanVien?.laBiThu);
+      console.log("laBiThu === 1:", doanVien?.laBiThu === 1);
+      console.log("!!laBiThu:", !!doanVien?.laBiThu);
+      console.log("==================");
+      
+      const role = doanVien && !!doanVien.laBiThu ? "BITHU" : "DOANVIEN";
       roleInfo = {
         type: role,
         idDV: account.idDV,
-        hoTen: doanVien.hoTen,
-        chucVu: doanVien.chucVu, // 'Bí thư Chi đoàn' or 'Đoàn viên'
-        idChiDoan: doanVien.idChiDoan,
-        chiDoan: doanVien.chiDoan,
+        hoTen: doanVien?.hoTen || "Unknown",
+        laBiThu: doanVien?.laBiThu ?? 0,
+        idChiDoan: doanVien?.idChiDoan || null,
+        chiDoan: doanVien?.chiDoan?.tenChiDoan || null,
       };
     } else if (account.idKhoa) {
       // Has idKhoa -> Đoàn Khoa

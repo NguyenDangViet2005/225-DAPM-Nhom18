@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const doanvienController = require("../controllers/doanvien.controller");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
+const { uploadAnhThe } = require("../middlewares/upload.middleware");
 
 // Tất cả route yêu cầu đăng nhập
 router.use(verifyToken);
@@ -12,6 +13,9 @@ router.get("/me", doanvienController.getMyProfile);
 
 // PATCH /api/doan-vien/me — Cập nhật thông tin cá nhân
 router.patch("/me", doanvienController.updateMyProfile);
+
+// POST /api/doan-vien/me/upload-photo — Upload ảnh thẻ
+router.post("/me/upload-photo", uploadAnhThe.single("anhThe"), doanvienController.uploadPhoto);
 
 // GET /api/doan-vien/so-doan — Xem sổ đoàn của mình
 router.get("/so-doan", doanvienController.getMySoDoan);

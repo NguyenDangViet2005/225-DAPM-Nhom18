@@ -19,7 +19,7 @@ const getDoanVienChuaCoTaiKhoan = async (excludeIdDV = null) => {
       idDV: { [Op.notIn]: usedIds.length > 0 ? usedIds : ["__NONE__"] },
     },
     include: [{ model: ChiDoan, as: "chiDoan", attributes: ["tenChiDoan"] }],
-    attributes: ["idDV", "hoTen", "chucVu", "idChiDoan"],
+    attributes: ["idDV", "hoTen", "laBiThu", "idChiDoan"],
     order: [["hoTen", "ASC"]],
   });
 };
@@ -129,11 +129,11 @@ const createTaiKhoan = async (data) => {
     const dvHasTK = await TaiKhoan.findOne({ where: { idDV } });
     if (dvHasTK) throw new Error("Đoàn viên này đã có tài khoản");
 
-    // Xác định chức vụ dựa trên tên vai trò
+    // Xác định laBiThu dựa trên tên vai trò
     const tenVaiTro = vaiTro.tenVaiTro.toLowerCase();
-    let chucVu = null;
+    let laBiThu = null;
     if (tenVaiTro.includes("bí thư") || tenVaiTro.includes("bi thu")) {
-      chucVu = "Bí thư Chi đoàn";
+      laBiThu = 1;
     }
 
     // Khởi tạo hồ sơ mặc định nếu chưa tồn tại
@@ -141,14 +141,14 @@ const createTaiKhoan = async (data) => {
       where: { idDV },
       defaults: {
         hoTen: "Sinh viên mới (Tự động tạo)",
-        chucVu: chucVu,
+        laBiThu: laBiThu,
         // Các trường khác được SQL hỗ trợ null sẽ tự trống
       }
     });
 
-    // Nếu đã tồn tại nhưng chưa có chức vụ, cập nhật chức vụ
-    if (!created && chucVu && !dv.chucVu) {
-      await dv.update({ chucVu });
+    // Nếu đã tồn tại và có laBiThu mới, cập nhật laBiThu
+    if (!created && laBiThu !== null) {
+      await dv.update({ laBiThu });
     }
   }
 

@@ -8,6 +8,8 @@ const DoanVienDetailModal = ({ show, idDV, onClose }) => {
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState("thongtin");
 
+  const API_BASE_URL = import.meta.env.VITE_BE_API_DOMAIN?.replace('/api', '') || "http://localhost:8000";
+
   useEffect(() => {
     if (show && idDV) {
       fetchDetail();
@@ -47,7 +49,7 @@ const DoanVienDetailModal = ({ show, idDV, onClose }) => {
             <div className="dv-detail-top">
               <div className="dv-detail-avatar">
                 {data.thongTinCaNhan.anhThe ? (
-                  <img src={data.thongTinCaNhan.anhThe} alt="Ảnh thẻ" />
+                  <img src={`${API_BASE_URL}${data.thongTinCaNhan.anhThe}`} alt="Ảnh thẻ" />
                 ) : (
                   <div className="dv-detail-avatar-placeholder">
                     {data.thongTinCaNhan.hoTen?.charAt(0) || "?"}
@@ -140,7 +142,6 @@ const ThongTinCaNhanTab = ({ data, thongTinDoan }) => (
       <InfoRow label="Chi đoàn" value={thongTinDoan.tenChiDoan} />
       <InfoRow label="Niên khóa" value={thongTinDoan.nienKhoa} />
       <InfoRow label="Khoa" value={thongTinDoan.tenKhoa} />
-      <InfoRow label="Chức vụ" value={thongTinDoan.chucVu || "Đoàn viên"} />
       <InfoRow label="Điểm hoạt động" value={thongTinDoan.diemHoatDong || 0} />
     </div>
   </div>

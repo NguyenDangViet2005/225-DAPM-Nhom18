@@ -1,4 +1,9 @@
-export const getRoleBasedRedirectPath = (userType, chucVu) => {
+export const getRoleBasedRedirectPath = (userType, laBiThu) => {
+  // Priority: Check laBiThu first if user is DOANVIEN
+  if (userType === "DOANVIEN" && laBiThu === 1) {
+    return "/bi-thu/dashboard";
+  }
+
   switch (userType) {
     case "DOANTRUONG":
       return "/doan-truong/dashboard";
@@ -7,10 +12,10 @@ export const getRoleBasedRedirectPath = (userType, chucVu) => {
       return "/doan-khoa/dashboard";
 
     case "DOANVIEN":
-      if (chucVu === "Bí thư Chi đoàn") {
-        return "/bi-thu/dashboard";
-      }
       return "/doan-vien/thong-tin-ca-nhan";
+
+    case "BITHU":
+      return "/bi-thu/dashboard";
 
     default:
       return "/doan-vien/thong-tin-ca-nhan";

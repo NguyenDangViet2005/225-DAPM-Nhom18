@@ -93,8 +93,14 @@ const refreshTokenHandler = async (req, res) => {
     // Determine role
     let userType = "DOANTRUONG";
     if (account.idDV) {
-      const doanVien = account.doanVien;
-      userType = doanVien.chucVu === "Bí thư Chi đoàn" ? "BITHU" : "DOANVIEN";
+      const doanVien = account.doanVien || await DoanVien.findOne({
+        where: { idDV: account.idDV },
+      });
+      console.log("DoanVien data:", doanVien?.toJSON?.() || doanVien);
+      console.log("laBiThu value:", doanVien?.laBiThu);
+      console.log("laBiThu type:", typeof doanVien?.laBiThu);
+      console.log("!!laBiThu:", !!doanVien?.laBiThu);
+      userType = doanVien && !!doanVien.laBiThu ? "BITHU" : "DOANVIEN";
     } else if (account.idKhoa) {
       userType = "DOANKHOA";
     }
@@ -139,12 +145,50 @@ const logout = (req, res) => {
   });
 };
 
-const getMe = (req, res) => {
+const getMe = async (req, res) => {
   // req.user is populated by verifyToken middleware
-  return res.status(200).json({
-    success: true,
-    user: req.user,
-  });
+  const { idUser, type, idDV, idKhoa } = req.user;
+
+  try {
+    let userData = {
+      idUser,
+      tenNguoiDung: req.user.tenNguoiDung,
+      type,
+      idVaiTro: req.user.idVaiTro,
+    };
+
+    if (type === "DOANVIEN" || type === "BITHU") {
+      // Get full DoanVien info
+      const doanVien = await DoanVien.findOne({
+        where: { idDV },
+        attributes: ["hoTen"],
+      });
+      if (doanVien) {
+        userData = { ...userData, ...doanVien.toJSON() };
+      }
+    } else if (type === "DOANKHOA") {
+      // Get Khoa info
+      const khoa = await Khoa.findOne({
+        where: { idKhoa },
+        attributes: ["tenKhoa"],
+      });
+      if (khoa) {
+        userData = { ...userData, tenDonVi: khoa.tenKhoa };
+      }
+    } else if (type === "DOANTRUONG") {
+      userData = { ...userData, tenDonVi: "Đoàn Trường" };
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: userData,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi hệ thống",
+    });
+  }
 };
 
 module.exports = {

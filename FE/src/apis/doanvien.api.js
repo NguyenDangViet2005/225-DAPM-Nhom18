@@ -13,6 +13,18 @@ export const doanvienAPI = {
     return response.data;
   },
 
+  // POST /api/doan-vien/me/upload-photo — Upload ảnh thẻ
+  uploadPhoto: async (file) => {
+    const formData = new FormData();
+    formData.append("anhThe", file);
+    const response = await apiClient.post("/doan-vien/me/upload-photo", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
   // GET /api/doan-vien/so-doan — Lấy thông tin sổ đoàn của đoàn viên
   getMySoDoan: async () => {
     const response = await apiClient.get("/doan-vien/so-doan");

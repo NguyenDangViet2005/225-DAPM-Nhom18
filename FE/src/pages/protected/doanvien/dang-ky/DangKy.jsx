@@ -105,6 +105,11 @@ const DangKy = () => {
               <div className="dk-card__meta">
                 <Users size={13} /> {hd.soLuongDaDK}/{hd.soLuongMax} người đăng ký
               </div>
+              {hd.donViToChuc && (
+                <div className="dk-card__meta" style={{ color: '#475569', fontWeight: 600 }}>
+                  Đơn vị: {hd.donViToChuc}
+                </div>
+              )}
 
               <div className="dk-progress-wrap">
                 <div className="dk-progress-bar" style={{ width: `${pct}%` }} />

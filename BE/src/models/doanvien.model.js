@@ -81,9 +81,11 @@ const DoanVien = sequelize.define(
         key: "idChiDoan",
       },
     },
-    chucVu: {
-      type: DataTypes.STRING(100),
+    laBiThu: {
+      type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: 0,
+      comment: "1 = Bí thư Chi đoàn, 0 = Đoàn viên",
     },
     // Quá trình sinh hoạt
     diemHoatDong: {

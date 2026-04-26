@@ -26,7 +26,6 @@ const EMPTY_FORM = {
   idVaiTro: "",
   idDV: "",
   idKhoa: "",
-  chucVu: "",
 };
 const EMPTY_RESET = { matKhauMoi: "", xacNhanMatKhau: "" };
 
@@ -209,10 +208,6 @@ const TaiKhoan = () => {
       setFormError("Bí thư/Đoàn viên phải nhập mã sinh viên");
       return;
     }
-    if (roleType === "DOANVIEN" && !form.chucVu) {
-      setFormError("Vui lòng chọn chức vụ cho Bí thư/Đoàn viên");
-      return;
-    }
 
     setIsSubmitting(true);
     try {
@@ -234,7 +229,6 @@ const TaiKhoan = () => {
         };
         if (roleType === "DOANVIEN") {
           payload.idDV = form.idDV.trim();
-          payload.chucVu = form.chucVu;
         }
         if (roleType === "DOANKHOA") payload.idKhoa = form.idKhoa.trim();
         await createTaiKhoanAPI(payload);
